@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#27ae60">
+    <title>SIFAHMI - Buku Kas</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --green: #27ae60;
+            --green-dark: #219150;
+            --green-light: #e9f8ef;
+            --ink: #2c3e50;
+            --muted: #7f8c8d;
+            --line: #dfe5e8;
+            --page: #f4f7f9;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --blue: #2980b9;
+            --purple: #8e44ad;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--page);
+            color: var(--ink);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body { display: flex; flex-direction: column; }
+
+        header.top-bar {
+            flex-shrink: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--line);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand-header { display: flex; align-items: center; gap: 12px; }
+        .brand-header img { width: 40px; height: 40px; object-fit: contain; }
+
+        .brand-info h1 {
+            font-size: 16px;
+            color: var(--green);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .brand-info h1 span.page-title-text { color: var(--ink); font-weight: 700; }
+        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 2px; }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+        main.container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .summary-grid {
+            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .summary-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .summary-card label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .summary-card .val { font-size: 16px; font-weight: 800; color: var(--ink); }
+        .summary-card.saldo-awal .val { color: #d35400; }
+        .summary-card.masuk .val { color: var(--blue); }
+        .summary-card.infaq .val { color: var(--purple); }
+        .summary-card.keluar .val { color: var(--danger); }
+        .summary-card.saldo-akhir { background: var(--green-light); border-color: rgba(39, 174, 96, 0.3); }
+        .summary-card.saldo-akhir .val { color: var(--green-dark); font-size: 18px; }
+
+        .page-header {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .btn {
+            min-height: 38px;
+            padding: 0 14px;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary { background: var(--green); color: #fff; }
+        .btn-primary:hover { background: var(--green-dark); }
+        .btn-infaq { background: var(--purple); color: #fff; }
+        .btn-infaq:hover { background: #732d91; }
+        .btn-secondary { background: #f0f3f5; color: var(--muted); }
+        .btn-secondary:hover { background: #e2e7eb; color: var(--ink); }
+
+        .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background: var(--white);
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-toolbar {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .left-filters { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .tab-group { display: flex; gap: 4px; background: #f0f3f5; padding: 3px; border-radius: 8px; }
+
+        .tab-btn {
+            border: 0;
+            background: transparent;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active { background: var(--white); color: var(--green-dark); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+        .month-select {
+            min-height: 34px;
+            padding: 4px 10px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .search-input {
+            min-width: 180px;
+            min-height: 34px;
+            padding: 6px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 12px;
+        }
+
+        .search-input:focus, .month-select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+
+        .table-responsive {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: #fff; }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--line);
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        td { padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align: middle; }
+
+        tr.row-saldo-awal { background: #fffdf5; font-weight: 700; }
+        tr.row-saldo-awal td { color: #d35400; border-bottom: 2px solid #f9e79f; }
+        tr:last-child td { border-bottom: 0; }
+        tr:hover td { background: #fcfdfe; }
+
+        .badge-type { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .type-masuk { background: #e9f8ef; color: #1e8449; }
+        .type-infaq { background: #f4ecf7; color: #8e44ad; }
+        .type-keluar { background: #fdecea; color: #a93226; }
+        .type-saldo { background: #fef5e7; color: #d35400; }
+
+        .amount-in { color: #27ae60; font-weight: 700; }
+        .amount-infaq { color: #8e44ad; font-weight: 700; }
+        .amount-out { color: #e74c3c; font-weight: 700; }
+        .amount-saldo { color: #d35400; font-weight: 700; }
+
+        .btn-action-del {
+            padding: 4px 8px;
+            border: 1px solid #fadbd8;
+            background: #fdecea;
+            color: var(--danger);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .btn-action-del:hover { background: var(--danger); color: #fff; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            display: grid;
+            place-items: center;
+            z-index: 1000;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-card {
+            background: #fff;
+            width: min(100%, 520px);
+            max-height: 90vh;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        .modal-header {
+            flex-shrink: 0;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 { font-size: 16px; color: var(--ink); font-weight: 700; }
+
+        .btn-close-modal {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .btn-close-modal:hover { background: #f0f3f5; color: var(--ink); }
+        .modal-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+
+        .field { margin-bottom: 12px; }
+
+        label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: var(--ink); }
+        label span.req { color: var(--danger); }
+
+        input, select, textarea {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 13px;
+        }
+
+        textarea { min-height: 60px; resize: vertical; }
+
+        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+
+        .modal-footer {
+            flex-shrink: 0;
+            padding: 12px 18px;
+            border-top: 1px solid var(--line);
+            background: #fdfdfd;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .message { margin-bottom: 14px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
+        .message[hidden] { display: none !important; }
+        .message.error { background: #fdecea; color: #a93226; border: 1px solid #fadbd8; }
+        .message.success { background: #e9f8ef; color: #1e8449; border: 1px solid #d4efdf; }
+
+        footer {
+            flex-shrink: 0;
+            background: var(--white);
+            border-top: 1px solid var(--line);
+            padding: 12px 16px;
+            color: #95a5a6;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        footer strong { color: var(--muted); }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="brand-header">
+            <img src="logo.png" alt="Logo YNHQ">
+            <div class="brand-info">
+                <h1>SIFAHMI <span class="page-title-text">- BUKU KAS</span></h1>
+                <p>SYSTEM INFORMASI HAFALAN &amp; MUTABAAH ISLAMI</p>
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <a href="dashboard.html" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section class="summary-grid">
+            <div class="summary-card saldo-awal">
+                <label id="lbl-saldo-awal">Saldo Awal (Tgl 1)</label>
+                <div class="val" id="summary-saldo-awal">Rp 0</div>
+            </div>
+            <div class="summary-card masuk">
+                <label>Pemasukan Reguler</label>
+                <div class="val" id="summary-masuk">Rp 0</div>
+            </div>
+            <div class="summary-card infaq">
+                <label>Infaq &amp; Sedekah</label>
+                <div class="val" id="summary-infaq">Rp 0</div>
+            </div>
+            <div class="summary-card keluar">
+                <label>Pengeluaran</label>
+                <div class="val" id="summary-keluar">Rp 0</div>
+            </div>
+            <div class="summary-card saldo-akhir">
+                <label>Total Saldo Akhir</label>
+                <div class="val" id="summary-saldo-akhir">Rp 0</div>
+            </div>
+        </section>
+
+        <div class="page-header">
+            <h2 style="font-size: 17px;">Buku Kas Utama &amp; Infaq</h2>
+            <div class="action-buttons">
+                <button class="btn btn-infaq" id="btn-open-infaq" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>+ Input Infaq Santri</span>
+                </button>
+                <button class="btn btn-primary" id="btn-open-kas" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>+ Transaksi Reguler</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="message" id="global-alert" hidden></div>
+
+        <section class="card">
+            <div class="filter-toolbar">
+                <div class="left-filters">
+                    <div class="tab-group">
+                        <button class="tab-btn active" data-tab="semua">Buku Kas Besar</button>
+                        <button class="tab-btn" data-tab="reguler">Kas Reguler</button>
+                        <button class="tab-btn" data-tab="infaq">Khusus Infaq</button>
+                    </div>
+
+                    <select id="month-filter" class="month-select">
+                        <!-- Dynamic Month Filter -->
+                    </select>
+                </div>
+
+                <input type="text" id="search-input" class="search-input" placeholder="Cari uraian transaksi...">
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>Jenis</th>
+                            <th>Donatur / Santri</th>
+                            <th>Penerima / Kategori</th>
+                            <th>Uraian Keterangan</th>
+                            <th style="text-align: right;">Nominal (Rp)</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kas-table-body">
+                        <!-- Data Kas via Supabase -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Transaksi Reguler -->
+    <div class="modal-overlay" id="kas-modal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Form Transaksi Kas Reguler</h3>
+                <button type="button" class="btn-close-modal close-kas-modal">&times;</button>
+            </div>
+
+            <form id="kas-form" novalidate>
+                <div class="modal-body">
+                    <div class="message" id="kas-modal-alert" hidden></div>
+
+                    <div class="field">
+                        <label for="reg-jenis">Jenis Transaksi <span class="req">*</span></label>
+                        <select id="reg-jenis" required>
+                            <option value="MASUK">Pemasukan Reguler</option>
+                            <option value="KELUAR">Pengeluaran</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="reg-tanggal">Tanggal Transaksi <span class="req">*</span></label>
+                        <input id="reg-tanggal" type="date" required>
+                    </div>
+                    <div class="field">
+                        <label for="reg-kategori">Kategori Transaksi <span class="req">*</span></label>
+                        <select id="reg-kategori" required>
+                            <option value="SPP / Syahriah">SPP / Syahriah Santri</option>
+                            <option value="Pendaftaran">Pendaftaran Santri Baru</option>
+                            <option value="Operasional Yayasan">Operasional Yayasan</option>
+                            <option value="Konsumsi & Dapur">Konsumsi & Dapur</option>
+                            <option value="Listrik & Air">Listrik, Air & Internet</option>
+                            <option value="Lain-lain">Lain-lain</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="reg-nominal">Nominal Transaksi (Rp) <span class="req">*</span></label>
+                        <input id="reg-nominal" type="number" min="1" placeholder="Contoh: 150000" required>
+                    </div>
+                    <div class="field">
+                        <label for="reg-keterangan">Keterangan / Uraian <span class="req">*</span></label>
+                        <textarea id="reg-keterangan" placeholder="Keterangan lengkap transaksi..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-kas-modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-kas">Simpan Transaksi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Input Infaq -->
+    <div class="modal-overlay" id="infaq-modal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Form Input Infaq Santri</h3>
+                <button type="button" class="btn-close-modal close-infaq-modal">&times;</button>
+            </div>
+
+            <form id="infaq-form" novalidate>
+                <div class="modal-body">
+                    <div class="message" id="infaq-modal-alert" hidden></div>
+
+                    <div class="field">
+                        <label for="infaq-tanggal">Tanggal <span class="req">*</span></label>
+                        <input id="infaq-tanggal" type="date" required>
+                    </div>
+                    <div class="field">
+                        <label for="infaq-santri">Nama Santri <span class="req">*</span></label>
+                        <select id="infaq-santri" required>
+                            <!-- Diisi via Supabase -->
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="infaq-nominal">Nominal Infaq (Rp) <span class="req">*</span></label>
+                        <input id="infaq-nominal" type="number" min="1" placeholder="Contoh: 50000" required>
+                    </div>
+                    <div class="field">
+                        <label for="infaq-penerima">Penerima Infaq (Asatidz / Pengurus) <span class="req">*</span></label>
+                        <select id="infaq-penerima" required>
+                            <option value="">-- Pilih Penerima --</option>
+                            <option value="Ust. Ahmad Fauzi (Pengasuh)">Ust. Ahmad Fauzi (Pengasuh)</option>
+                            <option value="Ust. Ridwan (Bendahara)">Ust. Ridwan (Bendahara)</option>
+                            <option value="Ustdzh. Siti Maryam">Ustdzh. Siti Maryam</option>
+                            <option value="Pengurus Yayasan / Admin">Pengurus Yayasan / Admin</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="infaq-keterangan">Keterangan / Uraian</label>
+                        <textarea id="infaq-keterangan" placeholder="Contoh: Infaq harian / sedekah subuh (opsional)"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-infaq-modal">Batal</button>
+                    <button type="submit" class="btn btn-infaq" id="btn-submit-infaq">Simpan Infaq</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
+    </footer>
+
+    <script>
+        "use strict";
+
+        const SUPABASE_URL = "https://dfakfkngujlhbcrhxmmk.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
+        const SESSION_KEY = "ynhq-supabase-session";
+
+        let currentTab = "semua";
+        let selectedYearMonth = "";
+
+        function checkAuth() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) {
+                window.location.href = "login.html";
+            }
+        }
+
+        function getAuthToken() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) return SUPABASE_ANON_KEY;
+            try {
+                const session = JSON.parse(sessionRaw);
+                return session.access_token || SUPABASE_ANON_KEY;
+            } catch (e) {
+                return SUPABASE_ANON_KEY;
+            }
+        }
+
+        async function supabaseFetch(path, options = {}) {
+            const token = getAuthToken();
+            const headers = {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json",
+                "Prefer": options.prefer || "return=representation",
+                ...options.headers
+            };
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                method: options.method || "GET",
+                headers: headers,
+                body: options.body ? JSON.stringify(options.body) : null
+            });
+
+            if (!response.ok) {
+                let errMessage = "Terjadi kesalahan pada Supabase.";
+                try {
+                    const errJson = await response.json();
+                    errMessage = errJson.message || errJson.hint || errMessage;
+                } catch (e) {}
+                throw new Error(errMessage);
+            }
+
+            if (response.status === 204) return null;
+            return await response.json();
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        function showGlobalAlert(msg, kind) {
+            const alertBox = document.getElementById("global-alert");
+            alertBox.textContent = msg;
+            alertBox.className = "message " + kind;
+            alertBox.hidden = false;
+            setTimeout(() => { alertBox.hidden = true; }, 4000);
+        }
+
+        function showKasModalAlert(msg, kind) {
+            const alertBox = document.getElementById("kas-modal-alert");
+            alertBox.textContent = msg;
+            alertBox.className = "message " + kind;
+            alertBox.hidden = false;
+        }
+
+        function showInfaqModalAlert(msg, kind) {
+            const alertBox = document.getElementById("infaq-modal-alert");
+            alertBox.textContent = msg;
+            alertBox.className = "message " + kind;
+            alertBox.hidden = false;
+        }
+
+        // Populasikan Dropdown Santri Langsung dari Database Supabase
+        async function populateSantriDropdown() {
+            const select = document.getElementById("infaq-santri");
+            select.innerHTML = `<option value="">-- Memuat Santri... --</option>`;
+
+            try {
+                const santriList = await supabaseFetch("santri?select=nis,nama_lengkap&order=nama_lengkap.asc");
+                select.innerHTML = `<option value="">-- Pilih Santri --</option>`;
+
+                santriList.forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = `${s.nama_lengkap} (${s.nis})`;
+                    opt.textContent = `${s.nama_lengkap} - NIS: ${s.nis}`;
+                    select.appendChild(opt);
+                });
+
+                const optUmum = document.createElement("option");
+                optUmum.value = "Hamba Allah / Donatur Umum";
+                optUmum.textContent = "Hamba Allah / Donatur Umum";
+                select.appendChild(optUmum);
+            } catch (err) {
+                select.innerHTML = `<option value="Hamba Allah / Donatur Umum">Hamba Allah / Donatur Umum</option>`;
+            }
+        }
+
+        function initMonthFilter() {
+            const select = document.getElementById("month-filter");
+            select.innerHTML = "";
+
+            const months = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+
+            const now = new Date();
+            const curYear = now.getFullYear();
+            const curMonth = now.getMonth();
+
+            for (let i = 0; i < 12; i++) {
+                const d = new Date(curYear, curMonth - i, 1);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const ym = `${year}-${month}`;
+
+                const option = document.createElement("option");
+                option.value = ym;
+                option.textContent = `${months[d.getMonth()]} ${year}`;
+                if (i === 0) {
+                    option.selected = true;
+                    selectedYearMonth = ym;
+                }
+                select.appendChild(option);
+            }
+        }
+
+        async function calculateBalances(allData) {
+            const [targetYear, targetMonth] = selectedYearMonth.split('-').map(Number);
+            const startOfSelectedMonth = new Date(targetYear, targetMonth - 1, 1);
+
+            let saldoAwalBulanLalu = 0;
+            let totalMasukBulanIni = 0;
+            let totalInfaqBulanIni = 0;
+            let totalKeluarBulanIni = 0;
+
+            allData.forEach(item => {
+                const itemDate = new Date(item.tanggal);
+                const itemNominal = Number(item.nominal);
+
+                if (itemDate < startOfSelectedMonth) {
+                    if (item.jenis === "MASUK" || item.jenis === "INFAQ") {
+                        saldoAwalBulanLalu += itemNominal;
+                    } else if (item.jenis === "KELUAR") {
+                        saldoAwalBulanLalu -= itemNominal;
+                    }
+                } else if (itemDate.getFullYear() === targetYear && (itemDate.getMonth() + 1) === targetMonth) {
+                    if (item.jenis === "MASUK") totalMasukBulanIni += itemNominal;
+                    else if (item.jenis === "INFAQ") totalInfaqBulanIni += itemNominal;
+                    else if (item.jenis === "KELUAR") totalKeluarBulanIni += itemNominal;
+                }
+            });
+
+            const totalSaldoAkhir = saldoAwalBulanLalu + totalMasukBulanIni + totalInfaqBulanIni - totalKeluarBulanIni;
+
+            document.getElementById("summary-saldo-awal").textContent = formatRupiah(saldoAwalBulanLalu);
+            document.getElementById("summary-masuk").textContent = formatRupiah(totalMasukBulanIni);
+            document.getElementById("summary-infaq").textContent = formatRupiah(totalInfaqBulanIni);
+            document.getElementById("summary-keluar").textContent = formatRupiah(totalKeluarBulanIni);
+            document.getElementById("summary-saldo-akhir").textContent = formatRupiah(totalSaldoAkhir);
+
+            return { saldoAwalBulanLalu };
+        }
+
+        async function renderKasTable(filterQuery = "") {
+            const tbody = document.getElementById("kas-table-body");
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px;">Memuat transaksi kas...</td></tr>`;
+
+            try {
+                const data = await supabaseFetch("buku_kas?select=*&order=tanggal.asc");
+                const { saldoAwalBulanLalu } = await calculateBalances(data);
+                tbody.innerHTML = "";
+
+                const [targetYear, targetMonth] = selectedYearMonth.split('-').map(Number);
+
+                let monthFiltered = data.filter(item => {
+                    const itemDate = new Date(item.tanggal);
+                    return itemDate.getFullYear() === targetYear && (itemDate.getMonth() + 1) === targetMonth;
+                });
+
+                if (currentTab === "semua" || currentTab === "reguler") {
+                    const trSaldoAwal = document.createElement("tr");
+                    trSaldoAwal.className = "row-saldo-awal";
+                    trSaldoAwal.innerHTML = `
+                        <td>-</td>
+                        <td>${selectedYearMonth}-01</td>
+                        <td><span class="badge-type type-saldo">SALDO AWAL</span></td>
+                        <td>System</td>
+                        <td>Akumulasi Bulan Lalu</td>
+                        <td>Saldo Akhir Bulan Sebelumnya (Saldo Awal Tgl 1)</td>
+                        <td style="text-align: right;" class="amount-saldo">${formatRupiah(saldoAwalBulanLalu)}</td>
+                        <td style="text-align: center;"><small style="color:var(--muted);">-</small></td>
+                    `;
+                    tbody.appendChild(trSaldoAwal);
+                }
+
+                let displayList = monthFiltered.filter(item => {
+                    const searchMatch = item.keterangan.toLowerCase().includes(filterQuery.toLowerCase()) ||
+                                        item.kategori.toLowerCase().includes(filterQuery.toLowerCase()) ||
+                                        (item.donatur && item.donatur.toLowerCase().includes(filterQuery.toLowerCase())) ||
+                                        (item.penerima && item.penerima.toLowerCase().includes(filterQuery.toLowerCase()));
+
+                    if (!searchMatch) return false;
+
+                    if (currentTab === "reguler") return item.jenis === "MASUK" || item.jenis === "KELUAR";
+                    if (currentTab === "infaq") return item.jenis === "INFAQ";
+                    return true;
+                });
+
+                if (displayList.length === 0 && currentTab === "infaq") {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--muted); padding: 20px;">Tidak ada transaksi infaq pada bulan ini.</td></tr>`;
+                    return;
+                }
+
+                displayList.forEach((item, index) => {
+                    const tr = document.createElement("tr");
+
+                    let badgeClass = "type-masuk";
+                    let amountClass = "amount-in";
+                    let jenisLabel = "MASUK";
+
+                    if (item.jenis === "INFAQ") {
+                        badgeClass = "type-infaq";
+                        amountClass = "amount-infaq";
+                        jenisLabel = "INFAQ";
+                    } else if (item.jenis === "KELUAR") {
+                        badgeClass = "type-keluar";
+                        amountClass = "amount-out";
+                        jenisLabel = "KELUAR";
+                    }
+
+                    const prefixNominal = item.jenis === "KELUAR" ? "- " : "+ ";
+
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.tanggal}</td>
+                        <td><span class="badge-type ${badgeClass}">${jenisLabel}</span></td>
+                        <td><strong>${item.donatur || "-"}</strong></td>
+                        <td>${item.penerima || item.kategori}</td>
+                        <td>${item.keterangan}</td>
+                        <td style="text-align: right;" class="${amountClass}">${prefixNominal}${formatRupiah(item.nominal)}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-action-del" onclick="deleteTransaction(${item.id})">Hapus</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                showGlobalAlert(err.message, "error");
+            }
+        }
+
+        async function deleteTransaction(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) {
+                try {
+                    await supabaseFetch(`buku_kas?id=eq.${id}`, { method: "DELETE" });
+                    renderKasTable(document.getElementById("search-input").value);
+                    showGlobalAlert("Transaksi kas berhasil dihapus.", "success");
+                } catch (err) {
+                    showGlobalAlert(err.message, "error");
+                }
+            }
+        }
+
+        document.getElementById("month-filter").addEventListener("change", function(e) {
+            selectedYearMonth = e.target.value;
+            renderKasTable(document.getElementById("search-input").value);
+        });
+
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+                currentTab = this.dataset.tab;
+                renderKasTable(document.getElementById("search-input").value);
+            });
+        });
+
+        const kasModal = document.getElementById("kas-modal");
+        const infaqModal = document.getElementById("infaq-modal");
+
+        function openKasModal() {
+            document.getElementById("kas-form").reset();
+            document.getElementById("reg-tanggal").valueAsDate = new Date();
+            document.getElementById("kas-modal-alert").hidden = true;
+            kasModal.classList.add("active");
+        }
+
+        function closeKasModal() { kasModal.classList.remove("active"); }
+
+        function openInfaqModal() {
+            document.getElementById("infaq-form").reset();
+            document.getElementById("infaq-tanggal").valueAsDate = new Date();
+            populateSantriDropdown();
+            document.getElementById("infaq-modal-alert").hidden = true;
+            infaqModal.classList.add("active");
+        }
+
+        function closeInfaqModal() { infaqModal.classList.remove("active"); }
+
+        document.getElementById("btn-open-kas").addEventListener("click", openKasModal);
+        document.getElementById("btn-open-infaq").addEventListener("click", openInfaqModal);
+
+        document.querySelectorAll(".close-kas-modal").forEach(b => b.addEventListener("click", closeKasModal));
+        document.querySelectorAll(".close-infaq-modal").forEach(b => b.addEventListener("click", closeInfaqModal));
+
+        // Submit Form Kas Reguler
+        document.getElementById("kas-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            if (!this.reportValidity()) return;
+
+            const submitBtn = document.getElementById("btn-submit-kas");
+            submitBtn.disabled = true;
+
+            const payload = {
+                tanggal: document.getElementById("reg-tanggal").value,
+                jenis: document.getElementById("reg-jenis").value,
+                kategori: document.getElementById("reg-kategori").value,
+                donatur: "-",
+                penerima: document.getElementById("reg-kategori").value,
+                nominal: Number(document.getElementById("reg-nominal").value),
+                keterangan: document.getElementById("reg-keterangan").value.trim()
+            };
+
+            try {
+                await supabaseFetch("buku_kas", { method: "POST", body: payload });
+                closeKasModal();
+                renderKasTable();
+                showGlobalAlert("Transaksi kas reguler berhasil disimpan.", "success");
+            } catch (err) {
+                showKasModalAlert(err.message, "error");
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Submit Form Infaq
+        document.getElementById("infaq-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            if (!this.reportValidity()) return;
+
+            const submitBtn = document.getElementById("btn-submit-infaq");
+            submitBtn.disabled = true;
+
+            const santri = document.getElementById("infaq-santri").value;
+            const nominal = Number(document.getElementById("infaq-nominal").value);
+            const notes = document.getElementById("infaq-keterangan").value.trim();
+
+            const payload = {
+                tanggal: document.getElementById("infaq-tanggal").value,
+                jenis: "INFAQ",
+                kategori: "Infaq Santri",
+                donatur: santri,
+                penerima: document.getElementById("infaq-penerima").value,
+                nominal: nominal,
+                keterangan: notes ? `Infaq Santri: ${notes}` : `Infaq dari ${santri}`
+            };
+
+            try {
+                await supabaseFetch("buku_kas", { method: "POST", body: payload });
+                closeInfaqModal();
+                renderKasTable();
+                showGlobalAlert(`Berhasil mencatat infaq ${santri}`, "success");
+            } catch (err) {
+                showInfaqModalAlert(err.message, "error");
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        document.getElementById("search-input").addEventListener("input", function(e) {
+            renderKasTable(e.target.value);
+        });
+
+        checkAuth();
+        initMonthFilter();
+        renderKasTable();
+    </script>
+</body>
+</html>

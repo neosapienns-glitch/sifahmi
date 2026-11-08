@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#27ae60">
+    <title>SIFAHMI - Daftar Akun Pengguna</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --green: #27ae60;
+            --green-dark: #219150;
+            --green-light: #e9f8ef;
+            --ink: #2c3e50;
+            --muted: #7f8c8d;
+            --line: #dfe5e8;
+            --page: #f4f7f9;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --blue: #2980b9;
+            --purple: #8e44ad;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--page);
+            color: var(--ink);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body { display: flex; flex-direction: column; }
+
+        header.top-bar {
+            flex-shrink: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--line);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand-header { display: flex; align-items: center; gap: 12px; }
+        .brand-header img { width: 40px; height: 40px; object-fit: contain; }
+
+        .brand-info h1 {
+            font-size: 16px;
+            color: var(--green);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .brand-info h1 span.page-title-text { color: var(--ink); font-weight: 700; }
+        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 2px; }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+        main.container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .page-header {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .page-title h2 { font-size: 20px; color: var(--ink); }
+        .page-title p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+        .btn {
+            min-height: 40px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 9px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s, opacity .2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--green); color: #fff; }
+        .btn-primary:hover { background: var(--green-dark); }
+        .btn-secondary { background: #f0f3f5; color: var(--muted); }
+        .btn-secondary:hover { background: #e2e7eb; color: var(--ink); }
+
+        .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-toolbar {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .tab-group { display: flex; gap: 4px; background: #f0f3f5; padding: 3px; border-radius: 8px; }
+
+        .tab-btn {
+            border: 0;
+            background: transparent;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active { background: var(--white); color: var(--green-dark); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+        .search-input {
+            min-width: 200px;
+            min-height: 38px;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .search-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+
+        .table-responsive {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: #fff; }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        td { padding: 11px 14px; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align: middle; }
+        tr:last-child td { border-bottom: 0; }
+        tr:hover td { background: #fcfdfe; }
+
+        .badge-role { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .role-asatidz { background: #eaf3fb; color: #24577a; }
+        .role-wali { background: #f4ecf7; color: #8e44ad; }
+        .role-admin { background: #e9f8ef; color: #1e8449; }
+
+        .badge-status { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+        .status-aktif { background: #e9f8ef; color: #1e8449; }
+
+        .btn-action-del {
+            padding: 5px 10px;
+            border: 1px solid #fadbd8;
+            background: #fdecea;
+            color: var(--danger);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-action-del:hover { background: var(--danger); color: #fff; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            display: grid;
+            place-items: center;
+            z-index: 1000;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-card {
+            background: #fff;
+            width: min(100%, 540px);
+            max-height: 90vh;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        .modal-header {
+            flex-shrink: 0;
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 { font-size: 17px; color: var(--ink); font-weight: 700; }
+
+        .btn-close-modal {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .btn-close-modal:hover { background: #f0f3f5; color: var(--ink); }
+        .modal-body { flex: 1; overflow-y: auto; padding: 20px 22px; }
+
+        .field { margin-bottom: 14px; }
+
+        label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: var(--ink); }
+        label span.req { color: var(--danger); }
+
+        input, select {
+            width: 100%;
+            min-height: 42px;
+            padding: 9px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 13px;
+        }
+
+        input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+
+        .modal-footer {
+            flex-shrink: 0;
+            padding: 14px 22px;
+            border-top: 1px solid var(--line);
+            background: #fdfdfd;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .message { margin-bottom: 16px; padding: 10px 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; }
+        .message[hidden] { display: none !important; }
+        .message.error { background: #fdecea; color: #a93226; border: 1px solid #fadbd8; }
+        .message.success { background: #e9f8ef; color: #1e8449; border: 1px solid #d4efdf; }
+
+        footer {
+            flex-shrink: 0;
+            background: var(--white);
+            border-top: 1px solid var(--line);
+            padding: 12px 16px;
+            color: #95a5a6;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        footer strong { color: var(--muted); }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="brand-header">
+            <img src="logo.png" alt="Logo YNHQ">
+            <div class="brand-info">
+                <h1>SIFAHMI <span class="page-title-text">- DAFTAR AKUN</span></h1>
+                <p>SYSTEM INFORMASI HAFALAN &amp; MUTABAAH ISLAMI</p>
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <a href="dashboard.html" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <div class="page-title">
+                <h2>Registrasi Akun Pengguna</h2>
+                <p>Buat dan kelola akun pengguna untuk Asatidz / Pengajar &amp; Wali Murid di Supabase Auth.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-open-modal" type="button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>+ Buat Akun Baru</span>
+            </button>
+        </div>
+
+        <div class="message" id="global-alert" hidden></div>
+
+        <section class="card">
+            <div class="filter-toolbar">
+                <div class="tab-group">
+                    <button class="tab-btn active" data-role="semua">Semua Akun</button>
+                    <button class="tab-btn" data-role="Asatidz">Asatidz / Pengajar</button>
+                    <button class="tab-btn" data-role="Wali Murid">Wali Murid</button>
+                    <button class="tab-btn" data-role="Administrator">Administrator</button>
+                </div>
+
+                <input type="text" id="search-input" class="search-input" placeholder="Cari nama pengguna...">
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Pengguna</th>
+                            <th>Hak Akses / Role</th>
+                            <th>Santri Terkait</th>
+                            <th>Status</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body">
+                        <!-- User profiles via Supabase -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Form -->
+    <div class="modal-overlay" id="user-modal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Form Buat Akun Pengguna Baru</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-modal">&times;</button>
+            </div>
+
+            <form id="user-form" novalidate>
+                <div class="modal-body">
+                    <div class="message" id="modal-alert" hidden></div>
+
+                    <div class="field">
+                        <label for="nama-lengkap">Nama Lengkap Pengguna <span class="req">*</span></label>
+                        <input id="nama-lengkap" type="text" placeholder="Contoh: Ust. Ahmad Fauzi / Bpk. Abdullah" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="email">Email Login <span class="req">*</span></label>
+                        <input id="email" type="email" placeholder="nama@email.com" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="role">Hak Akses / Role <span class="req">*</span></label>
+                        <select id="role" required>
+                            <option value="">-- Pilih Role --</option>
+                            <option value="Asatidz">Asatidz / Pengajar</option>
+                            <option value="Wali Murid">Wali Murid / Orang Tua</option>
+                            <option value="Administrator">Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="field" id="santri-field" hidden>
+                        <label for="santri-terkait">Hubungkan dengan Santri</label>
+                        <select id="santri-terkait">
+                            <!-- Populated via Supabase -->
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Password Default <span class="req">*</span></label>
+                        <input id="password" type="password" minlength="6" placeholder="Minimal 6 karakter" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="confirm-password">Ulangi Password <span class="req">*</span></label>
+                        <input id="confirm-password" type="password" minlength="6" placeholder="Ulangi password" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-user">Simpan Akun</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
+    </footer>
+
+    <script>
+        "use strict";
+
+        const SUPABASE_URL = "https://dfakfkngujlhbcrhxmmk.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
+        const SESSION_KEY = "ynhq-supabase-session";
+
+        let currentRoleFilter = "semua";
+
+        function checkAuth() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) {
+                window.location.href = "login.html";
+            }
+        }
+
+        function getAuthToken() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) return SUPABASE_ANON_KEY;
+            try {
+                const session = JSON.parse(sessionRaw);
+                return session.access_token || SUPABASE_ANON_KEY;
+            } catch (e) {
+                return SUPABASE_ANON_KEY;
+            }
+        }
+
+        async function supabaseFetch(path, options = {}) {
+            const token = getAuthToken();
+            const headers = {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json",
+                "Prefer": options.prefer || "return=representation",
+                ...options.headers
+            };
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                method: options.method || "GET",
+                headers: headers,
+                body: options.body ? JSON.stringify(options.body) : null
+            });
+
+            if (!response.ok) {
+                let errMessage = "Terjadi kesalahan pada Supabase.";
+                try {
+                    const errJson = await response.json();
+                    errMessage = errJson.message || errJson.hint || errMessage;
+                } catch (e) {}
+                throw new Error(errMessage);
+            }
+
+            if (response.status === 204) return null;
+            return await response.json();
+        }
+
+        function showGlobalAlert(msg, kind) {
+            const alertBox = document.getElementById("global-alert");
+            alertBox.textContent = msg;
+            alertBox.className = "message " + kind;
+            alertBox.hidden = false;
+            setTimeout(() => { alertBox.hidden = true; }, 4000);
+        }
+
+        function showModalAlert(msg, kind) {
+            const alertBox = document.getElementById("modal-alert");
+            alertBox.textContent = msg;
+            alertBox.className = "message " + kind;
+            alertBox.hidden = false;
+        }
+
+        async function populateSantriDropdown() {
+            const select = document.getElementById("santri-terkait");
+            select.innerHTML = `<option value="-">-- Memuat Santri... --</option>`;
+
+            try {
+                const santriList = await supabaseFetch("santri?select=nis,nama_lengkap&order=nama_lengkap.asc");
+                select.innerHTML = `<option value="-">-- Pilih Santri Terkait --</option>`;
+
+                santriList.forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = `${s.nama_lengkap} (${s.nis})`;
+                    opt.textContent = `${s.nama_lengkap} - NIS: ${s.nis}`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                select.innerHTML = `<option value="-">-- Tidak ada data santri --</option>`;
+            }
+        }
+
+                async function renderUserTable(filterQuery = "") {
+            const tbody = document.getElementById("user-table-body");
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">Memuat akun pengguna dari Supabase...</td></tr>`;
+
+            try {
+                const list = await supabaseFetch("profiles?select=*");
+                tbody.innerHTML = "";
+
+                if (!Array.isArray(list)) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 20px;">Gagal memuat akun pengguna.</td></tr>`;
+                    return;
+                }
+
+                const query = String(filterQuery || "").toLowerCase();
+                const filtered = list.filter(item => {
+                    const nama = String(item.nama_lengkap || "").toLowerCase();
+                    const searchMatch = nama.includes(query);
+                    if (!searchMatch) return false;
+                    if (currentRoleFilter !== "semua" && item.role !== currentRoleFilter) return false;
+                    return true;
+                });
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 20px;">Tidak ada akun pengguna ditemukan.</td></tr>`;
+                    return;
+                }
+
+                filtered.forEach((item, index) => {
+                    const tr = document.createElement("tr");
+
+                    let roleBadgeClass = "role-asatidz";
+                    if (item.role === "Wali Murid") roleBadgeClass = "role-wali";
+                    if (item.role === "Administrator") roleBadgeClass = "role-admin";
+
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><strong>${item.nama_lengkap || '-'}</strong></td>
+                        <td><span class="badge-role ${roleBadgeClass}">${item.role || '-'}</span></td>
+                        <td>${item.santri_nis || "-"}</td>
+                        <td><span class="badge-status status-aktif">${item.status || 'Aktif'}</span></td>
+                        <td style="text-align: center;">
+                            <button class="btn-action-del" onclick="deleteUser('${item.id}')">Hapus</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                showGlobalAlert(err.message, "error");
+            }
+        }
+
+
+        async function deleteUser(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus profil pengguna ini?")) {
+                try {
+                    await supabaseFetch(`profiles?id=eq.${id}`, { method: "DELETE" });
+                    renderUserTable(document.getElementById("search-input").value);
+                    showGlobalAlert("Profil akun pengguna berhasil dihapus.", "success");
+                } catch (err) {
+                    showGlobalAlert(err.message, "error");
+                }
+            }
+        }
+
+        document.getElementById("role").addEventListener("change", function(e) {
+            const santriField = document.getElementById("santri-field");
+            santriField.hidden = e.target.value !== "Wali Murid";
+        });
+
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+                currentRoleFilter = this.dataset.role;
+                renderUserTable(document.getElementById("search-input").value);
+            });
+        });
+
+        const modal = document.getElementById("user-modal");
+        const form = document.getElementById("user-form");
+
+        function openModal() {
+            form.reset();
+            document.getElementById("santri-field").hidden = true;
+            document.getElementById("modal-alert").hidden = true;
+            populateSantriDropdown();
+            modal.classList.add("active");
+        }
+
+        function closeModal() {
+            modal.classList.remove("active");
+        }
+
+        document.getElementById("btn-open-modal").addEventListener("click", openModal);
+        document.getElementById("btn-close-modal").addEventListener("click", closeModal);
+        document.getElementById("btn-cancel-modal").addEventListener("click", closeModal);
+
+        modal.addEventListener("click", function(e) {
+            if (e.target === modal) closeModal();
+        });
+
+        // Submit Registrasi Akun baru ke Supabase Auth (/auth/v1/signup)
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            if (!form.reportValidity()) return;
+
+            const submitBtn = document.getElementById("btn-submit-user");
+            submitBtn.disabled = true;
+
+            const nama = document.getElementById("nama-lengkap").value.trim();
+            const email = document.getElementById("email").value.trim().toLowerCase();
+            const role = document.getElementById("role").value;
+            const santriNis = role === "Wali Murid" ? document.getElementById("santri-terkait").value : null;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+
+            if (password.length < 6) {
+                showModalAlert("Password minimal 6 karakter.", "error");
+                submitBtn.disabled = false;
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showModalAlert("Password dan konfirmasi password tidak cocok.", "error");
+                submitBtn.disabled = false;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+                    method: "POST",
+                    headers: {
+                        "apikey": SUPABASE_ANON_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        data: {
+                            full_name: nama,
+                            role: role,
+                            santri_nis: santriNis
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.msg || result.message || "Gagal membuat akun pengguna baru.");
+                }
+
+                closeModal();
+                renderUserTable();
+                showGlobalAlert(`Berhasil membuat akun baru untuk ${nama} (${role})`, "success");
+            } catch (err) {
+                showModalAlert(err.message, "error");
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        document.getElementById("search-input").addEventListener("input", function (e) {
+            renderUserTable(e.target.value);
+        });
+
+        checkAuth();
+        renderUserTable();
+    </script>
+</body>
+</html>

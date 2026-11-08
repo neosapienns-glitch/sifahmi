@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutaba'ah Santri & Kitab - Ma'had App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg-main: #f8f9fa; --bg-card: #ffffff; --text-main: #2d3436; 
+            --text-muted: #888888; --border-line: #e0e0e0; --p-color: #1e7145; 
+            --blue: #1ba0e2; --red: #f05050; --green: #27c24c; 
+            --sidebar-width: 250px; --topbar-height: 60px; 
+        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Roboto Condensed', sans-serif; margin: 0; background: var(--bg-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: var(--text-main); }
+        
+        /* Topbar & Sidebar Layout */
+        .topbar { height: var(--topbar-height); background: var(--bg-card); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); z-index: 1000; flex-shrink: 0; border-bottom: 3px solid var(--p-color); }
+        .topbar-left, .topbar-right { display: flex; align-items: center; gap: 15px; }
+        .store-brand h3 { margin: 0; font-size: 16px; color: var(--p-color); font-weight: 700; }
+        .btn-logout { background: none; border: none; color: var(--red); cursor: pointer; font-weight: bold; font-size: 13px; text-decoration: underline; }
+
+        .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
+        .sidebar { width: var(--sidebar-width); background: var(--bg-card); border-right: 1px solid var(--border-line); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+        .nav-menu { padding: 15px 0; width: var(--sidebar-width); }
+        .nav-item { padding: 12px 20px; display: block; color: var(--text-main); text-decoration: none; font-size: 14px; border-bottom: 1px solid var(--border-line); font-weight: bold; }
+        .nav-item:hover, .nav-item.active { background: var(--bg-main); color: var(--p-color); border-right: 4px solid var(--p-color); }
+
+        .content-area { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--border-line); }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-line); border-radius: 6px; background: var(--bg-main); font-family: inherit; }
+        .btn-action { padding: 10px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; background: var(--p-color); color: white; width: 100%; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+        th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border-line); }
+        th { background: var(--bg-main); color: var(--text-muted); text-transform: uppercase; font-size: 11px; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-left">
+        <div class="store-brand"><h3>Manajemen Ma'had</h3></div>
+    </div>
+    <div class="topbar-right">
+        <span style="font-weight: bold;" id="userRoleTxt">Asatidz</span> 👋
+        <button class="btn-logout" onclick="window.location.href='index.html'">Keluar</button>
+    </div>
+</div>
+
+<div class="main-container">
+    <!-- Sidebar Navigasi Multi-Page -->
+    <div class="sidebar">
+        <div class="nav-menu">
+            <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+            <a href="mutabaah.html" class="nav-item active">📝 Absen & Mutaba'ah (Kitab & Adab)</a>
+            <a href="raport.html" class="nav-item">🎓 Buku Raport & Nilai</a>
+            <a href="buku_kas.html" class="nav-item">📖 Buku Kas Yayasan</a>
+        </div>
+    </div>
+
+    <!-- Konten Utama Halaman Mutaba'ah -->
+    <div class="content-area">
+        <div class="card">
+            <h3 style="margin-top:0; color: var(--p-color);">Form Input Presensi & Mutaba'ah Santri</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group"><label>Tanggal</label><input type="date" id="tglMutabaah"></div>
+                <div class="form-group">
+                    <label>Nama Santri</label>
+                    <select id="namaSantri">
+                        <option value="Ahmad">Ahmad</option>
+                        <option value="Fatimah">Fatimah</option>
+                        <option value="Umar">Umar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Presensi Kehadiran</label>
+                    <select id="statusHadir">
+                        <option value="Hadir">Hadir</option>
+                        <option value="Sakit">Sakit</option>
+                        <option value="Izin">Izin</option>
+                        <option value="Alpa">Alpa</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Nilai Adab (1-100)</label><input type="number" id="nilaiAdab" placeholder="Contoh: 90"></div>
+                <div class="form-group"><label>Baca Kitab (Progres / Halaman)</label><input type="text" id="progresKitab" placeholder="Contoh: Durusul Lughah Bab 3"></div>
+                <div class="form-group"><label>Hafalan Al-Quran</label><input type="text" id="progresHafalan" placeholder="Contoh: Al-Mulk ayat 1-10"></div>
+            </div>
+            <button class="btn-action" onclick="simpanDataMutabaah()">Simpan Mutaba'ah Santri</button>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0;">Database Riwayat Mutaba'ah</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Nama Santri</th>
+                        <th>Kehadiran</th>
+                        <th>Baca Kitab & Hafalan</th>
+                        <th>Nilai Adab</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelMutabaahBody">
+                    <tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('tglMutabaah').valueAsDate = new Date();
+
+    // Menggunakan tabel database terpisah di localStorage khusus mutabaah
+    let dbMutabaah = JSON.parse(localStorage.getItem('db_tabel_mutabaah')) || [];
+
+    function simpanDataMutabaah() {
+        const newData = {
+            id: 'MUT-' + Date.now(),
+            tanggal: document.getElementById('tglMutabaah').value,
+            santri: document.getElementById('namaSantri').value,
+            hadir: document.getElementById('statusHadir').value,
+            adab: document.getElementById('nilaiAdab').value || '0',
+            kitab: document.getElementById('progresKitab').value || '-',
+            hafalan: document.getElementById('progresHafalan').value || '-'
+        };
+
+        dbMutabaah.unshift(newData);
+        localStorage.setItem('db_tabel_mutabaah', JSON.stringify(dbMutabaah));
+        renderTabelMutabaah();
+        alert('Data mutaba\'ah santri & kitab berhasil disimpan ke database!');
+    }
+
+    function renderTabelMutabaah() {
+        const tbody = document.getElementById('tabelMutabaahBody');
+        if(dbMutabaah.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">Belum ada catatan mutaba\'ah.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = dbMutabaah.map(item => `
+            <tr>
+                <td>${item.tanggal}</td>
+                <td><b>${item.santri}</b></td>
+                <td><span style="color:${item.hadir==='Hadir'?'var(--green)':'var(--red)'}; font-weight:bold;">${item.hadir}</span></td>
+                <td>📖 Kitab: ${item.kitab}<br>🧠 Hafalan: ${item.hafalan}</td>
+                <td><b>${item.adab}</b></td>
+            </tr>
+        `).join('');
+    }
+
+    renderTabelMutabaah();
+</script>
+</body>
+</html>
