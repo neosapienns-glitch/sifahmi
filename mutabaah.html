@@ -2,159 +2,1002 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mutaba'ah Santri & Kitab - Ma'had App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#27ae60">
+    <title>SIFAHMI - Mutaba'ah Harian &amp; Tahfidz</title>
     <style>
-        :root { 
-            --bg-main: #f8f9fa; --bg-card: #ffffff; --text-main: #2d3436; 
-            --text-muted: #888888; --border-line: #e0e0e0; --p-color: #1e7145; 
-            --blue: #1ba0e2; --red: #f05050; --green: #27c24c; 
-            --sidebar-width: 250px; --topbar-height: 60px; 
+        :root {
+            color-scheme: light;
+            --green: #27ae60;
+            --green-dark: #1b5e20;
+            --green-light: #e9f8ef;
+            --ink: #2c3e50;
+            --muted: #7f8c8d;
+            --line: #dfe5e8;
+            --page: #f4f7f9;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --blue: #2980b9;
+            --purple: #8e44ad;
+            --card-header-tahfidz: #1b5e20;
+            --card-header-tahsin: #2c3e50;
+            --card-header-khat: #1a365d;
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Roboto Condensed', sans-serif; margin: 0; background: var(--bg-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: var(--text-main); }
-        
-        /* Topbar & Sidebar Layout */
-        .topbar { height: var(--topbar-height); background: var(--bg-card); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); z-index: 1000; flex-shrink: 0; border-bottom: 3px solid var(--p-color); }
-        .topbar-left, .topbar-right { display: flex; align-items: center; gap: 15px; }
-        .store-brand h3 { margin: 0; font-size: 16px; color: var(--p-color); font-weight: 700; }
-        .btn-logout { background: none; border: none; color: var(--red); cursor: pointer; font-weight: bold; font-size: 13px; text-decoration: underline; }
 
-        .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
-        .sidebar { width: var(--sidebar-width); background: var(--bg-card); border-right: 1px solid var(--border-line); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-        .nav-menu { padding: 15px 0; width: var(--sidebar-width); }
-        .nav-item { padding: 12px 20px; display: block; color: var(--text-main); text-decoration: none; font-size: 14px; border-bottom: 1px solid var(--border-line); font-weight: bold; }
-        .nav-item:hover, .nav-item.active { background: var(--bg-main); color: var(--p-color); border-right: 4px solid var(--p-color); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .content-area { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--border-line); }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-line); border-radius: 6px; background: var(--bg-main); font-family: inherit; }
-        .btn-action { padding: 10px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; background: var(--p-color); color: white; width: 100%; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
-        th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border-line); }
-        th { background: var(--bg-main); color: var(--text-muted); text-transform: uppercase; font-size: 11px; }
+        html, body {
+            min-height: 100%;
+            background: var(--page);
+            color: var(--ink);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body { display: flex; flex-direction: column; }
+
+        /* Top Bar Header */
+        header.top-bar {
+            flex-shrink: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--line);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand-header { display: flex; align-items: center; gap: 12px; }
+        .brand-header img { width: 40px; height: 40px; object-fit: contain; }
+
+        .brand-info h1 {
+            font-size: 16px;
+            color: var(--green);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .brand-info h1 span.page-title-text { color: var(--ink); font-weight: 700; }
+        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 2px; }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+        /* Layout Container */
+        main.container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Card Panels */
+        .card {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 14px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            min-height: 40px;
+            padding: 9px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 13px;
+        }
+
+        textarea { min-height: 65px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+
+        /* Action Buttons */
+        .btn {
+            min-height: 42px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 9px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-block { width: 100%; }
+        .btn-primary { background: var(--green); color: #fff; }
+        .btn-primary:hover { background: var(--green-dark); }
+        .btn-purple { background: var(--purple); color: #fff; }
+        .btn-purple:hover { background: #732d91; }
+        .btn-outline { background: #f0f7f3; color: var(--green-dark); border: 1px solid #c8e6c9; }
+        .btn-outline:hover { background: #dcedc8; }
+        .btn-secondary { background: #f0f3f5; color: var(--muted); }
+        .btn-secondary:hover { background: #e2e7eb; color: var(--ink); }
+
+        /* Callout Box - Presensi Sekelas */
+        .callout-box {
+            background: #f4f6fb;
+            border: 1px dashed #ced6e0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .callout-box p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .callout-box h4 { font-size: 13px; color: var(--ink); font-weight: 700; }
+
+        /* Riwayat Last 5 Items */
+        .history-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .history-item {
+            background: #fafbfc;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .history-header { display: flex; align-items: center; justify-content: space-between; }
+        .history-date { font-weight: 700; font-size: 13px; color: var(--ink); }
+
+        .badge-presence {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .presence-hadir { background: #e9f8ef; color: #1e8449; }
+        .presence-sakit { background: #fef5e7; color: #d35400; }
+        .presence-izin { background: #eaf3fb; color: #24577a; }
+        .presence-alpa { background: #fdecea; color: #a93226; }
+
+        .history-details { font-size: 12px; color: var(--muted); line-height: 1.5; }
+        .history-details strong { color: var(--ink); }
+
+        /* Progress Bar Target */
+        .progress-box { margin-top: 12px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+        .progress-bar-bg { width: 100%; height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.4s ease; }
+
+        /* Form Sub-Sections (Tahfidz, Tahsin, Khat) */
+        .section-header {
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .header-tahfidz { background: var(--card-header-tahfidz); }
+        .header-tahsin { background: var(--card-header-tahsin); }
+        .header-khat { background: var(--card-header-khat); }
+        .section-header span.tag-optional { font-size: 10px; opacity: 0.8; font-weight: 400; }
+
+        .form-block {
+            background: #fafcfb;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .form-block h5 { font-size: 13px; color: var(--green-dark); margin-bottom: 10px; }
+        .row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+
+        /* Modal Pop-Up Presensi Sekelas */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(4px);
+            display: grid;
+            place-items: center;
+            z-index: 1000;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-card {
+            background: #fff;
+            width: min(100%, 550px);
+            max-height: 85vh;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 16px; color: var(--ink); font-weight: 700; }
+        .btn-close-modal { background: transparent; border: none; font-size: 22px; color: var(--muted); cursor: pointer; }
+        .modal-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+        .modal-footer { padding: 12px 18px; border-top: 1px solid var(--line); background: #fdfdfd; display: flex; justify-content: flex-end; gap: 8px; }
+
+        .batch-santri-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+        .batch-santri-row:last-child { border-bottom: 0; }
+
+        .presence-options { display: flex; gap: 8px; }
+        .presence-options label { font-size: 11px; text-transform: none; cursor: pointer; display: flex; align-items: center; gap: 3px; font-weight: 600; color: var(--ink); }
+
+        .message { margin-bottom: 14px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
+        .message[hidden] { display: none !important; }
+        .message.error { background: #fdecea; color: #a93226; border: 1px solid #fadbd8; }
+        .message.success { background: #e9f8ef; color: #1e8449; border: 1px solid #d4efdf; }
+
+        footer {
+            flex-shrink: 0;
+            background: var(--white);
+            border-top: 1px solid var(--line);
+            padding: 12px 16px;
+            color: #95a5a6;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.6;
+            margin-top: auto;
+        }
+        footer strong { color: var(--muted); }
     </style>
 </head>
 <body>
 
-<div class="topbar">
-    <div class="topbar-left">
-        <div class="store-brand"><h3>Manajemen Ma'had</h3></div>
-    </div>
-    <div class="topbar-right">
-        <span style="font-weight: bold;" id="userRoleTxt">Asatidz</span> 👋
-        <button class="btn-logout" onclick="window.location.href='index.html'">Keluar</button>
-    </div>
-</div>
-
-<div class="main-container">
-    <!-- Sidebar Navigasi Multi-Page -->
-    <div class="sidebar">
-        <div class="nav-menu">
-            <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
-            <a href="mutabaah.html" class="nav-item active">📝 Absen & Mutaba'ah (Kitab & Adab)</a>
-            <a href="raport.html" class="nav-item">🎓 Buku Raport & Nilai</a>
-            <a href="buku_kas.html" class="nav-item">📖 Buku Kas Yayasan</a>
-        </div>
-    </div>
-
-    <!-- Konten Utama Halaman Mutaba'ah -->
-    <div class="content-area">
-        <div class="card">
-            <h3 style="margin-top:0; color: var(--p-color);">Form Input Presensi & Mutaba'ah Santri</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group"><label>Tanggal</label><input type="date" id="tglMutabaah"></div>
-                <div class="form-group">
-                    <label>Nama Santri</label>
-                    <select id="namaSantri">
-                        <option value="Ahmad">Ahmad</option>
-                        <option value="Fatimah">Fatimah</option>
-                        <option value="Umar">Umar</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Presensi Kehadiran</label>
-                    <select id="statusHadir">
-                        <option value="Hadir">Hadir</option>
-                        <option value="Sakit">Sakit</option>
-                        <option value="Izin">Izin</option>
-                        <option value="Alpa">Alpa</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Nilai Adab (1-100)</label><input type="number" id="nilaiAdab" placeholder="Contoh: 90"></div>
-                <div class="form-group"><label>Baca Kitab (Progres / Halaman)</label><input type="text" id="progresKitab" placeholder="Contoh: Durusul Lughah Bab 3"></div>
-                <div class="form-group"><label>Hafalan Al-Quran</label><input type="text" id="progresHafalan" placeholder="Contoh: Al-Mulk ayat 1-10"></div>
+    <!-- Header Topbar -->
+    <header class="top-bar">
+        <div class="brand-header">
+            <img src="logo.png" alt="Logo YNHQ">
+            <div class="brand-info">
+                <h1>SIFAHMI <span class="page-title-text">- PORTAL MUTABAAH</span></h1>
+                <p>PORTAL PENGAMPU TAHFIDZ &amp; HARIAN SANTRI</p>
             </div>
-            <button class="btn-action" onclick="simpanDataMutabaah()">Simpan Mutaba'ah Santri</button>
         </div>
 
-        <div class="card">
-            <h3 style="margin-top:0;">Database Riwayat Mutaba'ah</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Nama Santri</th>
-                        <th>Kehadiran</th>
-                        <th>Baca Kitab & Hafalan</th>
-                        <th>Nilai Adab</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelMutabaahBody">
-                    <tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>
-                </tbody>
-            </table>
+        <div class="nav-actions">
+            <a href="dashboard.html" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="message" id="global-alert" hidden></div>
+
+        <!-- Section 1: Filter Kelas & Siswa -->
+        <section class="card">
+            <h3 class="card-title">Input &amp; Koreksi Mutaba'ah Harian</h3>
+            
+            <div class="field-group">
+                <label for="select-kelas">PILIH KELAS</label>
+                <select id="select-kelas">
+                    <option value="">-- Semua / Pilih Kelas --</option>
+                    <option value="Taud">Taud</option>
+                    <option value="Mubtadi 1">Mubtadi 1</option>
+                    <option value="Mubtadi 2">Mubtadi 2</option>
+                    <option value="Mutawassith">Mutawassith</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn btn-outline btn-block" id="btn-progress-pekanan" style="margin-bottom: 12px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                <span>Lihat Progress Pekanan Sekelas</span>
+            </button>
+
+            <div class="field-group">
+                <label for="select-siswa">PILIH SISWA / SANTRI</label>
+                <select id="select-siswa">
+                    <option value="">-- Pilih Kelas Terlebih Dahulu --</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn btn-outline btn-block" id="btn-olahan-siswa">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>Lihat Olahan Data Siswa Ini</span>
+            </button>
+        </section>
+
+        <!-- Section 2: Callout Pencatatan Kehadiran Sekelas -->
+        <section class="callout-box">
+            <div>
+                <h4>PENCATATAN KEHADIRAN KELAS</h4>
+                <p>Isi presensi kehadiran seluruh santri sekelas sekaligus melalui pop-up modal.</p>
+            </div>
+            <button type="button" class="btn btn-purple" id="btn-open-batch-presence">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
+                <span>+ Input Kehadiran Siswa</span>
+            </button>
+        </section>
+
+        <!-- Section 3: 5 Riwayat Terakhir & Target -->
+        <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase;">5 RIWAYAT TERAKHIR</h4>
+                <small style="color: var(--green-dark); font-weight: 700; cursor: pointer;" onclick="fetchRiwayatSiswa()">Lihat Semua</small>
+            </div>
+
+            <div class="history-list" id="history-container">
+                <div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Pilih siswa untuk melihat 5 riwayat terakhir.</div>
+            </div>
+
+            <div class="progress-box">
+                <div class="progress-header">
+                    <span>Progress Target Tahunan</span>
+                    <span id="target-percent-txt">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="target-progress-bar"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 4px;">
+                    <span id="target-baris-txt">0 / 300 Baris</span>
+                    <span>Target: 1 Juz (300 Baris)</span>
+                </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 14px; margin-bottom: 0;">
+                <label for="input-tanggal-mutabaah">Tanggal Input Setoran / Mutaba'ah</label>
+                <input type="date" id="input-tanggal-mutabaah">
+            </div>
+        </section>
+
+        <!-- Form Input Utama Mutabaah -->
+        <form id="form-mutabaah-utama" novalidate>
+
+            <!-- A. INPUT TAHFIDZ & ADAB -->
+            <section class="card" style="padding: 0; overflow: hidden;">
+                <div class="section-header header-tahfidz">
+                    <span>A. Input Tahfidz</span>
+                    <span class="tag-optional">Tidak wajib diisi semua</span>
+                </div>
+
+                <div style="padding: 16px;">
+                    <!-- 1. Sabaq -->
+                    <div class="form-block">
+                        <h5>1. Sabaq (Hafalan Baru)</h5>
+                        <div class="field-group">
+                            <label>Surat / Hal</label>
+                            <input type="text" id="sabaq-surat" placeholder="Contoh: At-Tahrim (8 B)">
+                        </div>
+                        <div class="row-grid">
+                            <div class="field-group">
+                                <label>Jml Baris</label>
+                                <input type="number" id="sabaq-baris" min="0" placeholder="0">
+                            </div>
+                            <div class="field-group">
+                                <label>Nilai (0-100)</label>
+                                <input type="number" id="sabaq-nilai" min="0" max="100" placeholder="Contoh: 85">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Catatan Sabaq</label>
+                            <textarea id="sabaq-catatan" placeholder="Catatan kelancaran sabaq..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 2. Sabqi -->
+                    <div class="form-block">
+                        <h5>2. Sabqi (Murojaah Baru)</h5>
+                        <div class="row-grid">
+                            <div class="field-group">
+                                <label>Surat / Hal</label>
+                                <input type="text" id="sabqi-surat" placeholder="Contoh: Al-Mulk 1-15">
+                            </div>
+                            <div class="field-group">
+                                <label>Penerima Setoran</label>
+                                <select id="sabqi-penerima">
+                                    <option value="Ust. Pengampu">Ust. Pengampu</option>
+                                    <option value="Asisten Ustadz">Asisten Ustadz</option>
+                                    <option value="Teman Sebaya">Teman Sebaya</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Catatan Sabqi</label>
+                            <textarea id="sabqi-catatan" placeholder="Catatan murojaah sabqi..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 3. Manzil -->
+                    <div class="form-block">
+                        <h5>3. Manzil (Murojaah Lama)</h5>
+                        <div class="row-grid" style="align-items: center;">
+                            <div class="field-group">
+                                <label>Surat / Hal</label>
+                                <input type="text" id="manzil-surat" placeholder="Contoh: Juz 29">
+                            </div>
+                            <div style="margin-top: 12px;">
+                                <label style="text-transform: none; cursor: pointer;">
+                                    <input type="checkbox" id="manzil-ulang" style="width: auto; min-height: auto;"> Status: Ulang
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Catatan Manzil</label>
+                            <textarea id="manzil-catatan" placeholder="Catatan manzil..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 4. Persiapan Sidang -->
+                    <div class="form-block">
+                        <h5>4. Persiapan Sidang (Prasidang)</h5>
+                        <div class="row-grid">
+                            <div class="field-group">
+                                <label>Juz (Angka)</label>
+                                <input type="number" id="prasidang-juz" placeholder="Contoh: 30">
+                            </div>
+                            <div class="field-group">
+                                <label>Bagian (Surat/Hal)</label>
+                                <input type="text" id="prasidang-bagian" placeholder="Hal 1-10">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Nilai (0-100)</label>
+                            <input type="number" id="prasidang-nilai" min="0" max="100" placeholder="0-100">
+                        </div>
+                        <div class="field-group">
+                            <label>Catatan Prasidang</label>
+                            <textarea id="prasidang-catatan" placeholder="Catatan prasidang..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 5. Adab -->
+                    <div class="form-block">
+                        <h5>5. Adab &amp; Catatan Evaluasi Adab</h5>
+                        <div class="row-grid">
+                            <div class="field-group">
+                                <label>Predikat Adab</label>
+                                <select id="adab-predikat">
+                                    <option value="Sangat Baik">Sangat Baik (A)</option>
+                                    <option value="Baik" selected>Baik (B)</option>
+                                    <option value="Cukup">Cukup (C)</option>
+                                    <option value="Perlu Bimbingan">Perlu Bimbingan (D)</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label>Catatan Evaluasi Adab</label>
+                                <textarea id="adab-catatan" placeholder="Rincian evaluasi adab..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- B. INPUT TAHSIN -->
+            <section class="card" style="padding: 0; overflow: hidden;">
+                <div class="section-header header-tahsin">
+                    <span>B. Input Tahsin</span>
+                </div>
+                <div style="padding: 16px;">
+                    <div class="field-group">
+                        <label>Pilih Kitab / Jilid</label>
+                        <select id="tahsin-kitab">
+                            <option value="">-- Pilih Kitab --</option>
+                            <option value="Talaqqi Al-Qur'an">Talaqqi Al-Qur'an</option>
+                            <option value="Fathurrahman">Fathurrahman</option>
+                            <option value="Ummi / Iqro">Ummi / Iqro</option>
+                            <option value="Tajwid Asy-Syafii">Tajwid Asy-Syafii</option>
+                            <option value="LAINNYA">✍️ + Input Kitab Manual / Lainnya</option>
+                        </select>
+                        <input type="text" id="tahsin-kitab-custom" placeholder="Ketik nama kitab tahsin..." style="margin-top: 6px;" hidden>
+                    </div>
+                    <div class="row-grid">
+                        <div class="field-group">
+                            <label>Hal / Jilid</label>
+                            <input type="text" id="tahsin-hal" placeholder="Contoh: Hal 1-4">
+                        </div>
+                        <div class="field-group">
+                            <label>Nilai</label>
+                            <input type="number" id="tahsin-nilai" min="0" max="100" placeholder="0-100">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Catatan Tahsin</label>
+                        <textarea id="tahsin-catatan" placeholder="Catatan bacaan tahsin..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- C. INPUT KHAT / KITABAH -->
+            <section class="card" style="padding: 0; overflow: hidden;">
+                <div class="section-header header-khat">
+                    <span>C. Input Khat / Kitabah</span>
+                </div>
+                <div style="padding: 16px;">
+                    <div class="field-group">
+                        <label>Pilih Kitab / Buku Khat</label>
+                        <select id="khat-kitab">
+                            <option value="">-- Pilih Kitab / Buku --</option>
+                            <option value="Khat Naskhi">Khat Naskhi</option>
+                            <option value="Khat Riq'ah">Khat Riq'ah</option>
+                            <option value="Buku Imla'">Buku Imla'</option>
+                            <option value="LAINNYA">✍️ + Input Kitab Manual / Lainnya</option>
+                        </select>
+                        <input type="text" id="khat-kitab-custom" placeholder="Ketik nama kitab/buku khat..." style="margin-top: 6px;" hidden>
+                    </div>
+                    <div class="row-grid">
+                        <div class="field-group">
+                            <label>Bagian / Hal</label>
+                            <input type="text" id="khat-hal" placeholder="Hal 10">
+                        </div>
+                        <div class="field-group">
+                            <label>Nilai</label>
+                            <input type="number" id="khat-nilai" min="0" max="100" placeholder="0-100">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Catatan Khat</label>
+                        <textarea id="khat-catatan" placeholder="Catatan kebersihan & keindahan khat..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-block" id="btn-submit-mutabaah" style="margin-top: 10px; font-size: 15px;">
+                Simpan Data Mutaba'ah
+            </button>
+        </form>
+    </main>
+
+    <!-- Modal Presensi Sekelas -->
+    <div class="modal-overlay" id="presence-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Input Kehadiran Sekelas</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-presence">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="message" id="presence-modal-alert" hidden></div>
+                <div id="batch-santri-container">
+                    <p style="text-align: center; color: var(--muted);">Pilih kelas terlebih dahulu di halaman utama.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-presence">Batal</button>
+                <button type="button" class="btn btn-purple" id="btn-save-presence">Simpan Kehadiran Sekelas</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.getElementById('tglMutabaah').valueAsDate = new Date();
+    <footer>
+        <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>
+        Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
+    </footer>
 
-    // Menggunakan tabel database terpisah di localStorage khusus mutabaah
-    let dbMutabaah = JSON.parse(localStorage.getItem('db_tabel_mutabaah')) || [];
+    <script>
+        "use strict";
 
-    function simpanDataMutabaah() {
-        const newData = {
-            id: 'MUT-' + Date.now(),
-            tanggal: document.getElementById('tglMutabaah').value,
-            santri: document.getElementById('namaSantri').value,
-            hadir: document.getElementById('statusHadir').value,
-            adab: document.getElementById('nilaiAdab').value || '0',
-            kitab: document.getElementById('progresKitab').value || '-',
-            hafalan: document.getElementById('progresHafalan').value || '-'
-        };
+        const SUPABASE_URL = "https://dfakfkngujlhbcrhxmmk.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
+        const SESSION_KEY = "ynhq-supabase-session";
 
-        dbMutabaah.unshift(newData);
-        localStorage.setItem('db_tabel_mutabaah', JSON.stringify(dbMutabaah));
-        renderTabelMutabaah();
-        alert('Data mutaba\'ah santri & kitab berhasil disimpan ke database!');
-    }
+        let currentSantriList = [];
 
-    function renderTabelMutabaah() {
-        const tbody = document.getElementById('tabelMutabaahBody');
-        if(dbMutabaah.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">Belum ada catatan mutaba\'ah.</td></tr>';
-            return;
+        function checkAuth() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) window.location.href = "login.html";
         }
 
-        tbody.innerHTML = dbMutabaah.map(item => `
-            <tr>
-                <td>${item.tanggal}</td>
-                <td><b>${item.santri}</b></td>
-                <td><span style="color:${item.hadir==='Hadir'?'var(--green)':'var(--red)'}; font-weight:bold;">${item.hadir}</span></td>
-                <td>📖 Kitab: ${item.kitab}<br>🧠 Hafalan: ${item.hafalan}</td>
-                <td><b>${item.adab}</b></td>
-            </tr>
-        `).join('');
-    }
+        function getAuthToken() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) return SUPABASE_ANON_KEY;
+            try {
+                const session = JSON.parse(sessionRaw);
+                return session.access_token || SUPABASE_ANON_KEY;
+            } catch (e) {
+                return SUPABASE_ANON_KEY;
+            }
+        }
 
-    renderTabelMutabaah();
-</script>
+        async function supabaseFetch(path, options = {}) {
+            const token = getAuthToken();
+            const headers = {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json",
+                "Prefer": options.prefer || "return=representation",
+                ...options.headers
+            };
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                method: options.method || "GET",
+                headers: headers,
+                body: options.body ? JSON.stringify(options.body) : null
+            });
+
+            if (!response.ok) {
+                let errMessage = "Terjadi kesalahan pada Supabase.";
+                try {
+                    const errJson = await response.json();
+                    errMessage = errJson.message || errJson.hint || errMessage;
+                } catch (e) {}
+
+                if (errMessage.toLowerCase().includes("jwt expired") || response.status === 401) {
+                    localStorage.removeItem(SESSION_KEY);
+                    alert("Sesi login Anda telah berakhir. Silakan login kembali.");
+                    window.location.href = "login.html";
+                    return null;
+                }
+
+                throw new Error(errMessage);
+            }
+
+            if (response.status === 204) return null;
+            return await response.json();
+        }
+
+        function showGlobalAlert(msg, kind) {
+            const alertBox = document.getElementById("global-alert");
+            if (alertBox) {
+                alertBox.textContent = msg;
+                alertBox.className = "message " + kind;
+                alertBox.hidden = false;
+                setTimeout(() => { alertBox.hidden = true; }, 4000);
+            }
+        }
+
+        // Load santri berdasarkan kelas dari database Supabase
+        async function loadSantriByKelas(kelasName) {
+            const selectSiswa = document.getElementById("select-siswa");
+            selectSiswa.innerHTML = `<option value="">-- Memuat Santri... --</option>`;
+
+            try {
+                let query = "santri?select=*&order=nama_lengkap.asc";
+                if (kelasName) {
+                    query += `&kelas=eq.${encodeURIComponent(kelasName)}`;
+                }
+                
+                let list = await supabaseFetch(query);
+
+                // Fallback pencarian jika menggunakan kolom lama
+                if ((!Array.isArray(list) || list.length === 0) && kelasName) {
+                    let fallbackList = await supabaseFetch(`santri?select=*&program=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
+                    if (Array.isArray(fallbackList) && fallbackList.length > 0) {
+                        list = fallbackList;
+                    }
+                }
+
+                currentSantriList = Array.isArray(list) ? list : [];
+
+                selectSiswa.innerHTML = `<option value="">-- Pilih Siswa / Santri --</option>`;
+                if (currentSantriList.length === 0) {
+                    selectSiswa.innerHTML = `<option value="">-- Tidak Ada Santri di Kelas Ini --</option>`;
+                    return;
+                }
+
+                currentSantriList.forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = s.nis;
+                    opt.dataset.nama = s.nama_lengkap;
+                    opt.textContent = `${s.nama_lengkap} (${s.nis})`;
+                    selectSiswa.appendChild(opt);
+                });
+            } catch (err) {
+                selectSiswa.innerHTML = `<option value="">-- Gagal Memuat Santri --</option>`;
+            }
+        }
+
+        // Fetch 5 Riwayat Terakhir siswa
+        async function fetchRiwayatSiswa() {
+            const selectSiswa = document.getElementById("select-siswa");
+            const nis = selectSiswa.value;
+            const container = document.getElementById("history-container");
+
+            if (!nis) {
+                container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Pilih siswa untuk melihat 5 riwayat terakhir.</div>`;
+                updateProgressBar(0);
+                return;
+            }
+
+            container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Memuat riwayat...</div>`;
+
+            try {
+                const list = await supabaseFetch(`mutabaah?santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc&limit=5`);
+                container.innerHTML = "";
+
+                if (!Array.isArray(list) || list.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Belum ada riwayat mutaba'ah untuk siswa ini.</div>`;
+                    updateProgressBar(0);
+                    return;
+                }
+
+                let totalBaris = 0;
+                list.forEach(item => {
+                    if (item.sabaq_baris) totalBaris += Number(item.sabaq_baris);
+
+                    const div = document.createElement("div");
+                    div.className = "history-item";
+
+                    let presenceBadge = "presence-hadir";
+                    if (item.kehadiran === "Sakit") presenceBadge = "presence-sakit";
+                    if (item.kehadiran === "Izin") presenceBadge = "presence-izin";
+                    if (item.kehadiran === "Alpa") presenceBadge = "presence-alpa";
+
+                    let details = [];
+                    if (item.sabaq_surat) details.push(`<strong>[Sabaq]</strong> ${item.sabaq_surat} (${item.sabaq_baris || 0} B) - Nilai: ${item.sabaq_nilai || '-'}`);
+                    if (item.tahsin_kitab) details.push(`<strong>[Tahsin]</strong> ${item.tahsin_kitab} - Hal: ${item.tahsin_hal || '-'}`);
+
+                    div.innerHTML = `
+                        <div class="history-header">
+                            <span class="history-date">${item.tanggal}</span>
+                            <span class="badge-presence ${presenceBadge}">${item.kehadiran}</span>
+                        </div>
+                        <div class="history-details">
+                            ${details.length > 0 ? details.join("<br>") : "<em>Tidak ada rincian setoran.</em>"}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+                updateProgressBar(totalBaris);
+
+            } catch (err) {
+                container.innerHTML = `<div style="text-align: center; color: var(--danger); font-size: 12px; padding: 12px;">Gagal memuat riwayat.</div>`;
+            }
+        }
+
+        function updateProgressBar(baris) {
+            const maxBaris = 300;
+            const percent = Math.min(Math.round((baris / maxBaris) * 100), 100);
+            document.getElementById("target-percent-txt").textContent = `${percent}%`;
+            document.getElementById("target-progress-bar").style.width = `${percent}%`;
+            document.getElementById("target-baris-txt").textContent = `${baris} / ${maxBaris} Baris`;
+        }
+
+        function renderBatchPresenceModal() {
+            const container = document.getElementById("batch-santri-container");
+            container.innerHTML = "";
+
+            if (currentSantriList.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--muted); padding: 16px;">Tidak ada santri di kelas ini.</p>`;
+                return;
+            }
+
+            currentSantriList.forEach((s, idx) => {
+                const row = document.createElement("div");
+                row.className = "batch-santri-row";
+                row.innerHTML = `
+                    <div><strong>${idx + 1}. ${s.nama_lengkap}</strong></div>
+                    <div class="presence-options">
+                        <label><input type="radio" name="presence_${s.nis}" value="Hadir" checked> Hadir</label>
+                        <label><input type="radio" name="presence_${s.nis}" value="Sakit"> Sakit</label>
+                        <label><input type="radio" name="presence_${s.nis}" value="Izin"> Izin</label>
+                        <label><input type="radio" name="presence_${s.nis}" value="Alpa"> Alpa</label>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            checkAuth();
+
+            document.getElementById("input-tanggal-mutabaah").valueAsDate = new Date();
+
+            const selectKelas = document.getElementById("select-kelas");
+            const selectSiswa = document.getElementById("select-siswa");
+            const tahsinKitabSelect = document.getElementById("tahsin-kitab");
+            const tahsinKitabCustom = document.getElementById("tahsin-kitab-custom");
+            const khatKitabSelect = document.getElementById("khat-kitab");
+            const khatKitabCustom = document.getElementById("khat-kitab-custom");
+
+            // Event handler dropdown Kitab Manual (Tahsin & Khat)
+            tahsinKitabSelect.addEventListener("change", function(e) {
+                tahsinKitabCustom.hidden = e.target.value !== "LAINNYA";
+                if (e.target.value === "LAINNYA") tahsinKitabCustom.focus();
+            });
+
+            khatKitabSelect.addEventListener("change", function(e) {
+                khatKitabCustom.hidden = e.target.value !== "LAINNYA";
+                if (e.target.value === "LAINNYA") khatKitabCustom.focus();
+            });
+
+            selectKelas.addEventListener("change", function(e) {
+                loadSantriByKelas(e.target.value);
+            });
+
+            selectSiswa.addEventListener("change", function() {
+                fetchRiwayatSiswa();
+            });
+
+            // Pop-Up Modal Presensi Sekelas
+            const presenceModal = document.getElementById("presence-modal");
+            document.getElementById("btn-open-batch-presence").addEventListener("click", function() {
+                renderBatchPresenceModal();
+                presenceModal.classList.add("active");
+            });
+
+            document.getElementById("btn-close-presence").addEventListener("click", () => presenceModal.classList.remove("active"));
+            document.getElementById("btn-cancel-presence").addEventListener("click", () => presenceModal.classList.remove("active"));
+
+            // Submit Presensi Sekelas Batch
+            document.getElementById("btn-save-presence").addEventListener("click", async function() {
+                if (currentSantriList.length === 0) return;
+
+                const submitBtn = this;
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Menyimpan...";
+
+                const tgl = document.getElementById("input-tanggal-mutabaah").value;
+                const kelas = selectKelas.value || "Umum";
+
+                const batchPayload = currentSantriList.map(s => {
+                    const selectedPresence = document.querySelector(`input[name="presence_${s.nis}"]:checked`)?.value || "Hadir";
+                    return {
+                        tanggal: tgl,
+                        kelas: kelas,
+                        santri_nis: s.nis,
+                        nama_santri: s.nama_lengkap,
+                        kehadiran: selectedPresence
+                    };
+                });
+
+                try {
+                    await supabaseFetch("mutabaah", { method: "POST", body: batchPayload });
+                    presenceModal.classList.remove("active");
+                    showGlobalAlert(`Berhasil mencatat kehadiran ${batchPayload.length} santri sekelas!`, "success");
+                    fetchRiwayatSiswa();
+                } catch (err) {
+                    showGlobalAlert(err.message, "error");
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Simpan Kehadiran Sekelas";
+                }
+            });
+
+            // Submit Form Utama Mutabaah
+            document.getElementById("form-mutabaah-utama").addEventListener("submit", async function(e) {
+                e.preventDefault();
+
+                const nis = selectSiswa.value;
+                const selectedOpt = selectSiswa.options[selectSiswa.selectedIndex];
+                const namaSantri = selectedOpt ? selectedOpt.dataset.nama : "";
+
+                if (!nis || !namaSantri) {
+                    showGlobalAlert("Silakan pilih kelas dan siswa terlebih dahulu.", "error");
+                    return;
+                }
+
+                const submitBtn = document.getElementById("btn-submit-mutabaah");
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Menyimpan Data Mutaba'ah...";
+
+                // Penanganan nilai Kitab (Dropown vs Manual)
+                let finalTahsinKitab = tahsinKitabSelect.value;
+                if (finalTahsinKitab === "LAINNYA") {
+                    finalTahsinKitab = tahsinKitabCustom.value.trim();
+                }
+
+                let finalKhatKitab = khatKitabSelect.value;
+                if (finalKhatKitab === "LAINNYA") {
+                    finalKhatKitab = khatKitabCustom.value.trim();
+                }
+
+                const payload = {
+                    tanggal: document.getElementById("input-tanggal-mutabaah").value,
+                    kelas: selectKelas.value || null,
+                    santri_nis: nis,
+                    nama_santri: namaSantri,
+                    kehadiran: "Hadir",
+
+                    // A. Tahfidz & Adab
+                    sabaq_surat: document.getElementById("sabaq-surat").value.trim() || null,
+                    sabaq_baris: Number(document.getElementById("sabaq-baris").value) || 0,
+                    sabaq_nilai: Number(document.getElementById("sabaq-nilai").value) || null,
+                    sabaq_catatan: document.getElementById("sabaq-catatan").value.trim() || null,
+
+                    sabqi_surat: document.getElementById("sabqi-surat").value.trim() || null,
+                    sabqi_penerima: document.getElementById("sabqi-penerima").value || null,
+                    sabqi_catatan: document.getElementById("sabqi-catatan").value.trim() || null,
+
+                    manzil_surat: document.getElementById("manzil-surat").value.trim() || null,
+                    manzil_ulang: document.getElementById("manzil-ulang").checked,
+                    manzil_catatan: document.getElementById("manzil-catatan").value.trim() || null,
+
+                    prasidang_juz: Number(document.getElementById("prasidang-juz").value) || null,
+                    prasidang_bagian: document.getElementById("prasidang-bagian").value.trim() || null,
+                    prasidang_nilai: Number(document.getElementById("prasidang-nilai").value) || null,
+                    prasidang_catatan: document.getElementById("prasidang-catatan").value.trim() || null,
+
+                    adab_predikat: document.getElementById("adab-predikat").value || null,
+                    adab_catatan: document.getElementById("adab-catatan").value.trim() || null,
+
+                    // B. Tahsin
+                    tahsin_kitab: finalTahsinKitab || null,
+                    tahsin_hal: document.getElementById("tahsin-hal").value.trim() || null,
+                    tahsin_nilai: Number(document.getElementById("tahsin-nilai").value) || null,
+                    tahsin_catatan: document.getElementById("tahsin-catatan").value.trim() || null,
+
+                    // C. Khat
+                    khat_kitab: finalKhatKitab || null,
+                    khat_hal: document.getElementById("khat-hal").value.trim() || null,
+                    khat_nilai: Number(document.getElementById("khat-nilai").value) || null,
+                    khat_catatan: document.getElementById("khat-catatan").value.trim() || null
+                };
+
+                try {
+                    await supabaseFetch("mutabaah", { method: "POST", body: payload });
+                    showGlobalAlert(`Data Mutaba'ah ${namaSantri} berhasil disimpan!`, "success");
+                    this.reset();
+                    tahsinKitabCustom.hidden = true;
+                    khatKitabCustom.hidden = true;
+                    document.getElementById("input-tanggal-mutabaah").valueAsDate = new Date();
+                    fetchRiwayatSiswa();
+                } catch (err) {
+                    showGlobalAlert(err.message, "error");
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Simpan Data Mutaba'ah";
+                }
+            });
+
+            loadSantriByKelas("");
+        });
+    </script>
 </body>
 </html>

@@ -17,6 +17,7 @@
             --page: #f4f7f9;
             --white: #ffffff;
             --danger: #e74c3c;
+            --danger-dark: #c0392b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -120,6 +121,8 @@
 
         .btn-primary { background: var(--green); color: #fff; }
         .btn-primary:hover { background: var(--green-dark); }
+        .btn-danger-action { background: var(--danger); color: #fff; }
+        .btn-danger-action:hover { background: var(--danger-dark); }
         .btn-secondary { background: #f0f3f5; color: var(--muted); }
         .btn-secondary:hover { background: #e2e7eb; color: var(--ink); }
 
@@ -198,18 +201,24 @@
         .badge-inactive { background: #fdecea; color: #a93226; }
         .badge-alumni { background: #eaf3fb; color: #24577a; }
 
-        .btn-action-del {
-            padding: 5px 10px;
-            border: 1px solid #fadbd8;
-            background: #fdecea;
-            color: var(--danger);
-            border-radius: 6px;
+        /* Tombol Icon Pensil */
+        .btn-action-pencil {
+            padding: 6px 10px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink);
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
         }
-        .btn-action-del:hover { background: var(--danger); color: #fff; }
+        .btn-action-pencil:hover {
+            border-color: var(--green);
+            background: var(--green-light);
+            transform: scale(1.05);
+        }
 
+        /* Modal Base */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -359,7 +368,7 @@
             </div>
 
             <div class="filter-bar">
-                <input type="text" id="search-input" class="search-input" placeholder="Cari nama santri atau NIS...">
+                <input type="text" id="search-input" class="search-input" placeholder="Cari nama santri, NIS, atau kelas...">
             </div>
 
             <div class="table-responsive">
@@ -370,10 +379,10 @@
                             <th>NIS</th>
                             <th>Nama Santri</th>
                             <th>L/P</th>
-                            <th>Program</th>
+                            <th>Kelas</th>
                             <th>Ortu / No. WA</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th style="text-align: center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="santri-table-body">
@@ -384,11 +393,29 @@
         </section>
     </main>
 
-    <!-- Modal Form Input Santri -->
+    <!-- Modal Pilihan Aksi (Edit / Hapus / Batal) -->
+    <div class="modal-overlay" id="action-modal" aria-hidden="true">
+        <div class="modal-card" style="width: min(100%, 420px);">
+            <div class="modal-header">
+                <h3>Kelola Data Santri</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-action">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 22px;">
+                <p id="action-target-info" style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 20px;"></p>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button type="button" class="btn btn-primary" id="btn-action-edit">✏️ Edit Data Santri</button>
+                    <button type="button" class="btn btn-danger-action" id="btn-action-delete">🗑️ Hapus Santri</button>
+                    <button type="button" class="btn btn-secondary" id="btn-action-cancel">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form Input / Edit Santri -->
     <div class="modal-overlay" id="santri-modal" aria-hidden="true">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Form Input Santri Baru</h3>
+                <h3 id="form-modal-title">Form Input Santri Baru</h3>
                 <button type="button" class="btn-close-modal" id="btn-close-modal">&times;</button>
             </div>
 
@@ -421,21 +448,25 @@
                             <label for="tanggal-lahir">Tanggal Lahir</label>
                             <input id="tanggal-lahir" name="tanggalLahir" type="date">
                         </div>
+                        
+                        <!-- Pilihan 4 Kelas MDTA -->
                         <div class="field">
-                            <label for="program">Program / Halaqah <span class="req">*</span></label>
-                            <select id="program" name="program" required>
-                                <option value="">-- Pilih Program --</option>
-                                <option value="Tahfidz Reguler">Tahfidz Reguler</option>
-                                <option value="Tahfidz Takhassus">Tahfidz Takhassus</option>
-                                <option value="Tahsin & Mutabaah">Tahsin & Mutabaah</option>
+                            <label for="kelas">Kelas <span class="req">*</span></label>
+                            <select id="kelas" name="kelas" required>
+                                <option value="">-- Pilih Kelas --</option>
+                                <option value="Taud">Taud</option>
+                                <option value="Mubtadi 1">Mubtadi 1</option>
+                                <option value="Mubtadi 2">Mubtadi 2</option>
+                                <option value="Mutawassith">Mutawassith</option>
                             </select>
                         </div>
+
                         <div class="field">
                             <label for="nama-ortu">Nama Orang Tua / Wali <span class="req">*</span></label>
                             <input id="nama-ortu" name="namaOrtu" type="text" placeholder="Nama ayah / ibu / wali" required>
                         </div>
                         <div class="field">
-                            <label for="no-hp">No. WhatsApp / HP Ortud <span class="req">*</span></label>
+                            <label for="no-hp">No. WhatsApp / HP Ortu <span class="req">*</span></label>
                             <input id="no-hp" name="noHp" type="tel" placeholder="081234567890" required>
                         </div>
                         <div class="field">
@@ -471,6 +502,9 @@
         const SUPABASE_URL = "https://dfakfkngujlhbcrhxmmk.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
         const SESSION_KEY = "ynhq-supabase-session";
+
+        let selectedSantriData = null;
+        let isEditMode = false;
 
         function checkAuth() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
@@ -512,6 +546,14 @@
                     const errJson = await response.json();
                     errMessage = errJson.message || errJson.hint || errMessage;
                 } catch (e) {}
+
+                if (errMessage.toLowerCase().includes("jwt expired") || response.status === 401) {
+                    localStorage.removeItem(SESSION_KEY);
+                    alert("Sesi login Anda telah berakhir. Silakan login kembali.");
+                    window.location.href = "login.html";
+                    return null;
+                }
+
                 throw new Error(errMessage);
             }
 
@@ -538,12 +580,46 @@
             }
         }
 
-        function openModal() {
+        function openAddModal() {
+            isEditMode = false;
             const form = document.getElementById("santri-form");
             if (form) form.reset();
+
+            document.getElementById("form-modal-title").textContent = "Form Input Santri Baru";
+            document.getElementById("nis").readOnly = false;
+            
             const modalAlert = document.getElementById("modal-alert");
             if (modalAlert) modalAlert.hidden = true;
             
+            const modal = document.getElementById("santri-modal");
+            if (modal) {
+                modal.classList.add("active");
+                modal.setAttribute("aria-hidden", "false");
+            }
+        }
+
+        function openEditModal(santri) {
+            isEditMode = true;
+            selectedSantriData = santri;
+            
+            document.getElementById("form-modal-title").textContent = `Edit Data Santri: ${santri.nama_lengkap}`;
+            document.getElementById("nis").value = santri.nis || "";
+            document.getElementById("nis").readOnly = true;
+            document.getElementById("nama-lengkap").value = santri.nama_lengkap || "";
+            document.getElementById("jenis-kelamin").value = santri.jenis_kelamin || "";
+            document.getElementById("tempat-lahir").value = santri.tempat_lahir || "";
+            document.getElementById("tanggal-lahir").value = santri.tanggal_lahir || "";
+            document.getElementById("kelas").value = santri.kelas || santri.program || "";
+            document.getElementById("nama-ortu").value = santri.nama_ortu || "";
+            document.getElementById("no-hp").value = santri.no_hp || "";
+            document.getElementById("status").value = santri.status || "Aktif";
+            document.getElementById("alamat").value = santri.alamat || "";
+
+            closeActionModal();
+
+            const modalAlert = document.getElementById("modal-alert");
+            if (modalAlert) modalAlert.hidden = true;
+
             const modal = document.getElementById("santri-modal");
             if (modal) {
                 modal.classList.add("active");
@@ -557,6 +633,19 @@
                 modal.classList.remove("active");
                 modal.setAttribute("aria-hidden", "true");
             }
+        }
+
+        // Modal Action (Pilihan Edit/Hapus/Batal)
+        function openActionModal(santri) {
+            selectedSantriData = santri;
+            document.getElementById("action-target-info").textContent = `${santri.nama_lengkap} (${santri.nis})`;
+            const actionModal = document.getElementById("action-modal");
+            if (actionModal) actionModal.classList.add("active");
+        }
+
+        function closeActionModal() {
+            const actionModal = document.getElementById("action-modal");
+            if (actionModal) actionModal.classList.remove("active");
         }
 
         async function renderSantriTable(filterQuery = "") {
@@ -573,11 +662,14 @@
                     return;
                 }
 
+                window.cachedSantriList = list;
+
                 const query = String(filterQuery || "").toLowerCase();
                 const filtered = list.filter(item => {
                     const nama = String(item.nama_lengkap || "").toLowerCase();
                     const nis = String(item.nis || "").toLowerCase();
-                    return nama.includes(query) || nis.includes(query);
+                    const kelas = String(item.kelas || item.program || "").toLowerCase();
+                    return nama.includes(query) || nis.includes(query) || kelas.includes(query);
                 });
 
                 if (filtered.length === 0) {
@@ -596,11 +688,11 @@
                         <td><strong>${item.nis || '-'}</strong></td>
                         <td>${item.nama_lengkap || '-'}</td>
                         <td>${item.jenis_kelamin === "Laki-laki" ? "L" : "P"}</td>
-                        <td>${item.program || '-'}</td>
+                        <td><strong>${item.kelas || item.program || '-'}</strong></td>
                         <td>${item.nama_ortu || '-'}<br><small style="color: var(--muted);">${item.no_hp || '-'}</small></td>
                         <td><span class="badge ${badgeClass}">${item.status || 'Aktif'}</span></td>
-                        <td>
-                            <button class="btn-action-del" onclick="deleteSantri('${item.nis}')">Hapus</button>
+                        <td style="text-align: center;">
+                            <button class="btn-action-pencil" onclick="triggerPencilAction('${item.nis}')" title="Kelola Santri">✏️</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -610,10 +702,20 @@
             }
         }
 
+        function triggerPencilAction(nis) {
+            if (window.cachedSantriList) {
+                const item = window.cachedSantriList.find(s => String(s.nis) === String(nis));
+                if (item) {
+                    openActionModal(item);
+                }
+            }
+        }
+
         async function deleteSantri(nis) {
             if (confirm(`Apakah Anda yakin ingin menghapus santri dengan NIS ${nis}?`)) {
                 try {
                     await supabaseFetch(`santri?nis=eq.${encodeURIComponent(nis)}`, { method: "DELETE" });
+                    closeActionModal();
                     const searchInput = document.getElementById("search-input");
                     renderSantriTable(searchInput ? searchInput.value : "");
                     showGlobalAlert("Data santri berhasil dihapus.", "success");
@@ -632,7 +734,8 @@
             const modal = document.getElementById("santri-modal");
             const form = document.getElementById("santri-form");
 
-            if (btnOpen) btnOpen.addEventListener("click", openModal);
+            // Event Modal Form Input/Edit
+            if (btnOpen) btnOpen.addEventListener("click", openAddModal);
             if (btnClose) btnClose.addEventListener("click", closeModal);
             if (btnCancel) btnCancel.addEventListener("click", closeModal);
 
@@ -642,6 +745,26 @@
                 });
             }
 
+            // Event Modal Action Choice
+            const actionModal = document.getElementById("action-modal");
+            document.getElementById("btn-close-action").addEventListener("click", closeActionModal);
+            document.getElementById("btn-action-cancel").addEventListener("click", closeActionModal);
+            
+            document.getElementById("btn-action-edit").addEventListener("click", function() {
+                if (selectedSantriData) openEditModal(selectedSantriData);
+            });
+
+            document.getElementById("btn-action-delete").addEventListener("click", function() {
+                if (selectedSantriData) deleteSantri(selectedSantriData.nis);
+            });
+
+            if (actionModal) {
+                actionModal.addEventListener("click", function (e) {
+                    if (e.target === actionModal) closeActionModal();
+                });
+            }
+
+            // Submit Handler Form Santri (Create / Update)
             if (form) {
                 form.addEventListener("submit", async function (e) {
                     e.preventDefault();
@@ -659,7 +782,7 @@
                         jenis_kelamin: document.getElementById("jenis-kelamin").value,
                         tempat_lahir: document.getElementById("tempat-lahir").value.trim() || null,
                         tanggal_lahir: document.getElementById("tanggal-lahir").value || null,
-                        program: document.getElementById("program").value,
+                        kelas: document.getElementById("kelas").value,
                         nama_ortu: document.getElementById("nama-ortu").value.trim(),
                         no_hp: document.getElementById("no-hp").value.trim(),
                         status: document.getElementById("status").value,
@@ -667,13 +790,24 @@
                     };
 
                     try {
-                        await supabaseFetch("santri", {
-                            method: "POST",
-                            body: payload
-                        });
+                        if (isEditMode && selectedSantriData) {
+                            // UPDATE ke Supabase
+                            await supabaseFetch(`santri?nis=eq.${encodeURIComponent(selectedSantriData.nis)}`, {
+                                method: "PATCH",
+                                body: payload
+                            });
+                            showGlobalAlert(`Berhasil memperbarui data santri: ${payload.nama_lengkap}`, "success");
+                        } else {
+                            // INSERT Baru ke Supabase
+                            await supabaseFetch("santri", {
+                                method: "POST",
+                                body: payload
+                            });
+                            showGlobalAlert(`Berhasil menambahkan santri: ${payload.nama_lengkap}`, "success");
+                        }
+
                         closeModal();
                         renderSantriTable();
-                        showGlobalAlert(`Berhasil menambahkan santri: ${payload.nama_lengkap}`, "success");
                     } catch (err) {
                         showModalAlert(err.message, "error");
                     } finally {

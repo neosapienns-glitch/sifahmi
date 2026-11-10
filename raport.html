@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#27ae60">
+    <title>SIFAHMI - Evaluasi &amp; Rapor Berkala</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --green: #27ae60;
+            --green-dark: #1b5e20;
+            --green-light: #e9f8ef;
+            --ink: #2c3e50;
+            --muted: #7f8c8d;
+            --line: #dfe5e8;
+            --page: #f4f7f9;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --blue: #2980b9;
+            --purple: #8e44ad;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            min-height: 100%;
+            background: var(--page);
+            color: var(--ink);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body { display: flex; flex-direction: column; }
+
+        /* Top Bar Navigation */
+        header.top-bar {
+            flex-shrink: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--line);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand-header { display: flex; align-items: center; gap: 12px; }
+        .brand-header img { width: 40px; height: 40px; object-fit: contain; }
+
+        .brand-info h1 {
+            font-size: 16px;
+            color: var(--green);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .brand-info h1 span.page-title-text { color: var(--ink); font-weight: 700; }
+        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 2px; }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+        /* Main Layout */
+        main.container {
+            max-width: 920px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .card-header h2 { font-size: 18px; color: var(--ink); }
+        .card-header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+        /* Tag Periode */
+        .badge-periode {
+            display: inline-block;
+            background: var(--green-light);
+            color: var(--green-dark);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Group Buttons - Periode Evaluasi */
+        .periode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .btn-periode {
+            min-height: 38px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--muted);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-periode.active {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green-dark);
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        /* Filter Grid */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .field-group { display: flex; flex-direction: column; gap: 6px; }
+
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            min-height: 40px;
+            padding: 9px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 13px;
+        }
+
+        textarea { min-height: 75px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+
+        .btn {
+            min-height: 40px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--green); color: #fff; }
+        .btn-primary:hover { background: var(--green-dark); }
+        .btn-outline { background: #f0f7f3; color: var(--green-dark); border: 1px solid #c8e6c9; }
+        .btn-block { width: 100%; }
+
+        /* Sub-Section Form Tabs (Tahsin, Tasmi', MHQ, Matan, Deskripsi) */
+        .tab-menu {
+            display: flex;
+            gap: 4px;
+            background: #f0f3f5;
+            padding: 4px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin-bottom: 14px;
+        }
+
+        .tab-menu-btn {
+            flex: 1;
+            min-width: 90px;
+            border: 0;
+            background: transparent;
+            padding: 8px 12px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-menu-btn.active {
+            background: var(--green);
+            color: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        .row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+
+        /* Estimasi Subtotal Box */
+        .estimation-box {
+            background: #fcfdfd;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 12px 0;
+        }
+
+        .estimation-box label { font-size: 12px; color: var(--ink); text-transform: none; }
+        .estimation-val { font-size: 20px; font-weight: 800; color: var(--green-dark); }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #eaf3fb;
+            color: #24577a;
+        }
+
+        .message { margin-bottom: 14px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
+        .message[hidden] { display: none !important; }
+        .message.error { background: #fdecea; color: #a93226; border: 1px solid #fadbd8; }
+        .message.success { background: #e9f8ef; color: #1e8449; border: 1px solid #d4efdf; }
+
+        footer {
+            flex-shrink: 0;
+            background: var(--white);
+            border-top: 1px solid var(--line);
+            padding: 12px 16px;
+            color: #95a5a6;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.6;
+            margin-top: auto;
+        }
+        footer strong { color: var(--muted); }
+    </style>
+</head>
+<body>
+
+    <!-- Header Topbar -->
+    <header class="top-bar">
+        <div class="brand-header">
+            <img src="logo.png" alt="Logo YNHQ">
+            <div class="brand-info">
+                <h1>SIFAHMI <span class="page-title-text">- RAPOR BERKALA</span></h1>
+                <p>EVALUASI TAHFIN, TASMI', MHQ, MATAN &amp; RAPOR SANTRI</p>
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <a href="dashboard.html" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="message" id="global-alert" hidden></div>
+
+        <!-- Section 1: Periode & Filter Siswa -->
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Evaluasi &amp; Rapor Berkala</h2>
+                    <p>Penilaian Tahsin, Tasmi', MHQ, Matan, dan Deskripsi Rapor Santri.</p>
+                </div>
+                <span class="badge-periode" id="badge-periode-aktif">PTS Ganjil</span>
+            </div>
+
+            <!-- Buttons Pilih Periode -->
+            <div class="periode-selector">
+                <button type="button" class="btn-periode active" data-periode="PTS Ganjil">PTS Ganjil</button>
+                <button type="button" class="btn-periode" data-periode="PSAS Ganjil">PSAS Ganjil</button>
+                <button type="button" class="btn-periode" data-periode="PTS Genap">PTS Genap</button>
+                <button type="button" class="btn-periode" data-periode="PSAS Genap">PSAS Genap</button>
+            </div>
+
+            <div class="filter-grid">
+                <div class="field-group">
+                    <label for="select-kelas">1. Filter Kelas Siswa</label>
+                    <select id="select-kelas">
+                        <option value="">-- Semua Kelas --</option>
+                        <option value="Tahfidz Reguler">Tahfidz Reguler</option>
+                        <option value="Tahfidz Takhassus">Tahfidz Takhassus</option>
+                        <option value="Tahsin & Mutabaah">Tahsin & Mutabaah</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="select-siswa">2. Pilih Nama Siswa</label>
+                    <select id="select-siswa">
+                        <option value="">-- Pilih Siswa --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+                <button type="button" class="btn btn-outline" id="btn-rekap-sekela">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Lihat Rekapan Sekelas</span>
+                </button>
+                <button type="button" class="btn btn-outline" id="btn-lihat-rapor">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>Lihat Rapor &amp; Hasil Evaluasi</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 2: Form Input Nilai Evaluasi -->
+        <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 16px;">Form Input Nilai Evaluasi</h3>
+                <span class="status-pill" id="status-input-txt">Siap Input / Update Data</span>
+            </div>
+
+            <!-- Tab Buttons Sub-Penilaian -->
+            <div class="tab-menu">
+                <button type="button" class="tab-menu-btn active" data-tab="tab-tahsin">1. Tahsin</button>
+                <button type="button" class="tab-menu-btn" data-tab="tab-tasmi">2. Tasmi'</button>
+                <button type="button" class="tab-menu-btn" data-tab="tab-mhq">3. MHQ</button>
+                <button type="button" class="tab-menu-btn" data-tab="tab-matan">4. Matan</button>
+                <button type="button" class="tab-menu-btn" data-tab="tab-deskripsi">5. Deskripsi Rapor</button>
+            </div>
+
+            <form id="form-raport-utama" novalidate>
+                <!-- 1. TAB TAHSIN -->
+                <div class="tab-pane active" id="tab-tahsin">
+                    <div class="row-grid">
+                        <div class="field-group">
+                            <label for="tahsin-kitab">Pilih Kitab Tahsin</label>
+                            <select id="tahsin-kitab">
+                                <option value="Fathurrahman">Fathurrahman</option>
+                                <option value="Talaqqi Al-Qur'an">Talaqqi Al-Qur'an</option>
+                                <option value="Ummi / Iqro">Ummi / Iqro</option>
+                                <option value="Tajwid Asy-Syafii">Tajwid Asy-Syafii</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label for="tahsin-soal-hal">Soal Halaman Ke- (1-10)</label>
+                            <input type="number" id="tahsin-soal-hal" min="1" max="10" value="1">
+                        </div>
+                    </div>
+
+                    <div class="row-grid" style="margin-top: 10px;">
+                        <div class="field-group">
+                            <label for="tahsin-kelancaran">Kelancaran [50%]</label>
+                            <input type="number" id="tahsin-kelancaran" min="0" max="100" placeholder="20-100">
+                        </div>
+                        <div class="field-group">
+                            <label for="tahsin-bacaan">Bacaan / Tajwid [40%]</label>
+                            <input type="number" id="tahsin-bacaan" min="0" max="100" placeholder="50-95">
+                        </div>
+                        <div class="field-group">
+                            <label for="tahsin-adab">Adab [10%]</label>
+                            <input type="number" id="tahsin-adab" min="0" max="100" placeholder="50-100">
+                        </div>
+                    </div>
+
+                    <div class="estimation-box">
+                        <label>Estimasi Nilai Sub-Total Tahsin:</label>
+                        <span class="estimation-val" id="tahsin-subtotal-val">0.0</span>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="tahsin-catatan">Catatan Per Halaman (Opsional)</label>
+                        <textarea id="tahsin-catatan" placeholder="Catatan evaluasi bacaan tahsin..."></textarea>
+                    </div>
+                </div>
+
+                <!-- 2. TAB TASMI' -->
+                <div class="tab-pane" id="tab-tasmi">
+                    <div class="row-grid">
+                        <div class="field-group">
+                            <label for="tasmi-juz">Juz / Surat Tasmi'</label>
+                            <input type="text" id="tasmi-juz" placeholder="Contoh: Juz 30 Sekali Duduk">
+                        </div>
+                        <div class="field-group">
+                            <label for="tasmi-nilai">Nilai Tasmi' (0-100)</label>
+                            <input type="number" id="tasmi-nilai" min="0" max="100" placeholder="0-100">
+                        </div>
+                    </div>
+                    <div class="field-group" style="margin-top: 10px;">
+                        <label for="tasmi-catatan">Catatan Tasmi'</label>
+                        <textarea id="tasmi-catatan" placeholder="Catatan kelancaran dan tajwid tasmi'..."></textarea>
+                    </div>
+                </div>
+
+                <!-- 3. TAB MHQ -->
+                <div class="tab-pane" id="tab-mhq">
+                    <div class="row-grid">
+                        <div class="field-group">
+                            <label for="mhq-juz">Materi / Juz MHQ</label>
+                            <input type="text" id="mhq-juz" placeholder="Contoh: Musabaqah Juz 29-30">
+                        </div>
+                        <div class="field-group">
+                            <label for="mhq-nilai">Nilai MHQ (0-100)</label>
+                            <input type="number" id="mhq-nilai" min="0" max="100" placeholder="0-100">
+                        </div>
+                    </div>
+                    <div class="field-group" style="margin-top: 10px;">
+                        <label for="mhq-catatan">Catatan Evaluasi MHQ</label>
+                        <textarea id="mhq-catatan" placeholder="Catatan hasil lomba / simulasi MHQ..."></textarea>
+                    </div>
+                </div>
+
+                <!-- 4. TAB MATAN -->
+                <div class="tab-pane" id="tab-matan">
+                    <div class="row-grid">
+                        <div class="field-group">
+                            <label for="matan-kitab">Pilih Kitab Matan</label>
+                            <select id="matan-kitab">
+                                <option value="Matan Tuhfatul Athfal">Matan Tuhfatul Athfal</option>
+                                <option value="Matan Jazariyah">Matan Jazariyah</option>
+                                <option value="Matan Al-Jazari">Matan Al-Jazari</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label for="matan-nilai">Nilai Hafalan Matan (0-100)</label>
+                            <input type="number" id="matan-nilai" min="0" max="100" placeholder="0-100">
+                        </div>
+                    </div>
+                    <div class="field-group" style="margin-top: 10px;">
+                        <label for="matan-catatan">Catatan Matan</label>
+                        <textarea id="matan-catatan" placeholder="Catatan bait matan yang disetorkan..."></textarea>
+                    </div>
+                </div>
+
+                <!-- 5. TAB DESKRIPSI RAPOR -->
+                <div class="tab-pane" id="tab-deskripsi">
+                    <div class="field-group">
+                        <label for="deskripsi-rapor">Deskripsi Rapor &amp; Catatan Pengasuh</label>
+                        <textarea id="deskripsi-rapor" style="min-height: 110px;" placeholder="Tuliskan narasi perkembangan hafalan, adab, dan motivasi santri untuk dicetak pada lembar rapor..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="btn-submit-raport" style="margin-top: 16px; font-size: 14px;">
+                    Simpan Nilai Evaluasi &amp; Rapor
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>
+        Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
+    </footer>
+
+    <script>
+        "use strict";
+
+        const SUPABASE_URL = "https://dfakfkngujlhbcrhxmmk.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
+        const SESSION_KEY = "ynhq-supabase-session";
+
+        let currentPeriode = "PTS Ganjil";
+        let currentSantriList = [];
+
+        function checkAuth() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) window.location.href = "login.html";
+        }
+
+        function getAuthToken() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) return SUPABASE_ANON_KEY;
+            try {
+                const session = JSON.parse(sessionRaw);
+                return session.access_token || SUPABASE_ANON_KEY;
+            } catch (e) {
+                return SUPABASE_ANON_KEY;
+            }
+        }
+
+        async function supabaseFetch(path, options = {}) {
+            const token = getAuthToken();
+            const headers = {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json",
+                "Prefer": options.prefer || "return=representation",
+                ...options.headers
+            };
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                method: options.method || "GET",
+                headers: headers,
+                body: options.body ? JSON.stringify(options.body) : null
+            });
+
+            if (!response.ok) {
+                let errMessage = "Terjadi kesalahan pada Supabase.";
+                try {
+                    const errJson = await response.json();
+                    errMessage = errJson.message || errJson.hint || errMessage;
+                } catch (e) {}
+                throw new Error(errMessage);
+            }
+
+            if (response.status === 204) return null;
+            return await response.json();
+        }
+
+        function showGlobalAlert(msg, kind) {
+            const alertBox = document.getElementById("global-alert");
+            if (alertBox) {
+                alertBox.textContent = msg;
+                alertBox.className = "message " + kind;
+                alertBox.hidden = false;
+                setTimeout(() => { alertBox.hidden = true; }, 4000);
+            }
+        }
+
+        // Populasikan daftar siswa berdasarkan kelas
+        async function loadSantriByKelas(programName) {
+            const selectSiswa = document.getElementById("select-siswa");
+            selectSiswa.innerHTML = `<option value="">-- Memuat Santri... --</option>`;
+
+            try {
+                let query = "santri?select=*&order=nama_lengkap.asc";
+                if (programName) {
+                    query += `&program=eq.${encodeURIComponent(programName)}`;
+                }
+                
+                const list = await supabaseFetch(query);
+                currentSantriList = Array.isArray(list) ? list : [];
+
+                selectSiswa.innerHTML = `<option value="">-- Pilih Siswa --</option>`;
+                currentSantriList.forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = s.nis;
+                    opt.dataset.nama = s.nama_lengkap;
+                    opt.textContent = `${s.nama_lengkap} (${s.nis})`;
+                    selectSiswa.appendChild(opt);
+                });
+            } catch (err) {
+                selectSiswa.innerHTML = `<option value="">-- Gagal Memuat Santri --</option>`;
+            }
+        }
+
+        // Kalkulasi Sub-Total Nilai Tahsin: (Kelancaran * 0.5) + (Bacaan * 0.4) + (Adab * 0.1)
+        function calculateTahsinSubtotal() {
+            const kelancaran = Number(document.getElementById("tahsin-kelancaran").value) || 0;
+            const bacaan = Number(document.getElementById("tahsin-bacaan").value) || 0;
+            const adab = Number(document.getElementById("tahsin-adab").value) || 0;
+
+            const subtotal = (kelancaran * 0.50) + (bacaan * 0.40) + (adab * 0.10);
+            document.getElementById("tahsin-subtotal-val").textContent = subtotal.toFixed(1);
+            return subtotal;
+        }
+
+        // Fetch data nilai evaluasi yang sudah ada di database untuk periode & nis terpilih
+        async function loadExistingEvaluasiData() {
+            const nis = document.getElementById("select-siswa").value;
+            const statusTxt = document.getElementById("status-input-txt");
+
+            if (!nis) {
+                statusTxt.textContent = "Pilih Siswa Terlebih Dahulu";
+                resetFormInputs();
+                return;
+            }
+
+            try {
+                const list = await supabaseFetch(`evaluasi_raport?santri_nis=eq.${encodeURIComponent(nis)}&periode=eq.${encodeURIComponent(currentPeriode)}`);
+                
+                if (Array.isArray(list) && list.length > 0) {
+                    const data = list[0];
+                    statusTxt.textContent = `Data ${currentPeriode} Ditemukan (Edit Mode)`;
+
+                    // Populate form fields
+                    document.getElementById("tahsin-kitab").value = data.tahsin_kitab || "Fathurrahman";
+                    document.getElementById("tahsin-soal-hal").value = data.tahsin_soal_hal || 1;
+                    document.getElementById("tahsin-kelancaran").value = data.tahsin_kelancaran || "";
+                    document.getElementById("tahsin-bacaan").value = data.tahsin_bacaan || "";
+                    document.getElementById("tahsin-adab").value = data.tahsin_adab || "";
+                    document.getElementById("tahsin-catatan").value = data.tahsin_catatan || "";
+
+                    document.getElementById("tasmi-juz").value = data.tasmi_juz || "";
+                    document.getElementById("tasmi-nilai").value = data.tasmi_nilai || "";
+                    document.getElementById("tasmi-catatan").value = data.tasmi_catatan || "";
+
+                    document.getElementById("mhq-juz").value = data.mhq_juz || "";
+                    document.getElementById("mhq-nilai").value = data.mhq_nilai || "";
+                    document.getElementById("mhq-catatan").value = data.mhq_catatan || "";
+
+                    document.getElementById("matan-kitab").value = data.matan_kitab || "Matan Tuhfatul Athfal";
+                    document.getElementById("matan-nilai").value = data.matan_nilai || "";
+                    document.getElementById("matan-catatan").value = data.matan_catatan || "";
+
+                    document.getElementById("deskripsi-rapor").value = data.deskripsi_rapor || "";
+
+                    calculateTahsinSubtotal();
+                } else {
+                    statusTxt.textContent = "Data Baru (Siap Input)";
+                    resetFormInputs();
+                }
+            } catch (err) {
+                statusTxt.textContent = "Siap Input";
+            }
+        }
+
+        function resetFormInputs() {
+            document.getElementById("form-raport-utama").reset();
+            document.getElementById("tahsin-subtotal-val").textContent = "0.0";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            checkAuth();
+
+            // Event Selector Periode
+            document.querySelectorAll(".btn-periode").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    document.querySelectorAll(".btn-periode").forEach(b => b.classList.remove("active"));
+                    this.classList.add("active");
+                    currentPeriode = this.dataset.periode;
+                    document.getElementById("badge-periode-aktif").textContent = currentPeriode;
+                    loadExistingEvaluasiData();
+                });
+            });
+
+            // Event Tab Sub-Penilaian
+            document.querySelectorAll(".tab-menu-btn").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    document.querySelectorAll(".tab-menu-btn").forEach(b => b.classList.remove("active"));
+                    document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+
+                    this.classList.add("active");
+                    document.getElementById(this.dataset.tab).classList.add("active");
+                });
+            });
+
+            // Event Live Calculation Tahsin
+            ["tahsin-kelancaran", "tahsin-bacaan", "tahsin-adab"].forEach(id => {
+                document.getElementById(id).addEventListener("input", calculateTahsinSubtotal);
+            });
+
+            const selectKelas = document.getElementById("select-kelas");
+            const selectSiswa = document.getElementById("select-siswa");
+
+            selectKelas.addEventListener("change", function(e) {
+                loadSantriByKelas(e.target.value);
+            });
+
+            selectSiswa.addEventListener("change", function() {
+                loadExistingEvaluasiData();
+            });
+
+            // Submit Form Evaluasi & Rapor
+            document.getElementById("form-raport-utama").addEventListener("submit", async function(e) {
+                e.preventDefault();
+
+                const nis = selectSiswa.value;
+                const selectedOpt = selectSiswa.options[selectSiswa.selectedIndex];
+                const namaSantri = selectedOpt ? selectedOpt.dataset.nama : "";
+
+                if (!nis || !namaSantri) {
+                    showGlobalAlert("Silakan pilih siswa terlebih dahulu.", "error");
+                    return;
+                }
+
+                const submitBtn = document.getElementById("btn-submit-raport");
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Menyimpan Nilai Rapor...";
+
+                const subtotalTahsin = calculateTahsinSubtotal();
+
+                const payload = {
+                    periode: currentPeriode,
+                    tahun_ajaran: "2026/2027",
+                    kelas: selectKelas.value || null,
+                    santri_nis: nis,
+                    nama_santri: namaSantri,
+
+                    // 1. Tahsin
+                    tahsin_kitab: document.getElementById("tahsin-kitab").value,
+                    tahsin_soal_hal: Number(document.getElementById("tahsin-soal-hal").value) || 1,
+                    tahsin_kelancaran: Number(document.getElementById("tahsin-kelancaran").value) || 0,
+                    tahsin_bacaan: Number(document.getElementById("tahsin-bacaan").value) || 0,
+                    tahsin_adab: Number(document.getElementById("tahsin-adab").value) || 0,
+                    tahsin_subtotal: subtotalTahsin,
+                    tahsin_catatan: document.getElementById("tahsin-catatan").value.trim() || null,
+
+                    // 2. Tasmi'
+                    tasmi_juz: document.getElementById("tasmi-juz").value.trim() || null,
+                    tasmi_nilai: Number(document.getElementById("tasmi-nilai").value) || 0,
+                    tasmi_catatan: document.getElementById("tasmi-catatan").value.trim() || null,
+
+                    // 3. MHQ
+                    mhq_juz: document.getElementById("mhq-juz").value.trim() || null,
+                    mhq_nilai: Number(document.getElementById("mhq-nilai").value) || 0,
+                    mhq_catatan: document.getElementById("mhq-catatan").value.trim() || null,
+
+                    // 4. Matan
+                    matan_kitab: document.getElementById("matan-kitab").value || null,
+                    matan_nilai: Number(document.getElementById("matan-nilai").value) || 0,
+                    matan_catatan: document.getElementById("matan-catatan").value.trim() || null,
+
+                    // 5. Deskripsi Rapor
+                    deskripsi_rapor: document.getElementById("deskripsi-rapor").value.trim() || null
+                };
+
+                try {
+                    // Gunakan Upsert (Prefer: resolution=merge-duplicates) agar jika data siswa & periode sudah ada, otomatis mengupdate
+                    await supabaseFetch("evaluasi_raport", {
+                        method: "POST",
+                        prefer: "resolution=merge-duplicates,return=representation",
+                        body: payload
+                    });
+
+                    showGlobalAlert(`Berhasil menyimpan nilai Rapor ${currentPeriode} untuk ${namaSantri}!`, "success");
+                    loadExistingEvaluasiData();
+                } catch (err) {
+                    showGlobalAlert(err.message, "error");
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Simpan Nilai Evaluasi & Rapor";
+                }
+            });
+
+            loadSantriByKelas("");
+        });
+    </script>
+</body>
+</html>
