@@ -23,6 +23,7 @@
             --purple: #8b5cf6;
             --amber: #f59e0b;
             --sidebar-width: 260px;
+            --surface: rgba(255, 255, 255, 0.88);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,14 +54,15 @@
         /* Sidebar Adaptive */
         aside.sidebar {
             width: var(--sidebar-width);
-            background: var(--white);
-            border-right: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.82);
+            border-right: 1px solid rgba(255, 255, 255, 0.72);
             display: flex;
             flex-direction: column;
             z-index: 100;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
-            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.03);
+            box-shadow: 12px 0 36px rgba(15, 23, 42, 0.08), inset -1px 0 rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px) saturate(155%);
         }
 
         .sidebar-header {
@@ -146,8 +148,8 @@
         }
 
         header.top-bar {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.76);
+            backdrop-filter: blur(18px) saturate(155%);
             border-bottom: 1px solid var(--line);
             padding: 14px 24px;
             display: flex;
@@ -178,29 +180,40 @@
         main.container {
             flex: 1;
             padding: 24px;
-            max-width: 1280px;
+            max-width: 1480px;
             width: 100%;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 18px;
         }
 
-        /* Hero Banner Embossed Gradient */
+        .dashboard-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .dashboard-heading h1 { font-size: clamp(22px, 2.4vw, 29px); font-weight: 850; letter-spacing: -0.8px; }
+        .dashboard-heading p { margin-top: 5px; color: var(--muted); font-size: 13px; }
+        .heading-date { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 700; }
+        .heading-date svg { width: 16px; height: 16px; color: var(--green-dark); }
+
         .hero-banner {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 45%, #27ae60 100%);
-            border-radius: 22px;
-            padding: 26px 30px;
-            color: #fff;
+            background:
+                radial-gradient(circle at 90% 20%, rgba(39, 174, 96, 0.13), transparent 30%),
+                linear-gradient(115deg, rgba(255,255,255,0.96), rgba(233,248,239,0.9));
+            border-radius: 20px;
+            padding: 20px 24px;
+            color: var(--ink);
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 
-                inset 0 1.5px 0 0 rgba(255, 255, 255, 0.4),
-                0 14px 28px -6px rgba(27, 94, 32, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 1px 0 #fff, 0 10px 24px rgba(15, 23, 42, 0.045);
         }
 
         .hero-banner::after {
@@ -208,50 +221,49 @@
             position: absolute;
             right: -20px;
             bottom: -40px;
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(39,174,96,0.13) 0%, rgba(39,174,96,0) 70%);
             pointer-events: none;
         }
 
-        .hero-text h2 { font-size: 23px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.4px; }
-        .hero-text p { font-size: 13.5px; opacity: 0.92; max-width: 520px; line-height: 1.5; }
+        .hero-text h2 { font-size: 18px; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.3px; }
+        .hero-text p { font-size: 12.5px; color: var(--muted); max-width: 520px; line-height: 1.5; }
 
-        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; z-index: 2; }
+        .hero-actions { display: flex; gap: 9px; flex-wrap: wrap; z-index: 2; }
         .btn-hero {
-            padding: 11px 18px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(10px);
-            color: #fff;
+            padding: 10px 14px;
+            border-radius: 11px;
+            background: #fff;
+            color: var(--green-dark);
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(27, 94, 32, 0.1);
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.08);
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
         .btn-hero:hover { 
-            background: #ffffff; 
-            color: var(--green-dark); 
+            background: var(--green-dark);
+            color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 18px rgba(27, 94, 32, 0.2);
         }
 
         /* EFEK EMBOSS & DEPTH UTAMA PADA KARTU */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
         }
 
         .stat-card, .card {
             background: var(--white);
-            border-radius: 20px;
-            padding: 22px;
+            border-radius: 17px;
+            padding: 18px;
             border: 1px solid rgba(226, 232, 240, 0.9);
             /* Double Shadow untuk efek Emboss Timbul */
             box-shadow: 
@@ -260,7 +272,7 @@
                 0 10px 25px -5px rgba(15, 23, 42, 0.06);
             position: relative;
             overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
 
         /* Floating Accent Top Line */
@@ -315,7 +327,7 @@
         .icon-blue { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e40af; }
 
         .stat-main-val { 
-            font-size: 30px; 
+            font-size: clamp(21px, 2vw, 27px);
             font-weight: 800; 
             color: var(--ink); 
             letter-spacing: -0.8px;
@@ -338,13 +350,21 @@
         /* Grid Layout Utama */
         .dashboard-main-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 22px;
+            grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.85fr);
+            align-items: start;
+            gap: 16px;
         }
 
         @media (max-width: 991px) {
-            .dashboard-main-grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .dashboard-main-grid { grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr); }
         }
+
+        .dashboard-primary, .dashboard-aside { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+        .dashboard-main-grid .card { padding: 19px; border-radius: 17px; }
+        .dashboard-aside .card { padding: 17px; }
+        .dashboard-main-grid .card-header-flex { margin-bottom: 14px; }
+        .dashboard-main-grid .card-header-flex h3 { font-size: 15px; }
 
         .card-header-flex {
             display: flex;
@@ -376,8 +396,28 @@
         .chart-container {
             position: relative;
             width: 100%;
-            height: 320px;
+            height: 270px;
         }
+        .chart-container.compact { height: 185px; }
+        .chart-empty { display: none; padding: 12px; color: var(--muted); text-align: center; font-size: 11px; }
+        .chart-empty.visible { display: block; }
+        .chart-container.empty canvas { display: none; }
+        .chart-container.empty .chart-empty { display: block; }
+
+        .status-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 12px; margin-top: 10px; }
+        .status-legend-item { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; }
+        .status-legend-item strong { margin-left: auto; color: var(--ink); font-size: 11px; }
+
+        .class-list { display: flex; flex-direction: column; gap: 14px; }
+        .class-row { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; }
+        .class-row span { color: #475569; font-size: 11px; font-weight: 700; }
+        .class-row strong { color: var(--ink); font-size: 11px; }
+        .class-progress { grid-column: 1 / -1; height: 7px; overflow: hidden; border-radius: 999px; background: #eef2f6; }
+        .class-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #42bd75, #1b5e20); transition: width 0.5s ease; }
+        .class-empty { padding: 8px 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+        .text-link { color: var(--green-dark); font-size: 11px; font-weight: 800; text-decoration: none; }
+        .text-link:hover { text-decoration: underline; }
 
         /* Activity / Feed Item Embossed */
         .feed-list { display: flex; flex-direction: column; gap: 10px; }
@@ -433,7 +473,24 @@
                 transform: translateX(-100%);
             }
             aside.sidebar.active { transform: translateX(0); }
-            .hero-banner { flex-direction: column; align-items: flex-start; gap: 18px; }
+            .hero-banner { flex-direction: column; align-items: flex-start; gap: 14px; }
+            main.container { padding: 17px 14px; gap: 14px; }
+            .dashboard-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+            .dashboard-main-grid { grid-template-columns: 1fr; }
+            .chart-container { height: 230px; }
+        }
+
+        @media (max-width: 520px) {
+            .summary-grid { gap: 10px; }
+            .stat-card, .dashboard-main-grid .card { padding: 15px; }
+            .stat-card-header span { font-size: 9px; letter-spacing: 0.4px; }
+            .stat-main-val { font-size: 21px; }
+            .stat-sub-info { gap: 7px; font-size: 10px; flex-wrap: wrap; }
+            .stat-card-icon { width: 36px; height: 36px; border-radius: 12px; }
+            .stat-card-icon svg { width: 18px; height: 18px; }
+            .hero-actions { width: 100%; }
+            .btn-hero { flex: 1; justify-content: center; }
+            .chart-container.compact { height: 170px; }
         }
     </style>
 </head>
@@ -479,7 +536,13 @@
             </a>
             <a href="infaq.html" class="nav-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <span>Infaq Mobile (Cepat)</span>
+                <span>Infaq &amp; Sedekah</span>
+            </a>
+
+            <span class="nav-category">PENGELOLAAN</span>
+            <a href="daftar-akun.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0M19 8v6M22 11h-6"/></svg>
+                <span>Daftar Akun</span>
             </a>
         </nav>
 
@@ -500,15 +563,25 @@
                 </button>
                 <span class="page-title">Ringkasan Sistem Ma'had</span>
             </div>
-            <small style="color: var(--muted); font-weight: 700; font-size: 12px;" id="current-date-txt">-</small>
+            <small style="color: var(--muted); font-weight: 700; font-size: 12px;">Yayasan Nuuru Hidaayatil Qur'aan</small>
         </header>
 
         <main class="container">
-            <!-- Hero Banner Embossed -->
+            <section class="dashboard-heading">
+                <div>
+                    <h1>Ringkasan Ma'had</h1>
+                    <p>Pantau aktivitas santri dan operasional ma'had hari ini.</p>
+                </div>
+                <div class="heading-date">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+                    <span id="current-date-txt">-</span>
+                </div>
+            </section>
+
             <section class="hero-banner">
                 <div class="hero-text">
                     <h2>Ahlan wa Sahlan, Pengelola Ma'had 👋</h2>
-                    <p>Pantau rekapan mutaba'ah santri, kehadiran sekelas, dan posisi kas infaq harian dalam satu sistem terpadu.</p>
+                    <p>Semoga aktivitas belajar dan ibadah para santri hari ini berjalan lancar.</p>
                 </div>
                 <div class="hero-actions">
                     <a href="mutabaah.html" class="btn-hero">📖 Setor Mutaba'ah</a>
@@ -516,9 +589,7 @@
                 </div>
             </section>
 
-            <!-- Card Grid Timbul / Emboss -->
             <section class="summary-grid">
-                <!-- 1. Santri Aktif & Gender -->
                 <div class="stat-card santri-card">
                     <div>
                         <div class="stat-card-header">
@@ -536,7 +607,6 @@
                     </div>
                 </div>
 
-                <!-- 2. Saldo Kas Bulan Berjalan -->
                 <div class="stat-card kas-card">
                     <div>
                         <div class="stat-card-header">
@@ -554,7 +624,6 @@
                     </div>
                 </div>
 
-                <!-- 3. Total Setoran Pekan Ini -->
                 <div class="stat-card mutabaah-card">
                     <div>
                         <div class="stat-card-header">
@@ -566,46 +635,91 @@
                         <div class="stat-main-val" id="val-total-mutabaah">0 Catatan</div>
                     </div>
                     <div class="stat-sub-info">
-                        <span>Terhubung Real-time via Supabase</span>
+                        <span>Seluruh catatan tersimpan</span>
+                    </div>
+                </div>
+
+                <div class="stat-card attendance-card">
+                    <div>
+                        <div class="stat-card-header">
+                            <span>TINGKAT KEHADIRAN</span>
+                            <div class="stat-card-icon icon-green">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="10"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-main-val" id="val-present-rate">0%</div>
+                    </div>
+                    <div class="stat-sub-info">
+                        <span><strong id="val-attendance-total">0</strong> catatan kehadiran</span>
                     </div>
                 </div>
             </section>
 
-            <!-- Layout 2 Kolom Grafik & Feed -->
             <div class="dashboard-main-grid">
-                <!-- Left: Grafik Kehadiran Embossed -->
-                <section class="card">
-                    <div class="card-header-flex">
-                        <div>
-                            <h3>Grafik Kehadiran Santri</h3>
-                            <p style="font-size: 12px; color: var(--muted); margin-top: 2px;">Rekap status Hadir, Sakit, Izin, dan Alpa</p>
+                <div class="dashboard-primary">
+                    <section class="card">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>Rekap Kehadiran Santri</h3>
+                                <p style="font-size: 11px; color: var(--muted); margin-top: 3px;">Distribusi status kehadiran berdasarkan catatan mutaba'ah</p>
+                            </div>
+                            <select id="select-kelas-chart" class="select-kelas-chart" aria-label="Filter grafik berdasarkan kelas">
+                                <option value="">Semua Kelas</option>
+                                <option value="Taud 1">Taud 1</option>
+                                <option value="Taud 2">Taud 2</option>
+                                <option value="Mubtadi 1">Mubtadi 1</option>
+                                <option value="Mubtadi 2">Mubtadi 2</option>
+                                <option value="Mutawassith">Mutawassith</option>
+                            </select>
                         </div>
+                        <div class="chart-container" id="attendance-chart-container">
+                            <canvas id="attendanceChart"></canvas>
+                            <div class="chart-empty">Belum ada data kehadiran untuk filter ini.</div>
+                        </div>
+                    </section>
 
-                        <select id="select-kelas-chart" class="select-kelas-chart">
-                            <option value="">-- Semua Kelas --</option>
-                            <option value="Taud">Taud</option>
-                            <option value="Mubtadi 1">Mubtadi 1</option>
-                            <option value="Mubtadi 2">Mubtadi 2</option>
-                            <option value="Mutawassith">Mutawassith</option>
-                        </select>
-                    </div>
+                    <section class="card">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>Setoran Mutaba'ah Terbaru</h3>
+                                <p style="font-size: 11px; color: var(--muted); margin-top: 3px;">Aktivitas belajar santri yang tercatat</p>
+                            </div>
+                            <a class="text-link" href="mutabaah.html">Lihat semua</a>
+                        </div>
+                        <div class="feed-list" id="feed-container">
+                            <div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Memuat setoran terbaru...</div>
+                        </div>
+                    </section>
+                </div>
 
-                    <div class="chart-container">
-                        <canvas id="attendanceChart"></canvas>
-                    </div>
-                </section>
+                <aside class="dashboard-aside">
+                    <section class="card">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>Ringkasan Kehadiran</h3>
+                                <p style="font-size: 11px; color: var(--muted); margin-top: 3px;">Komposisi semua catatan</p>
+                            </div>
+                        </div>
+                        <div class="chart-container compact" id="attendance-doughnut-container">
+                            <canvas id="attendanceDoughnut"></canvas>
+                            <div class="chart-empty">Data kehadiran akan tampil setelah tersedia.</div>
+                        </div>
+                        <div class="status-legend" id="attendance-legend"></div>
+                    </section>
 
-                <!-- Right: Recent Activity / Feed Terbaru -->
-                <section class="card">
-                    <div class="card-header-flex">
-                        <h3>Setoran Terbaru</h3>
-                        <small style="color: var(--green-dark); font-weight: 700; cursor: pointer;" onclick="loadRecentMutabaahFeed()">Refresh</small>
-                    </div>
-
-                    <div class="feed-list" id="feed-container">
-                        <div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Memuat setoran terbaru...</div>
-                    </div>
-                </section>
+                    <section class="card">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>Santri per Kelas</h3>
+                                <p style="font-size: 11px; color: var(--muted); margin-top: 3px;">Sebaran santri aktif di ma'had</p>
+                            </div>
+                            <a class="text-link" href="santri.html">Kelola</a>
+                        </div>
+                        <div class="class-list" id="class-distribution">
+                            <div class="class-empty">Memuat data santri...</div>
+                        </div>
+                    </section>
+                </aside>
             </div>
         </main>
 
@@ -622,6 +736,7 @@
         const SESSION_KEY = "ynhq-supabase-session";
 
         let attendanceChartInstance = null;
+        let attendanceDoughnutInstance = null;
         let cachedMutabaahData = [];
 
         function checkAuth() {
@@ -683,7 +798,7 @@
 
         async function loadSantriSummary() {
             try {
-                const list = await supabaseFetch("santri?select=jenis_kelamin,status");
+                const list = await supabaseFetch("santri?select=jenis_kelamin,status,kelas,program");
                 if (!Array.isArray(list)) return;
 
                 const activeList = list.filter(s => s.status === "Aktif" || !s.status);
@@ -693,9 +808,40 @@
                 document.getElementById("val-total-santri").textContent = `${activeList.length} Santri`;
                 document.getElementById("val-santri-l").textContent = countL;
                 document.getElementById("val-santri-p").textContent = countP;
+                renderClassDistribution(activeList);
             } catch (err) {
                 console.error("Gagal memuat ringkasan santri:", err);
+                document.getElementById("class-distribution").innerHTML =
+                    `<div class="class-empty">Data sebaran kelas belum dapat dimuat.</div>`;
             }
+        }
+
+        function renderClassDistribution(activeSantri) {
+            const classes = ["Taud 1", "Taud 2", "Mubtadi 1", "Mubtadi 2", "Mutawassith"];
+            const counts = new Map(classes.map(name => [name, 0]));
+            activeSantri.forEach(santri => {
+                const name = String(santri.kelas || santri.program || "").trim().toLowerCase();
+                const matchedClass = classes.find(className => className.toLowerCase() === name);
+                if (matchedClass) counts.set(matchedClass, counts.get(matchedClass) + 1);
+            });
+
+            const total = activeSantri.length;
+            const container = document.getElementById("class-distribution");
+            if (!total) {
+                container.innerHTML = `<div class="class-empty">Belum ada data santri aktif.</div>`;
+                return;
+            }
+
+            container.innerHTML = classes.map(name => {
+                const count = counts.get(name);
+                const percentage = Math.round((count / total) * 100);
+                return `<div class="class-row">
+                    <span>${name}</span><strong>${count} santri</strong>
+                    <div class="class-progress" role="progressbar" aria-label="${name}" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
+                        <span style="width: ${percentage}%"></span>
+                    </div>
+                </div>`;
+            }).join("");
         }
 
         async function loadKasSummary() {
@@ -744,10 +890,70 @@
                 const data = await supabaseFetch("mutabaah?select=kehadiran,kelas,tanggal");
                 cachedMutabaahData = Array.isArray(data) ? data : [];
                 document.getElementById("val-total-mutabaah").textContent = `${cachedMutabaahData.length} Catatan`;
+                renderAttendanceSummary();
                 renderChart(document.getElementById("select-kelas-chart").value);
             } catch (err) {
                 console.error("Gagal memuat data kehadiran:", err);
+                document.getElementById("attendance-chart-container").classList.add("empty");
+                document.getElementById("attendance-doughnut-container").classList.add("empty");
+                document.getElementById("attendance-legend").innerHTML =
+                    `<div class="class-empty">Data kehadiran belum dapat dimuat.</div>`;
             }
+        }
+
+        function countAttendanceStatuses(records) {
+            const counts = { Hadir: 0, Sakit: 0, Izin: 0, Alpa: 0 };
+            records.forEach(item => {
+                const status = String(item.kehadiran || "").trim().toLowerCase();
+                if (status === "hadir") counts.Hadir++;
+                else if (status === "sakit") counts.Sakit++;
+                else if (status === "izin") counts.Izin++;
+                else if (status === "alpa") counts.Alpa++;
+            });
+            return counts;
+        }
+
+        function renderAttendanceSummary() {
+            const counts = countAttendanceStatuses(cachedMutabaahData);
+            const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
+            const attendanceRate = total ? Math.round((counts.Hadir / total) * 100) : 0;
+            const colors = { Hadir: "#27ae60", Sakit: "#f59e0b", Izin: "#3b82f6", Alpa: "#ef4444" };
+            const legend = document.getElementById("attendance-legend");
+            const chartContainer = document.getElementById("attendance-doughnut-container");
+
+            document.getElementById("val-present-rate").textContent = `${attendanceRate}%`;
+            document.getElementById("val-attendance-total").textContent = total;
+            chartContainer.classList.toggle("empty", total === 0);
+            legend.innerHTML = Object.entries(counts).map(([status, count]) =>
+                `<div class="status-legend-item">
+                    <span class="status-dot" style="background: ${colors[status]}"></span>
+                    <span>${status}</span><strong>${count}</strong>
+                </div>`
+            ).join("");
+
+            if (attendanceDoughnutInstance) attendanceDoughnutInstance.destroy();
+            attendanceDoughnutInstance = new Chart(document.getElementById("attendanceDoughnut").getContext("2d"), {
+                type: "doughnut",
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        data: Object.values(counts),
+                        backgroundColor: Object.values(colors),
+                        borderColor: "#fff",
+                        borderWidth: 3,
+                        hoverOffset: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "72%",
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: total > 0 }
+                    }
+                }
+            });
         }
 
         async function loadRecentMutabaahFeed() {
@@ -790,14 +996,10 @@
                 filtered = cachedMutabaahData.filter(item => String(item.kelas).toLowerCase() === selectedKelas.toLowerCase());
             }
 
-            let hadir = 0, sakit = 0, izin = 0, alpa = 0;
-            filtered.forEach(item => {
-                const k = String(item.kehadiran).toLowerCase();
-                if (k === "hadir") hadir++;
-                else if (k === "sakit") sakit++;
-                else if (k === "izin") izin++;
-                else if (k === "alpa") alpa++;
-            });
+            const counts = countAttendanceStatuses(filtered);
+            const values = Object.values(counts);
+            const hasRecords = values.some(count => count > 0);
+            document.getElementById("attendance-chart-container").classList.toggle("empty", !hasRecords);
 
             const ctx = document.getElementById("attendanceChart").getContext("2d");
 
@@ -808,10 +1010,10 @@
             attendanceChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Hadir', 'Sakit', 'Izin', 'Alpa'],
+                    labels: Object.keys(counts),
                     datasets: [{
                         label: `Jumlah Kehadiran ${selectedKelas ? '(' + selectedKelas + ')' : '(Semua Kelas)'}`,
-                        data: [hadir, sakit, izin, alpa],
+                        data: values,
                         backgroundColor: [
                             '#27ae60', // Hadir
                             '#f59e0b', // Sakit
