@@ -3,40 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#27ae60">
-    <title>SIFAHMI - Data Santri</title>
+    <meta name="theme-color" content="#1b5e20">
+    <title>SIFAHMI - Data Santri &amp; Import Excel</title>
+    <!-- SheetJS untuk baca & buat file Excel (.xlsx/.xls) dan CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
             color-scheme: light;
             --green: #27ae60;
-            --green-dark: #219150;
+            --green-dark: #1b5e20;
             --green-light: #e9f8ef;
-            --ink: #2c3e50;
-            --muted: #7f8c8d;
-            --line: #dfe5e8;
-            --page: #f4f7f9;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --page: #f1f5f9;
             --white: #ffffff;
-            --danger: #e74c3c;
-            --danger-dark: #c0392b;
+            --danger: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
             background: var(--page);
             color: var(--ink);
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body { display: flex; flex-direction: column; }
 
+        /* Top Bar Header */
         header.top-bar {
             flex-shrink: 0;
             background: var(--white);
             border-bottom: 1px solid var(--line);
-            padding: 12px 24px;
+            padding: 14px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -45,13 +49,12 @@
         }
 
         .brand-header { display: flex; align-items: center; gap: 12px; }
-        .brand-header img { width: 40px; height: 40px; object-fit: contain; }
+        .brand-header img { width: 38px; height: 38px; object-fit: contain; }
 
         .brand-info h1 {
             font-size: 16px;
-            color: var(--green);
+            color: var(--green-dark);
             font-weight: 800;
-            letter-spacing: 0.5px;
             line-height: 1.2;
             display: flex;
             align-items: center;
@@ -60,7 +63,7 @@
         }
 
         .brand-info h1 span.page-title-text { color: var(--ink); font-weight: 700; }
-        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 2px; }
+        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
 
         .btn-back {
             display: flex;
@@ -68,30 +71,37 @@
             gap: 6px;
             padding: 8px 14px;
             border: 1px solid var(--line);
-            border-radius: 8px;
+            border-radius: 10px;
             background: var(--white);
             color: var(--ink);
             text-decoration: none;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.2s;
         }
-
-        .btn-back:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+        .btn-back:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-light); }
 
         main.container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            max-width: 1100px;
+            max-width: 1120px;
             width: 100%;
             margin: 0 auto;
-            padding: 18px 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
 
-        .page-header {
-            flex-shrink: 0;
+        /* Embossed Card */
+        .card {
+            background: var(--white);
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: inset 0 1.5px 0 0 rgba(255, 255, 255, 1), 0 8px 20px -4px rgba(15, 23, 42, 0.05);
+        }
+
+        /* Toolbar & Actions */
+        .toolbar-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -100,129 +110,116 @@
             margin-bottom: 16px;
         }
 
-        .page-title h2 { font-size: 20px; color: var(--ink); }
-        .page-title p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .toolbar-header h2 { font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -0.3px; }
+
+        .action-group { display: flex; gap: 10px; flex-wrap: wrap; }
 
         .btn {
             min-height: 40px;
             padding: 0 16px;
             border: 0;
-            border-radius: 9px;
+            border-radius: 11px;
             font: inherit;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
-            transition: background .2s, opacity .2s;
+            transition: all .2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 7px;
+        }
+        .btn-primary { background: var(--green-dark); color: #fff; box-shadow: 0 4px 12px rgba(27, 94, 32, 0.25); }
+        .btn-primary:hover { background: #144718; transform: translateY(-1px); }
+        .btn-blue { background: var(--blue); color: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25); }
+        .btn-blue:hover { background: #2563eb; transform: translateY(-1px); }
+        .btn-outline { background: #f8fafc; color: var(--ink); border: 1px solid var(--line); }
+        .btn-outline:hover { background: #e2e8f0; }
+        .btn-sm { min-height: 30px; padding: 0 10px; font-size: 11.5px; border-radius: 8px; }
+        .btn-danger-soft { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+        .btn-danger-soft:hover { background: var(--danger); color: #fff; }
+
+        /* Filter Bar */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
         }
 
-        .btn-primary { background: var(--green); color: #fff; }
-        .btn-primary:hover { background: var(--green-dark); }
-        .btn-danger-action { background: var(--danger); color: #fff; }
-        .btn-danger-action:hover { background: var(--danger-dark); }
-        .btn-secondary { background: #f0f3f5; color: var(--muted); }
-        .btn-secondary:hover { background: #e2e7eb; color: var(--ink); }
-
-        .card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            background: var(--white);
-            border-radius: 16px;
-            padding: 18px;
-            border: 1px solid var(--line);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        @media (max-width: 767px) {
+            .filter-grid { grid-template-columns: 1fr; }
         }
 
-        .card-header {
-            flex-shrink: 0;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--line);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-header h3 { font-size: 15px; color: var(--ink); font-weight: 700; }
-
-        .filter-bar { flex-shrink: 0; display: flex; gap: 12px; margin-bottom: 14px; }
-
-        .search-input {
+        input, select, textarea {
             width: 100%;
             min-height: 40px;
             padding: 8px 12px;
             border: 1px solid var(--line);
-            border-radius: 8px;
+            border-radius: 10px;
             outline: none;
             background: #fff;
             color: var(--ink);
             font: inherit;
             font-size: 13px;
         }
+        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .15); }
 
-        .search-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
-
-        .table-responsive {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: auto;
-            border-radius: 10px;
-            border: 1px solid var(--line);
+        /* Stat Pills */
+        .stat-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
         }
+        .pill {
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            color: var(--muted);
+        }
+        .pill strong { color: var(--ink); }
 
-        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: #fff; }
-
-        th {
-            position: sticky;
-            top: 0;
+        /* Table Santri */
+        .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+        table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        table.data-table th, table.data-table td {
+            padding: 11px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+        }
+        table.data-table th {
             background: #f8fafc;
             color: var(--muted);
-            font-weight: 700;
-            text-transform: uppercase;
             font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--line);
-            white-space: nowrap;
-            z-index: 2;
         }
+        table.data-table tr:last-child td { border-bottom: none; }
+        table.data-table tr:hover td { background: #f8fafc; }
 
-        td { padding: 11px 14px; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align: middle; }
-        tr:last-child td { border-bottom: 0; }
-        tr:hover td { background: #fcfdfe; }
-
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
-        .badge-active { background: #e9f8ef; color: #1e8449; }
-        .badge-inactive { background: #fdecea; color: #a93226; }
-        .badge-alumni { background: #eaf3fb; color: #24577a; }
-
-        /* Tombol Icon Pensil */
-        .btn-action-pencil {
-            padding: 6px 10px;
-            border: 1px solid var(--line);
-            background: #fff;
-            color: var(--ink);
+        .badge-kelas {
+            display: inline-block;
+            padding: 3px 9px;
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        .btn-action-pencil:hover {
-            border-color: var(--green);
+            font-size: 11px;
+            font-weight: 800;
             background: var(--green-light);
-            transform: scale(1.05);
+            color: var(--green-dark);
         }
 
-        /* Modal Base */
+        .badge-status-aktif { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+        .badge-status-non { background: #f1f5f9; color: #64748b; padding: 3px 8px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+
+        /* Modal Dialog */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(15, 23, 42, 0.5);
             backdrop-filter: blur(4px);
             display: grid;
             place-items: center;
@@ -232,101 +229,78 @@
             visibility: hidden;
             transition: all 0.25s ease;
         }
-
         .modal-overlay.active { opacity: 1; visibility: visible; }
 
         .modal-card {
             background: #fff;
-            width: min(100%, 650px);
+            width: min(100%, 620px);
             max-height: 90vh;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transform: scale(0.95);
-            transition: transform 0.25s ease;
         }
-
-        .modal-overlay.active .modal-card { transform: scale(1); }
+        .modal-card.modal-lg { width: min(100%, 840px); }
 
         .modal-header {
-            flex-shrink: 0;
-            padding: 16px 22px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 { font-size: 16px; font-weight: 800; color: var(--ink); }
+        .btn-close-modal { background: transparent; border: none; font-size: 24px; color: var(--muted); cursor: pointer; line-height: 1; }
+        .modal-body { flex: 1; overflow-y: auto; padding: 18px 20px; }
+        .modal-footer { padding: 14px 20px; border-top: 1px solid var(--line); background: #f8fafc; display: flex; justify-content: flex-end; gap: 10px; }
+
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 600px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+        .field-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+        .field-group label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+
+        /* Dropzone Import Excel / CSV */
+        .upload-dropzone {
+            border: 2px dashed #94a3b8;
+            border-radius: 14px;
+            padding: 24px 16px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+        }
+        .upload-dropzone:hover, .upload-dropzone.dragover {
+            border-color: var(--green);
+            background: var(--green-light);
+        }
+        .upload-dropzone p { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-top: 8px; }
+        .upload-dropzone small { font-size: 12px; color: var(--muted); }
+
+        .template-banner {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-
-        .modal-header h3 { font-size: 17px; color: var(--ink); font-weight: 700; }
-
-        .btn-close-modal {
-            background: transparent;
-            border: none;
-            font-size: 22px;
-            color: var(--muted);
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-        }
-
-        .btn-close-modal:hover { background: #f0f3f5; color: var(--ink); }
-        .modal-body { flex: 1; overflow-y: auto; padding: 20px 22px; }
-
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-        .field { margin-bottom: 4px; }
-        .field.full-width { grid-column: 1 / -1; }
-
-        label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: var(--ink); }
-        label span.req { color: var(--danger); }
-
-        input, select, textarea {
-            width: 100%;
-            min-height: 42px;
-            padding: 9px 12px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            outline: none;
-            background: #fff;
-            color: var(--ink);
-            font: inherit;
-            font-size: 13px;
-        }
-
-        textarea { min-height: 70px; resize: vertical; }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(39, 174, 96, .12);
-        }
-
-        .modal-footer {
-            flex-shrink: 0;
-            padding: 14px 22px;
-            border-top: 1px solid var(--line);
-            background: #fdfdfd;
-            display: flex;
-            justify-content: flex-end;
+            flex-wrap: wrap;
             gap: 10px;
         }
+        .template-banner span { font-size: 12.5px; color: #1e3a8a; font-weight: 600; }
 
-        .message { margin-bottom: 16px; padding: 10px 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; }
+        .preview-box { margin-top: 16px; }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12.5px; font-weight: 800; }
+
+        .message { padding: 10px 14px; border-radius: 10px; font-size: 12.5px; }
         .message[hidden] { display: none !important; }
         .message.error { background: #fdecea; color: #a93226; border: 1px solid #fadbd8; }
         .message.success { background: #e9f8ef; color: #1e8449; border: 1px solid #d4efdf; }
 
-        footer {
-            flex-shrink: 0;
-            background: var(--white);
-            border-top: 1px solid var(--line);
-            padding: 12px 16px;
-            color: #95a5a6;
-            text-align: center;
-            font-size: 11px;
-            line-height: 1.6;
-        }
-        footer strong { color: var(--muted); }
+        footer { background: var(--white); border-top: 1px solid var(--line); padding: 16px; color: #94a3b8; text-align: center; font-size: 11.5px; margin-top: auto; }
     </style>
 </head>
 <body>
@@ -335,165 +309,227 @@
         <div class="brand-header">
             <img src="logo.png" alt="Logo YNHQ">
             <div class="brand-info">
-                <h1>SIFAHMI <span class="page-title-text">- DATA SANTRI</span></h1>
-                <p>SYSTEM INFORMASI HAFALAN &amp; MUTABAAH ISLAMI</p>
+                <h1>SIFAHMI <span class="page-title-text">- DATA SANTRI MA'HAD</span></h1>
+                <p>MANAJEMEN INDUK SANTRI &amp; IMPORT MASSAL EXCEL / CSV</p>
             </div>
         </div>
-
-        <div class="nav-actions">
-            <a href="dashboard.html" class="btn-back">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                <span>Dashboard</span>
-            </a>
-        </div>
+        <a href="dashboard.html" class="btn-back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Dashboard</span>
+        </a>
     </header>
 
     <main class="container">
-        <div class="page-header">
-            <div class="page-title">
-                <h2>Manajemen Data Santri</h2>
-                <p>Kelola data santri terdaftar dan tambah data baru via Supabase Database.</p>
-            </div>
-            <button class="btn btn-primary" id="btn-open-modal" type="button">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <span>Tambah Santri Baru</span>
-            </button>
-        </div>
-
         <div class="message" id="global-alert" hidden></div>
 
         <section class="card">
-            <div class="card-header">
-                <h3>Daftar Data Santri</h3>
+            <div class="toolbar-header">
+                <h2>Daftar Induk Santri</h2>
+                <div class="action-group">
+                    <button type="button" class="btn btn-blue" id="btn-open-import">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <span>Import Excel / CSV</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btn-open-add">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <span>+ Tambah Santri</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="filter-bar">
-                <input type="text" id="search-input" class="search-input" placeholder="Cari nama santri, NIS, atau kelas...">
+            <!-- Filter & Pencarian -->
+            <div class="filter-grid">
+                <input type="text" id="search-santri" placeholder="Cari nama santri atau NIS...">
+                <select id="filter-kelas">
+                    <option value="">-- Semua Kelas --</option>
+                    <option value="Taud 1">Taud 1</option>
+                    <option value="Taud 2">Taud 2</option>
+                    <option value="Mubtadi 1">Mubtadi 1</option>
+                    <option value="Mubtadi 2">Mubtadi 2</option>
+                    <option value="Mutawassith">Mutawassith</option>
+                </select>
+                <select id="filter-status">
+                    <option value="">-- Semua Status --</option>
+                    <option value="Aktif">Aktif</option>
+                    <option value="Non-Aktif">Non-Aktif</option>
+                </select>
             </div>
 
-            <div class="table-responsive">
-                <table>
+            <!-- Statistik Ringkas -->
+            <div class="stat-pills">
+                <span class="pill">Ditampilkan: <strong id="count-shown">0</strong> Santri</span>
+                <span class="pill">Laki-laki: <strong id="count-l">0</strong></span>
+                <span class="pill">Perempuan: <strong id="count-p">0</strong></span>
+            </div>
+
+            <!-- Tabel Santri -->
+            <div class="table-wrap">
+                <table class="data-table">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th style="width: 45px;">No</th>
                             <th>NIS</th>
-                            <th>Nama Santri</th>
-                            <th>L/P</th>
+                            <th>Nama Lengkap</th>
                             <th>Kelas</th>
-                            <th>Ortu / No. WA</th>
+                            <th>L / P</th>
+                            <th>Nama Wali &amp; No. HP</th>
                             <th>Status</th>
-                            <th style="text-align: center;">Aksi</th>
+                            <th style="width: 130px;">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="santri-table-body">
-                        <!-- Data santri dirender via JavaScript -->
+                    <tbody id="santri-tbody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 24px; color: var(--muted);">Memuat data santri...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
 
-    <!-- Modal Pilihan Aksi (Edit / Hapus / Batal) -->
-    <div class="modal-overlay" id="action-modal" aria-hidden="true">
-        <div class="modal-card" style="width: min(100%, 420px);">
+    <!-- MODAL 1: TAMBAH / EDIT SANTRI MANUAL -->
+    <div class="modal-overlay" id="modal-form-santri">
+        <div class="modal-card">
             <div class="modal-header">
-                <h3>Kelola Data Santri</h3>
-                <button type="button" class="btn-close-modal" id="btn-close-action">&times;</button>
+                <h3 id="modal-santri-title">Tambah Data Santri</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-form">&times;</button>
             </div>
-            <div class="modal-body" style="text-align: center; padding: 22px;">
-                <p id="action-target-info" style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 20px;"></p>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button type="button" class="btn btn-primary" id="btn-action-edit">✏️ Edit Data Santri</button>
-                    <button type="button" class="btn btn-danger-action" id="btn-action-delete">🗑️ Hapus Santri</button>
-                    <button type="button" class="btn btn-secondary" id="btn-action-cancel">Batal</button>
+            <form id="form-santri" class="modal-body">
+                <input type="hidden" id="edit-santri-id">
+                <div class="form-grid-2">
+                    <div class="field-group">
+                        <label>Nomor Induk Santri (NIS) *</label>
+                        <input type="text" id="input-nis" required placeholder="Contoh: 2026001">
+                    </div>
+                    <div class="field-group">
+                        <label>Kelas Ma'had *</label>
+                        <select id="input-kelas" required>
+                            <option value="Taud 1">Taud 1</option>
+                            <option value="Taud 2">Taud 2</option>
+                            <option value="Mubtadi 1">Mubtadi 1</option>
+                            <option value="Mubtadi 2">Mubtadi 2</option>
+                            <option value="Mutawassith">Mutawassith</option>
+                        </select>
+                    </div>
                 </div>
+
+                <div class="field-group">
+                    <label>Nama Lengkap Santri *</label>
+                    <input type="text" id="input-nama" required placeholder="Nama lengkap sesuai akta">
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="field-group">
+                        <label>Jenis Kelamin *</label>
+                        <select id="input-jk">
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label>Status Keaktifan</label>
+                        <select id="input-status">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Non-Aktif">Non-Aktif</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="field-group">
+                        <label>Tempat Lahir</label>
+                        <input type="text" id="input-tempat-lahir" placeholder="Contoh: Bandung">
+                    </div>
+                    <div class="field-group">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" id="input-tanggal-lahir">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="field-group">
+                        <label>Nama Orang Tua / Wali</label>
+                        <input type="text" id="input-wali" placeholder="Nama Ayah / Ibu">
+                    </div>
+                    <div class="field-group">
+                        <label>No. HP / WhatsApp Wali</label>
+                        <input type="text" id="input-hp" placeholder="08xxxxxxxxxx">
+                    </div>
+                </div>
+
+                <div class="field-group" style="margin-bottom: 0;">
+                    <label>Alamat Lengkap</label>
+                    <textarea id="input-alamat" rows="2" placeholder="Alamat domisili santri..."></textarea>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="btn-cancel-form">Batal</button>
+                <button type="submit" form="form-santri" class="btn btn-primary" id="btn-submit-santri">Simpan Santri</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Form Input / Edit Santri -->
-    <div class="modal-overlay" id="santri-modal" aria-hidden="true">
-        <div class="modal-card">
+    <!-- MODAL 2: IMPORT EXCEL / CSV -->
+    <div class="modal-overlay" id="modal-import">
+        <div class="modal-card modal-lg">
             <div class="modal-header">
-                <h3 id="form-modal-title">Form Input Santri Baru</h3>
-                <button type="button" class="btn-close-modal" id="btn-close-modal">&times;</button>
+                <h3>Import Data Santri via Excel / CSV</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-import">&times;</button>
             </div>
+            <div class="modal-body">
+                <div class="message" id="import-alert" hidden></div>
 
-            <form id="santri-form" novalidate>
-                <div class="modal-body">
-                    <div class="message" id="modal-alert" hidden></div>
+                <!-- Banner Download Template -->
+                <div class="template-banner">
+                    <span>Belum punya format filenya? Unduh template Excel resmi agar kolom otomatis terbaca:</span>
+                    <button type="button" class="btn btn-outline btn-sm" id="btn-download-template" style="background: #fff; border-color: #93c5fd; color: #1d4ed8;">
+                        📥 Download Template Excel (.xlsx)
+                    </button>
+                </div>
 
-                    <div class="form-grid">
-                        <div class="field">
-                            <label for="nis">NIS / Nomor Induk Santri <span class="req">*</span></label>
-                            <input id="nis" name="nis" type="text" placeholder="Contoh: 202601001" required>
-                        </div>
-                        <div class="field">
-                            <label for="nama-lengkap">Nama Lengkap Santri <span class="req">*</span></label>
-                            <input id="nama-lengkap" name="namaLengkap" type="text" placeholder="Nama lengkap santri" required>
-                        </div>
-                        <div class="field">
-                            <label for="jenis-kelamin">Jenis Kelamin <span class="req">*</span></label>
-                            <select id="jenis-kelamin" name="jenisKelamin" required>
-                                <option value="">-- Pilih Jenis Kelamin --</option>
-                                <option value="Laki-laki">Laki-laki</option>
-                                <option value="Perempuan">Perempuan</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label for="tempat-lahir">Tempat Lahir</label>
-                            <input id="tempat-lahir" name="tempatLahir" type="text" placeholder="Kota lahir">
-                        </div>
-                        <div class="field">
-                            <label for="tanggal-lahir">Tanggal Lahir</label>
-                            <input id="tanggal-lahir" name="tanggalLahir" type="date">
-                        </div>
-                        
-                        <!-- Pilihan 4 Kelas MDTA -->
-                        <div class="field">
-                            <label for="kelas">Kelas <span class="req">*</span></label>
-                            <select id="kelas" name="kelas" required>
-                                <option value="">-- Pilih Kelas --</option>
-                                <option value="Taud">Taud</option>
-                                <option value="Mubtadi 1">Mubtadi 1</option>
-                                <option value="Mubtadi 2">Mubtadi 2</option>
-                                <option value="Mutawassith">Mutawassith</option>
-                            </select>
-                        </div>
+                <!-- Area Pilih / Drop File -->
+                <div class="upload-dropzone" id="dropzone-area">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                    <p id="dropzone-label">Klik untuk memilih file Excel (.xlsx / .xls) atau CSV (.csv)</p>
+                    <small>Atau seret dan lepas (drag &amp; drop) file ke kotak ini</small>
+                    <input type="file" id="file-excel-input" accept=".xlsx, .xls, .csv" hidden>
+                </div>
 
-                        <div class="field">
-                            <label for="nama-ortu">Nama Orang Tua / Wali <span class="req">*</span></label>
-                            <input id="nama-ortu" name="namaOrtu" type="text" placeholder="Nama ayah / ibu / wali" required>
-                        </div>
-                        <div class="field">
-                            <label for="no-hp">No. WhatsApp / HP Ortu <span class="req">*</span></label>
-                            <input id="no-hp" name="noHp" type="tel" placeholder="081234567890" required>
-                        </div>
-                        <div class="field">
-                            <label for="status">Status Santri <span class="req">*</span></label>
-                            <select id="status" name="status" required>
-                                <option value="Aktif">Aktif</option>
-                                <option value="Non-Aktif">Non-Aktif</option>
-                                <option value="Alumni">Alumni</option>
-                            </select>
-                        </div>
-                        <div class="field full-width">
-                            <label for="alamat">Alamat Lengkap</label>
-                            <textarea id="alamat" name="alamat" placeholder="Jalan, RT/RW, Kelurahan, Kecamatan, Kota/Kabupaten"></textarea>
-                        </div>
+                <!-- Tabel Pratinjau Data Sebelum Upload -->
+                <div class="preview-box" id="preview-section" hidden>
+                    <div class="preview-header">
+                        <span id="preview-summary-txt" style="color: var(--green-dark);">0 baris siap diimport</span>
+                        <small style="color: var(--muted);">Pastikan NIS &amp; Nama sudah benar</small>
+                    </div>
+                    <div class="table-wrap" style="max-height: 280px; overflow-y: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>NIS</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Kelas</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Nama Wali</th>
+                                    <th>No. HP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preview-tbody"></tbody>
+                        </table>
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="btn-submit">Simpan Santri</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="btn-cancel-import">Tutup</button>
+                <button type="button" class="btn btn-primary" id="btn-process-import" disabled>
+                    Upload &amp; Simpan Semua ke Database
+                </button>
+            </div>
         </div>
     </div>
 
     <footer>
-        <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
+        <strong>© 2026 Management Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> - Bandung
     </footer>
 
     <script>
@@ -503,330 +539,428 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
         const SESSION_KEY = "ynhq-supabase-session";
 
-        let selectedSantriData = null;
-        let isEditMode = false;
+        let allSantriData = [];
+        let parsedImportRows = [];
 
         function checkAuth() {
-            const sessionRaw = localStorage.getItem(SESSION_KEY);
-            if (!sessionRaw) {
-                window.location.href = "login.html";
-            }
+            if (!localStorage.getItem(SESSION_KEY)) window.location.href = "login.html";
         }
 
         function getAuthToken() {
-            const sessionRaw = localStorage.getItem(SESSION_KEY);
-            if (!sessionRaw) return SUPABASE_ANON_KEY;
-            try {
-                const session = JSON.parse(sessionRaw);
-                return session.access_token || SUPABASE_ANON_KEY;
-            } catch (e) {
-                return SUPABASE_ANON_KEY;
-            }
+            const raw = localStorage.getItem(SESSION_KEY);
+            if (!raw) return SUPABASE_ANON_KEY;
+            try { return JSON.parse(raw).access_token || SUPABASE_ANON_KEY; }
+            catch (e) { return SUPABASE_ANON_KEY; }
         }
 
         async function supabaseFetch(path, options = {}) {
-            const token = getAuthToken();
-            const headers = {
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": "Bearer " + token,
-                "Content-Type": "application/json",
-                "Prefer": options.prefer || "return=representation",
-                ...options.headers
-            };
-
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
                 method: options.method || "GET",
-                headers: headers,
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": "Bearer " + getAuthToken(),
+                    "Content-Type": "application/json",
+                    "Prefer": options.prefer || "return=representation",
+                    ...options.headers
+                },
                 body: options.body ? JSON.stringify(options.body) : null
             });
 
-            if (!response.ok) {
-                let errMessage = "Terjadi kesalahan pada server Supabase.";
-                try {
-                    const errJson = await response.json();
-                    errMessage = errJson.message || errJson.hint || errMessage;
-                } catch (e) {}
-
-                if (errMessage.toLowerCase().includes("jwt expired") || response.status === 401) {
+            if (!res.ok) {
+                let msg = "Terjadi kesalahan pada Supabase.";
+                try { const j = await res.json(); msg = j.message || j.hint || msg; } catch (e) {}
+                if (res.status === 401) {
                     localStorage.removeItem(SESSION_KEY);
-                    alert("Sesi login Anda telah berakhir. Silakan login kembali.");
                     window.location.href = "login.html";
                     return null;
                 }
-
-                throw new Error(errMessage);
+                throw new Error(msg);
             }
-
-            if (response.status === 204) return null;
-            return await response.json();
+            if (res.status === 204) return null;
+            return await res.json();
         }
 
-        function showGlobalAlert(msg, kind) {
-            const alertBox = document.getElementById("global-alert");
-            if (alertBox) {
-                alertBox.textContent = msg;
-                alertBox.className = "message " + kind;
-                alertBox.hidden = false;
-                setTimeout(() => { alertBox.hidden = true; }, 4000);
-            }
-        }
-
-        function showModalAlert(msg, kind) {
-            const alertBox = document.getElementById("modal-alert");
-            if (alertBox) {
-                alertBox.textContent = msg;
-                alertBox.className = "message " + kind;
-                alertBox.hidden = false;
+        function showAlert(msg, kind, targetId = "global-alert") {
+            const box = document.getElementById(targetId);
+            if (!box) return;
+            box.textContent = msg;
+            box.className = "message " + kind;
+            box.hidden = false;
+            if (targetId === "global-alert") {
+                setTimeout(() => { box.hidden = true; }, 4500);
             }
         }
 
-        function openAddModal() {
-            isEditMode = false;
-            const form = document.getElementById("santri-form");
-            if (form) form.reset();
-
-            document.getElementById("form-modal-title").textContent = "Form Input Santri Baru";
-            document.getElementById("nis").readOnly = false;
-            
-            const modalAlert = document.getElementById("modal-alert");
-            if (modalAlert) modalAlert.hidden = true;
-            
-            const modal = document.getElementById("santri-modal");
-            if (modal) {
-                modal.classList.add("active");
-                modal.setAttribute("aria-hidden", "false");
-            }
-        }
-
-        function openEditModal(santri) {
-            isEditMode = true;
-            selectedSantriData = santri;
-            
-            document.getElementById("form-modal-title").textContent = `Edit Data Santri: ${santri.nama_lengkap}`;
-            document.getElementById("nis").value = santri.nis || "";
-            document.getElementById("nis").readOnly = true;
-            document.getElementById("nama-lengkap").value = santri.nama_lengkap || "";
-            document.getElementById("jenis-kelamin").value = santri.jenis_kelamin || "";
-            document.getElementById("tempat-lahir").value = santri.tempat_lahir || "";
-            document.getElementById("tanggal-lahir").value = santri.tanggal_lahir || "";
-            document.getElementById("kelas").value = santri.kelas || santri.program || "";
-            document.getElementById("nama-ortu").value = santri.nama_ortu || "";
-            document.getElementById("no-hp").value = santri.no_hp || "";
-            document.getElementById("status").value = santri.status || "Aktif";
-            document.getElementById("alamat").value = santri.alamat || "";
-
-            closeActionModal();
-
-            const modalAlert = document.getElementById("modal-alert");
-            if (modalAlert) modalAlert.hidden = true;
-
-            const modal = document.getElementById("santri-modal");
-            if (modal) {
-                modal.classList.add("active");
-                modal.setAttribute("aria-hidden", "false");
-            }
-        }
-
-        function closeModal() {
-            const modal = document.getElementById("santri-modal");
-            if (modal) {
-                modal.classList.remove("active");
-                modal.setAttribute("aria-hidden", "true");
-            }
-        }
-
-        // Modal Action (Pilihan Edit/Hapus/Batal)
-        function openActionModal(santri) {
-            selectedSantriData = santri;
-            document.getElementById("action-target-info").textContent = `${santri.nama_lengkap} (${santri.nis})`;
-            const actionModal = document.getElementById("action-modal");
-            if (actionModal) actionModal.classList.add("active");
-        }
-
-        function closeActionModal() {
-            const actionModal = document.getElementById("action-modal");
-            if (actionModal) actionModal.classList.remove("active");
-        }
-
-        async function renderSantriTable(filterQuery = "") {
-            const tbody = document.getElementById("santri-table-body");
-            if (!tbody) return;
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px;">Memuat data santri dari database...</td></tr>`;
-
+        // Load & Render Daftar Santri
+        async function loadSantri() {
             try {
-                const list = await supabaseFetch("santri?select=*&order=id.desc");
-                tbody.innerHTML = "";
-
-                if (!Array.isArray(list)) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--muted); padding: 24px;">Gagal memuat data santri.</td></tr>`;
-                    return;
-                }
-
-                window.cachedSantriList = list;
-
-                const query = String(filterQuery || "").toLowerCase();
-                const filtered = list.filter(item => {
-                    const nama = String(item.nama_lengkap || "").toLowerCase();
-                    const nis = String(item.nis || "").toLowerCase();
-                    const kelas = String(item.kelas || item.program || "").toLowerCase();
-                    return nama.includes(query) || nis.includes(query) || kelas.includes(query);
-                });
-
-                if (filtered.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--muted); padding: 24px;">Tidak ada data santri ditemukan.</td></tr>`;
-                    return;
-                }
-
-                filtered.forEach((item, index) => {
-                    const tr = document.createElement("tr");
-                    let badgeClass = "badge-active";
-                    if (item.status === "Non-Aktif") badgeClass = "badge-inactive";
-                    if (item.status === "Alumni") badgeClass = "badge-alumni";
-
-                    tr.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td><strong>${item.nis || '-'}</strong></td>
-                        <td>${item.nama_lengkap || '-'}</td>
-                        <td>${item.jenis_kelamin === "Laki-laki" ? "L" : "P"}</td>
-                        <td><strong>${item.kelas || item.program || '-'}</strong></td>
-                        <td>${item.nama_ortu || '-'}<br><small style="color: var(--muted);">${item.no_hp || '-'}</small></td>
-                        <td><span class="badge ${badgeClass}">${item.status || 'Aktif'}</span></td>
-                        <td style="text-align: center;">
-                            <button class="btn-action-pencil" onclick="triggerPencilAction('${item.nis}')" title="Kelola Santri">✏️</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                const list = await supabaseFetch("santri?select=*&order=nama_lengkap.asc");
+                allSantriData = Array.isArray(list) ? list : [];
+                renderSantriTable();
             } catch (err) {
-                showGlobalAlert(err.message, "error");
+                document.getElementById("santri-tbody").innerHTML =
+                    `<tr><td colspan="8" style="text-align:center;color:var(--danger);padding:20px;">Gagal memuat data: ${err.message}</td></tr>`;
             }
         }
 
-        function triggerPencilAction(nis) {
-            if (window.cachedSantriList) {
-                const item = window.cachedSantriList.find(s => String(s.nis) === String(nis));
-                if (item) {
-                    openActionModal(item);
-                }
+        function renderSantriTable() {
+            const q = document.getElementById("search-santri").value.toLowerCase().trim();
+            const fKelas = document.getElementById("filter-kelas").value;
+            const fStatus = document.getElementById("filter-status").value;
+
+            const filtered = allSantriData.filter(s => {
+                const matchText = !q ||
+                    String(s.nama_lengkap || "").toLowerCase().includes(q) ||
+                    String(s.nis || "").toLowerCase().includes(q);
+                const matchKelas = !fKelas || String(s.kelas || s.program || "") === fKelas;
+                const matchStatus = !fStatus || String(s.status || "Aktif") === fStatus;
+                return matchText && matchKelas && matchStatus;
+            });
+
+            document.getElementById("count-shown").textContent = filtered.length;
+            document.getElementById("count-l").textContent = filtered.filter(s => s.jenis_kelamin === "Laki-laki").length;
+            document.getElementById("count-p").textContent = filtered.filter(s => s.jenis_kelamin === "Perempuan").length;
+
+            const tbody = document.getElementById("santri-tbody");
+            tbody.innerHTML = "";
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px;">Tidak ada data santri yang cocok.</td></tr>`;
+                return;
             }
+
+            filtered.forEach((s, idx) => {
+                const tr = document.createElement("tr");
+                const isAktif = (s.status || "Aktif") === "Aktif";
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td><strong>${s.nis || "-"}</strong></td>
+                    <td><strong>${s.nama_lengkap}</strong></td>
+                    <td><span class="badge-kelas">${s.kelas || s.program || "-"}</span></td>
+                    <td>${s.jenis_kelamin || "-"}</td>
+                    <td>${s.nama_wali || "-"} <br><small style="color:var(--muted);">${s.no_hp || ""}</small></td>
+                    <td><span class="${isAktif ? 'badge-status-aktif' : 'badge-status-non'}">${s.status || "Aktif"}</span></td>
+                    <td>
+                        <div style="display:flex;gap:6px;">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="openEditSantri('${s.id}')">Edit</button>
+                            <button type="button" class="btn btn-danger-soft btn-sm" onclick="deleteSantri('${s.id}', '${String(s.nama_lengkap).replace(/'/g, "\\'")}')">Hapus</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        async function deleteSantri(nis) {
-            if (confirm(`Apakah Anda yakin ingin menghapus santri dengan NIS ${nis}?`)) {
+        // Edit & Hapus Manual
+        window.openEditSantri = function(id) {
+            const s = allSantriData.find(item => String(item.id) === String(id));
+            if (!s) return;
+
+            document.getElementById("modal-santri-title").textContent = "Edit Data Santri";
+            document.getElementById("edit-santri-id").value = s.id;
+            document.getElementById("input-nis").value = s.nis || "";
+            document.getElementById("input-nama").value = s.nama_lengkap || "";
+            document.getElementById("input-kelas").value = s.kelas || s.program || "Taud 1";
+            document.getElementById("input-jk").value = s.jenis_kelamin || "Laki-laki";
+            document.getElementById("input-status").value = s.status || "Aktif";
+            document.getElementById("input-tempat-lahir").value = s.tempat_lahir || "";
+            document.getElementById("input-tanggal-lahir").value = s.tanggal_lahir || "";
+            document.getElementById("input-wali").value = s.nama_wali || "";
+            document.getElementById("input-hp").value = s.no_hp || "";
+            document.getElementById("input-alamat").value = s.alamat || "";
+
+            document.getElementById("modal-form-santri").classList.add("active");
+        };
+
+        window.deleteSantri = async function(id, nama) {
+            if (!confirm(`Hapus data santri "${nama}"?`)) return;
+            try {
+                await supabaseFetch(`santri?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+                showAlert(`Data santri ${nama} berhasil dihapus.`, "success");
+                loadSantri();
+            } catch (err) {
+                showAlert("Gagal menghapus: " + err.message, "error");
+            }
+        };
+
+        // Helper Normalisasi Data Excel/CSV
+        function normalizeGender(val) {
+            const v = String(val || "").trim().toLowerCase();
+            if (v === "p" || v === "perempuan" || v === "wanita" || v === "akhwat") return "Perempuan";
+            return "Laki-laki";
+        }
+
+        function normalizeKelas(val) {
+            const v = String(val || "").trim().toLowerCase();
+            if (v.includes("taud 1") || v === "taud1") return "Taud 1";
+            if (v.includes("taud 2") || v === "taud2") return "Taud 2";
+            if (v.includes("mubtadi 1") || v === "mubtadi1") return "Mubtadi 1";
+            if (v.includes("mubtadi 2") || v === "mubtadi2") return "Mubtadi 2";
+            if (v.includes("mutawas")) return "Mutawassith";
+            return val ? String(val).trim() : "Taud 1";
+        }
+
+        function normalizeExcelDate(val) {
+            if (!val) return null;
+            if (typeof val === "number") {
+                // Konversi serial number tanggal Excel ke YYYY-MM-DD
+                const utcDays = Math.floor(val - 25569);
+                const dateObj = new Date(utcDays * 86400 * 1000);
+                if (!isNaN(dateObj.getTime())) return dateObj.toISOString().slice(0, 10);
+            }
+            const str = String(val).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+            return null;
+        }
+
+        function handleFileUpload(file) {
+            if (!file) return;
+            document.getElementById("dropzone-label").textContent = `File terpilih: ${file.name}`;
+            document.getElementById("import-alert").hidden = true;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
                 try {
-                    await supabaseFetch(`santri?nis=eq.${encodeURIComponent(nis)}`, { method: "DELETE" });
-                    closeActionModal();
-                    const searchInput = document.getElementById("search-input");
-                    renderSantriTable(searchInput ? searchInput.value : "");
-                    showGlobalAlert("Data santri berhasil dihapus.", "success");
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: "array" });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    if (!rawRows || rawRows.length === 0) {
+                        showAlert("File kosong atau tidak memiliki baris data.", "error", "import-alert");
+                        return;
+                    }
+
+                    parsedImportRows = [];
+                    rawRows.forEach((row, idx) => {
+                        // Normalisasi nama kolom (tidak sensitif huruf besar/kecil & spasi)
+                        const norm = {};
+                        Object.keys(row).forEach(k => {
+                            const cleanKey = k.toLowerCase().trim().replace(/[^a-z0-9]/g, "_");
+                            norm[cleanKey] = row[k];
+                        });
+
+                        const nama = String(norm.nama_lengkap || norm.nama_santri || norm.nama || "").trim();
+                        if (!nama) return; // Lewati baris kosong
+
+                        const rawNis = String(norm.nis || norm.nomor_induk || "").trim();
+                        const nis = rawNis || `SNT-${Date.now().toString().slice(-4)}${idx + 1}`;
+
+                        parsedImportRows.push({
+                            nis: nis,
+                            nama_lengkap: nama,
+                            kelas: normalizeKelas(norm.kelas || norm.program),
+                            jenis_kelamin: normalizeGender(norm.jenis_kelamin || norm.jk || norm.gender),
+                            tempat_lahir: String(norm.tempat_lahir || "").trim() || null,
+                            tanggal_lahir: normalizeExcelDate(norm.tanggal_lahir || norm.tgl_lahir),
+                            nama_wali: String(norm.nama_wali || norm.wali || norm.orang_tua || "").trim() || null,
+                            no_hp: String(norm.no_hp || norm.hp || norm.whatsapp || norm.telepon || "").trim() || null,
+                            alamat: String(norm.alamat || "").trim() || null,
+                            status: String(norm.status || "Aktif").trim() || "Aktif"
+                        });
+                    });
+
+                    if (parsedImportRows.length === 0) {
+                        showAlert("Kolom 'nama_lengkap' tidak ditemukan atau semua baris nama kosong.", "error", "import-alert");
+                        return;
+                    }
+
+                    renderImportPreview();
                 } catch (err) {
-                    showGlobalAlert(err.message, "error");
+                    showAlert("Gagal membaca file Excel/CSV: " + err.message, "error", "import-alert");
                 }
-            }
+            };
+            reader.readAsArrayBuffer(file);
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
+        function renderImportPreview() {
+            const previewSection = document.getElementById("preview-section");
+            const tbody = document.getElementById("preview-tbody");
+            const btnProcess = document.getElementById("btn-process-import");
+
+            tbody.innerHTML = "";
+            parsedImportRows.forEach((r, idx) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td><strong>${r.nis}</strong></td>
+                    <td>${r.nama_lengkap}</td>
+                    <td><span class="badge-kelas">${r.kelas}</span></td>
+                    <td>${r.jenis_kelamin}</td>
+                    <td>${r.nama_wali || "-"}</td>
+                    <td>${r.no_hp || "-"}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById("preview-summary-txt").textContent =
+                `✅ ${parsedImportRows.length} data santri berhasil dibaca dan siap diupload!`;
+            previewSection.hidden = false;
+            btnProcess.disabled = false;
+        }
+
+        // Download Template Excel (.xlsx)
+        function downloadExcelTemplate() {
+            const sampleData = [
+                {
+                    nis: "2026001",
+                    nama_lengkap: "Ahmad Fauzan",
+                    kelas: "Taud 1",
+                    jenis_kelamin: "Laki-laki",
+                    tempat_lahir: "Bandung",
+                    tanggal_lahir: "2019-05-12",
+                    nama_wali: "Bpk. Ridwan",
+                    no_hp: "081234567890",
+                    alamat: "Jl. Jamaras 3 Jatihandap Bandung",
+                    status: "Aktif"
+                },
+                {
+                    nis: "2026002",
+                    nama_lengkap: "Aisyah Humaira",
+                    kelas: "Mubtadi 1",
+                    jenis_kelamin: "Perempuan",
+                    tempat_lahir: "Bandung",
+                    tanggal_lahir: "2017-08-20",
+                    nama_wali: "Ibu Siti Aminah",
+                    no_hp: "085712345678",
+                    alamat: "Kel. Jatihandap Kec. Mandalajati",
+                    status: "Aktif"
+                }
+            ];
+
+            const ws = XLSX.utils.json_to_sheet(sampleData);
+            ws["!cols"] = [
+                { wch: 12 }, { wch: 24 }, { wch: 15 }, { wch: 15 },
+                { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 16 }, { wch: 30 }, { wch: 10 }
+            ];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template_Santri");
+            XLSX.writeFile(wb, "Template_Import_Santri_SIFAHMI.xlsx");
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
             checkAuth();
+            loadSantri();
 
-            const btnOpen = document.getElementById("btn-open-modal");
-            const btnClose = document.getElementById("btn-close-modal");
-            const btnCancel = document.getElementById("btn-cancel-modal");
-            const modal = document.getElementById("santri-modal");
-            const form = document.getElementById("santri-form");
+            document.getElementById("search-santri").addEventListener("input", renderSantriTable);
+            document.getElementById("filter-kelas").addEventListener("change", renderSantriTable);
+            document.getElementById("filter-status").addEventListener("change", renderSantriTable);
 
-            // Event Modal Form Input/Edit
-            if (btnOpen) btnOpen.addEventListener("click", openAddModal);
-            if (btnClose) btnClose.addEventListener("click", closeModal);
-            if (btnCancel) btnCancel.addEventListener("click", closeModal);
+            // Modal Tambah / Edit
+            const modalForm = document.getElementById("modal-form-santri");
+            document.getElementById("btn-open-add").addEventListener("click", () => {
+                document.getElementById("form-santri").reset();
+                document.getElementById("edit-santri-id").value = "";
+                document.getElementById("modal-santri-title").textContent = "Tambah Data Santri";
+                modalForm.classList.add("active");
+            });
+            document.getElementById("btn-close-form").addEventListener("click", () => modalForm.classList.remove("active"));
+            document.getElementById("btn-cancel-form").addEventListener("click", () => modalForm.classList.remove("active"));
 
-            if (modal) {
-                modal.addEventListener("click", function (e) {
-                    if (e.target === modal) closeModal();
-                });
-            }
+            document.getElementById("form-santri").addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const editId = document.getElementById("edit-santri-id").value;
+                const btn = document.getElementById("btn-submit-santri");
+                btn.disabled = true;
 
-            // Event Modal Action Choice
-            const actionModal = document.getElementById("action-modal");
-            document.getElementById("btn-close-action").addEventListener("click", closeActionModal);
-            document.getElementById("btn-action-cancel").addEventListener("click", closeActionModal);
-            
-            document.getElementById("btn-action-edit").addEventListener("click", function() {
-                if (selectedSantriData) openEditModal(selectedSantriData);
+                const payload = {
+                    nis: document.getElementById("input-nis").value.trim(),
+                    nama_lengkap: document.getElementById("input-nama").value.trim(),
+                    kelas: document.getElementById("input-kelas").value,
+                    jenis_kelamin: document.getElementById("input-jk").value,
+                    status: document.getElementById("input-status").value,
+                    tempat_lahir: document.getElementById("input-tempat-lahir").value.trim() || null,
+                    tanggal_lahir: document.getElementById("input-tanggal-lahir").value || null,
+                    nama_wali: document.getElementById("input-wali").value.trim() || null,
+                    no_hp: document.getElementById("input-hp").value.trim() || null,
+                    alamat: document.getElementById("input-alamat").value.trim() || null
+                };
+
+                try {
+                    if (editId) {
+                        await supabaseFetch(`santri?id=eq.${encodeURIComponent(editId)}`, {
+                            method: "PATCH",
+                            body: payload
+                        });
+                        showAlert(`Data ${payload.nama_lengkap} berhasil diperbarui!`, "success");
+                    } else {
+                        await supabaseFetch("santri?on_conflict=nis", {
+                            method: "POST",
+                            prefer: "resolution=merge-duplicates,return=representation",
+                            body: payload
+                        });
+                        showAlert(`Santri ${payload.nama_lengkap} berhasil ditambahkan!`, "success");
+                    }
+                    modalForm.classList.remove("active");
+                    loadSantri();
+                } catch (err) {
+                    showAlert("Gagal menyimpan santri: " + err.message, "error");
+                } finally {
+                    btn.disabled = false;
+                }
             });
 
-            document.getElementById("btn-action-delete").addEventListener("click", function() {
-                if (selectedSantriData) deleteSantri(selectedSantriData.nis);
+            // Modal Import Excel / CSV
+            const modalImport = document.getElementById("modal-import");
+            const fileInput = document.getElementById("file-excel-input");
+            const dropzone = document.getElementById("dropzone-area");
+
+            document.getElementById("btn-open-import").addEventListener("click", () => {
+                parsedImportRows = [];
+                fileInput.value = "";
+                document.getElementById("dropzone-label").textContent = "Klik untuk memilih file Excel (.xlsx / .xls) atau CSV (.csv)";
+                document.getElementById("preview-section").hidden = true;
+                document.getElementById("import-alert").hidden = true;
+                document.getElementById("btn-process-import").disabled = true;
+                modalImport.classList.add("active");
             });
 
-            if (actionModal) {
-                actionModal.addEventListener("click", function (e) {
-                    if (e.target === actionModal) closeActionModal();
-                });
-            }
+            document.getElementById("btn-close-import").addEventListener("click", () => modalImport.classList.remove("active"));
+            document.getElementById("btn-cancel-import").addEventListener("click", () => modalImport.classList.remove("active"));
+            document.getElementById("btn-download-template").addEventListener("click", downloadExcelTemplate);
 
-            // Submit Handler Form Santri (Create / Update)
-            if (form) {
-                form.addEventListener("submit", async function (e) {
-                    e.preventDefault();
-                    if (!form.reportValidity()) return;
+            dropzone.addEventListener("click", () => fileInput.click());
+            fileInput.addEventListener("change", (e) => handleFileUpload(e.target.files[0]));
 
-                    const submitBtn = document.getElementById("btn-submit");
-                    if (submitBtn) {
-                        submitBtn.disabled = true;
-                        submitBtn.textContent = "Menyimpan...";
-                    }
+            dropzone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropzone.classList.add("dragover");
+            });
+            dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+            dropzone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropzone.classList.remove("dragover");
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
 
-                    const payload = {
-                        nis: document.getElementById("nis").value.trim(),
-                        nama_lengkap: document.getElementById("nama-lengkap").value.trim(),
-                        jenis_kelamin: document.getElementById("jenis-kelamin").value,
-                        tempat_lahir: document.getElementById("tempat-lahir").value.trim() || null,
-                        tanggal_lahir: document.getElementById("tanggal-lahir").value || null,
-                        kelas: document.getElementById("kelas").value,
-                        nama_ortu: document.getElementById("nama-ortu").value.trim(),
-                        no_hp: document.getElementById("no-hp").value.trim(),
-                        status: document.getElementById("status").value,
-                        alamat: document.getElementById("alamat").value.trim() || null
-                    };
+            // Eksekusi Batch Upload ke Supabase
+            document.getElementById("btn-process-import").addEventListener("click", async function() {
+                if (parsedImportRows.length === 0) return;
 
-                    try {
-                        if (isEditMode && selectedSantriData) {
-                            // UPDATE ke Supabase
-                            await supabaseFetch(`santri?nis=eq.${encodeURIComponent(selectedSantriData.nis)}`, {
-                                method: "PATCH",
-                                body: payload
-                            });
-                            showGlobalAlert(`Berhasil memperbarui data santri: ${payload.nama_lengkap}`, "success");
-                        } else {
-                            // INSERT Baru ke Supabase
-                            await supabaseFetch("santri", {
-                                method: "POST",
-                                body: payload
-                            });
-                            showGlobalAlert(`Berhasil menambahkan santri: ${payload.nama_lengkap}`, "success");
-                        }
+                const btn = this;
+                btn.disabled = true;
+                btn.textContent = `Mengunggah ${parsedImportRows.length} data...`;
 
-                        closeModal();
-                        renderSantriTable();
-                    } catch (err) {
-                        showModalAlert(err.message, "error");
-                    } finally {
-                        if (submitBtn) {
-                            submitBtn.disabled = false;
-                            submitBtn.textContent = "Simpan Santri";
-                        }
-                    }
-                });
-            }
+                try {
+                    await supabaseFetch("santri?on_conflict=nis", {
+                        method: "POST",
+                        prefer: "resolution=merge-duplicates,return=representation",
+                        body: parsedImportRows
+                    });
 
-            const searchInput = document.getElementById("search-input");
-            if (searchInput) {
-                searchInput.addEventListener("input", function (e) {
-                    renderSantriTable(e.target.value);
-                });
-            }
-
-            renderSantriTable();
+                    modalImport.classList.remove("active");
+                    showAlert(`Berhasil mengimport ${parsedImportRows.length} data santri ke database!`, "success");
+                    loadSantri();
+                } catch (err) {
+                    showAlert("Gagal upload massal: " + err.message, "error", "import-alert");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "Upload & Simpan Semua ke Database";
+                }
+            });
         });
     </script>
 </body>

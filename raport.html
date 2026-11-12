@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#27ae60">
-    <title>SIFAHMI - Evaluasi &amp; Rapor Berkala</title>
+    <meta name="theme-color" content="#1b5e20">
+    <title>SIFAHMI - Evaluasi &amp; Rapor Santri</title>
     <style>
         :root {
             color-scheme: light;
             --green: #27ae60;
             --green-dark: #1b5e20;
             --green-light: #e9f8ef;
-            --ink: #2c3e50;
-            --muted: #7f8c8d;
-            --line: #dfe5e8;
-            --page: #f4f7f9;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --page: #f1f5f9;
             --white: #ffffff;
-            --danger: #e74c3c;
-            --blue: #2980b9;
-            --purple: #8e44ad;
+            --danger: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,17 +28,17 @@
             min-height: 100%;
             background: var(--page);
             color: var(--ink);
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body { display: flex; flex-direction: column; }
 
-        /* Top Bar Navigation */
+        /* Top Bar Header */
         header.top-bar {
             flex-shrink: 0;
             background: var(--white);
             border-bottom: 1px solid var(--line);
-            padding: 12px 24px;
+            padding: 14px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -46,13 +47,12 @@
         }
 
         .brand-header { display: flex; align-items: center; gap: 12px; }
-        .brand-header img { width: 40px; height: 40px; object-fit: contain; }
+        .brand-header img { width: 38px; height: 38px; object-fit: contain; }
 
         .brand-info h1 {
             font-size: 16px;
-            color: var(--green);
+            color: var(--green-dark);
             font-weight: 800;
-            letter-spacing: 0.5px;
             line-height: 1.2;
             display: flex;
             align-items: center;
@@ -61,7 +61,7 @@
         }
 
         .brand-info h1 span.page-title-text { color: var(--ink); font-weight: 700; }
-        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 2px; }
+        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
 
         .btn-back {
             display: flex;
@@ -69,108 +69,48 @@
             gap: 6px;
             padding: 8px 14px;
             border: 1px solid var(--line);
-            border-radius: 8px;
+            border-radius: 10px;
             background: var(--white);
             color: var(--ink);
             text-decoration: none;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.2s;
         }
+        .btn-back:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-light); }
 
-        .btn-back:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
-
-        /* Main Layout */
         main.container {
-            max-width: 920px;
+            max-width: 980px;
             width: 100%;
             margin: 0 auto;
-            padding: 16px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
 
+        /* Embossed Card */
         .card {
             background: var(--white);
-            border-radius: 14px;
-            padding: 18px;
-            border: 1px solid var(--line);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            border-radius: 18px;
+            padding: 22px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: inset 0 1.5px 0 0 rgba(255, 255, 255, 1), 0 8px 20px -4px rgba(15, 23, 42, 0.05);
         }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
+        .card-title { font-size: 17px; font-weight: 800; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.3px; }
 
-        .card-header h2 { font-size: 18px; color: var(--ink); }
-        .card-header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 
-        /* Tag Periode */
-        .badge-periode {
-            display: inline-block;
-            background: var(--green-light);
-            color: var(--green-dark);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        /* Group Buttons - Periode Evaluasi */
-        .periode-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-
-        .btn-periode {
-            min-height: 38px;
-            border: 1px solid var(--line);
-            background: #fff;
-            color: var(--muted);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-periode.active {
-            background: var(--green);
-            color: #fff;
-            border-color: var(--green-dark);
-            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
-        }
-
-        /* Filter Grid */
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .field-group { display: flex; flex-direction: column; gap: 6px; }
-
-        label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
+        label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
         input, select, textarea {
             width: 100%;
             min-height: 40px;
-            padding: 9px 12px;
+            padding: 8px 12px;
             border: 1px solid var(--line);
-            border-radius: 8px;
+            border-radius: 10px;
             outline: none;
             background: #fff;
             color: var(--ink);
@@ -179,16 +119,18 @@
         }
 
         textarea { min-height: 75px; resize: vertical; }
-        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .15); }
 
+        /* Buttons */
+        .action-bar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
         .btn {
-            min-height: 40px;
-            padding: 0 16px;
+            min-height: 42px;
+            padding: 0 18px;
             border: 0;
-            border-radius: 8px;
+            border-radius: 11px;
             font: inherit;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             transition: all .2s;
             display: inline-flex;
@@ -196,303 +138,387 @@
             justify-content: center;
             gap: 8px;
         }
+        .btn-primary { background: var(--green-dark); color: #fff; box-shadow: 0 4px 12px rgba(27, 94, 32, 0.25); }
+        .btn-primary:hover { background: #144718; }
+        .btn-blue { background: var(--blue); color: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25); }
+        .btn-blue:hover { background: #2563eb; }
+        .btn-outline { background: #f8fafc; color: var(--ink); border: 1px solid var(--line); }
+        .btn-outline:hover { background: #e2e8f0; }
 
-        .btn-primary { background: var(--green); color: #fff; }
-        .btn-primary:hover { background: var(--green-dark); }
-        .btn-outline { background: #f0f7f3; color: var(--green-dark); border: 1px solid #c8e6c9; }
-        .btn-block { width: 100%; }
-
-        /* Sub-Section Form Tabs (Tahsin, Tasmi', MHQ, Matan, Deskripsi) */
-        .tab-menu {
-            display: flex;
-            gap: 4px;
-            background: #f0f3f5;
-            padding: 4px;
-            border-radius: 10px;
-            overflow-x: auto;
-            margin-bottom: 14px;
-        }
-
-        .tab-menu-btn {
-            flex: 1;
-            min-width: 90px;
-            border: 0;
-            background: transparent;
-            padding: 8px 12px;
-            border-radius: 7px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--muted);
-            cursor: pointer;
-            text-align: center;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        .tab-menu-btn.active {
-            background: var(--green);
-            color: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-        }
-
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-
-        .row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
-
-        /* Estimasi Subtotal Box */
-        .estimation-box {
-            background: #fcfdfd;
+        /* Report Sheet Paper */
+        .raport-paper {
+            background: #fff;
+            border-radius: 18px;
+            padding: 28px 32px;
             border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 12px 14px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        /* Kop Yayasan */
+        .kop-yayasan {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin: 12px 0;
+            gap: 16px;
+            padding-bottom: 14px;
+            border-bottom: 3px double var(--green-dark);
+            margin-bottom: 18px;
+        }
+        .kop-yayasan img { width: 64px; height: 64px; object-fit: contain; }
+        .kop-text { flex: 1; text-align: center; }
+        .kop-text h2 { font-size: 18px; font-weight: 900; color: var(--green-dark); letter-spacing: 0.4px; }
+        .kop-text h3 { font-size: 14px; font-weight: 800; color: var(--ink); margin-top: 2px; }
+        .kop-text p { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+        .raport-doc-title {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .raport-doc-title h4 {
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-decoration: underline;
+            color: var(--ink);
+        }
+        .raport-doc-title span { font-size: 12px; color: var(--muted); font-weight: 700; }
+
+        /* Identitas Santri Grid */
+        .identitas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 24px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+        .id-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 4px; }
+        .id-row span.lbl { color: var(--muted); font-weight: 600; }
+        .id-row span.val { color: var(--ink); font-weight: 800; }
+
+        /* Tabel Penilaian Kategori Kelas */
+        .section-label {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--green-dark);
+            text-transform: uppercase;
+            margin: 16px 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .estimation-box label { font-size: 12px; color: var(--ink); text-transform: none; }
-        .estimation-val { font-size: 20px; font-weight: 800; color: var(--green-dark); }
-
-        .status-pill {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 10px;
+        .table-wrap { width: 100%; overflow-x: auto; }
+        table.raport-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+        table.raport-table th, table.raport-table td {
+            border: 1px solid #cbd5e1;
+            padding: 9px 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        table.raport-table th {
+            background: #f1f5f9;
+            color: var(--ink);
+            font-weight: 800;
+            text-transform: uppercase;
             font-size: 11px;
-            font-weight: 700;
-            background: #eaf3fb;
-            color: #24577a;
+        }
+        table.raport-table td.center, table.raport-table th.center { text-align: center; }
+
+        .input-nilai-raport {
+            width: 68px;
+            min-height: 32px;
+            padding: 4px 6px;
+            text-align: center;
+            font-weight: 800;
+            border-radius: 6px;
+            border: 1px solid #94a3b8;
         }
 
-        .message { margin-bottom: 14px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
+        .input-ket-raport {
+            min-height: 32px;
+            padding: 5px 8px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .badge-predikat {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .pred-a { background: #dcfce7; color: #166534; }
+        .pred-b { background: #dbeafe; color: #1e40af; }
+        .pred-c { background: #fef3c7; color: #92400e; }
+        .pred-d { background: #fee2e2; color: #991b1b; }
+
+        /* Bab Sesi Pills (Khusus Taud 1 & 2) */
+        .bab-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+        .bab-pill {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 99px;
+            font-weight: 700;
+        }
+        .bab-done { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .bab-pending { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+
+        /* Grid Bawah: Kehadiran & Ringkasan Tahfidz */
+        .bottom-summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        /* Kolom Tanda Tangan */
+        .signature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 28px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .sig-box p.role { font-weight: 700; color: var(--muted); }
+        .sig-space { height: 64px; }
+        .sig-box p.name { font-weight: 800; color: var(--ink); text-decoration: underline; }
+
+        .message { padding: 10px 14px; border-radius: 10px; font-size: 12.5px; }
         .message[hidden] { display: none !important; }
         .message.error { background: #fdecea; color: #a93226; border: 1px solid #fadbd8; }
         .message.success { background: #e9f8ef; color: #1e8449; border: 1px solid #d4efdf; }
 
-        footer {
-            flex-shrink: 0;
-            background: var(--white);
-            border-top: 1px solid var(--line);
-            padding: 12px 16px;
-            color: #95a5a6;
-            text-align: center;
-            font-size: 11px;
-            line-height: 1.6;
-            margin-top: auto;
+        footer { background: var(--white); border-top: 1px solid var(--line); padding: 16px; color: #94a3b8; text-align: center; font-size: 11.5px; margin-top: auto; }
+
+        @media (max-width: 767px) {
+            .identitas-grid, .bottom-summary-grid { grid-template-columns: 1fr; }
+            .raport-paper { padding: 18px; }
         }
-        footer strong { color: var(--muted); }
+
+        /* PRINT STYLING */
+        @media print {
+            body { background: #fff; }
+            header.top-bar, .no-print, footer { display: none !important; }
+            main.container { max-width: 100%; padding: 0; margin: 0; }
+            .raport-paper { border: none; box-shadow: none; padding: 0; }
+            .input-nilai-raport, .input-ket-raport, textarea.print-clean {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                resize: none;
+            }
+            .bab-pill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            table.raport-table th { background: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Header Topbar -->
     <header class="top-bar">
         <div class="brand-header">
             <img src="logo.png" alt="Logo YNHQ">
             <div class="brand-info">
-                <h1>SIFAHMI <span class="page-title-text">- RAPOR BERKALA</span></h1>
-                <p>EVALUASI TAHFIN, TASMI', MHQ, MATAN &amp; RAPOR SANTRI</p>
+                <h1>SIFAHMI <span class="page-title-text">- EVALUASI &amp; RAPOR SANTRI</span></h1>
+                <p>LAPORAN CAPAIAN BELAJAR SESUAI KURIKULUM KELAS</p>
             </div>
         </div>
-
-        <div class="nav-actions">
-            <a href="dashboard.html" class="btn-back">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                <span>Dashboard</span>
-            </a>
-        </div>
+        <a href="dashboard.html" class="btn-back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Dashboard</span>
+        </a>
     </header>
 
     <main class="container">
         <div class="message" id="global-alert" hidden></div>
 
-        <!-- Section 1: Periode & Filter Siswa -->
-        <section class="card">
-            <div class="card-header">
-                <div>
-                    <h2>Evaluasi &amp; Rapor Berkala</h2>
-                    <p>Penilaian Tahsin, Tasmi', MHQ, Matan, dan Deskripsi Rapor Santri.</p>
-                </div>
-                <span class="badge-periode" id="badge-periode-aktif">PTS Ganjil</span>
-            </div>
-
-            <!-- Buttons Pilih Periode -->
-            <div class="periode-selector">
-                <button type="button" class="btn-periode active" data-periode="PTS Ganjil">PTS Ganjil</button>
-                <button type="button" class="btn-periode" data-periode="PSAS Ganjil">PSAS Ganjil</button>
-                <button type="button" class="btn-periode" data-periode="PTS Genap">PTS Genap</button>
-                <button type="button" class="btn-periode" data-periode="PSAS Genap">PSAS Genap</button>
-            </div>
-
-            <div class="filter-grid">
+        <!-- Filter & Kontrol Rapor (Disembunyikan saat Print) -->
+        <section class="card no-print">
+            <h3 class="card-title">Pilih Kelas, Santri &amp; Periode Rapor</h3>
+            <div class="row-grid">
                 <div class="field-group">
-                    <label for="select-kelas">1. Filter Kelas Siswa</label>
+                    <label for="select-kelas">KELAS MA'HAD</label>
                     <select id="select-kelas">
-                        <option value="">-- Semua Kelas --</option>
-                        <option value="Tahfidz Reguler">Tahfidz Reguler</option>
-                        <option value="Tahfidz Takhassus">Tahfidz Takhassus</option>
-                        <option value="Tahsin & Mutabaah">Tahsin & Mutabaah</option>
+                        <option value="Taud 1">Taud 1</option>
+                        <option value="Taud 2">Taud 2</option>
+                        <option value="Mubtadi 1">Mubtadi 1</option>
+                        <option value="Mubtadi 2">Mubtadi 2</option>
+                        <option value="Mutawassith">Mutawassith</option>
                     </select>
                 </div>
+
                 <div class="field-group">
-                    <label for="select-siswa">2. Pilih Nama Siswa</label>
+                    <label for="select-siswa">NAMA SANTRI</label>
                     <select id="select-siswa">
-                        <option value="">-- Pilih Siswa --</option>
+                        <option value="">-- Memuat Santri... --</option>
                     </select>
+                </div>
+
+                <div class="field-group">
+                    <label for="select-semester">SEMESTER</label>
+                    <select id="select-semester">
+                        <option value="Semester Ganjil">Semester Ganjil</option>
+                        <option value="Semester Genap">Semester Genap</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label for="input-tahun-ajaran">TAHUN AJARAN</label>
+                    <input type="text" id="input-tahun-ajaran" value="2026/2027">
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
-                <button type="button" class="btn btn-outline" id="btn-rekap-sekela">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    <span>Lihat Rekapan Sekelas</span>
+            <div class="action-bar" style="margin-top: 8px;">
+                <button type="button" class="btn btn-outline" id="btn-sync-mutabaah">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    <span>Tarik Ulang Nilai Mutaba'ah</span>
                 </button>
-                <button type="button" class="btn btn-outline" id="btn-lihat-rapor">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <span>Lihat Rapor &amp; Hasil Evaluasi</span>
+                <button type="button" class="btn btn-primary" id="btn-save-raport">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                    <span>Simpan Rapor</span>
+                </button>
+                <button type="button" class="btn btn-blue" onclick="window.print()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    <span>Cetak / PDF Rapor</span>
                 </button>
             </div>
         </section>
 
-        <!-- Section 2: Form Input Nilai Evaluasi -->
-        <section class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3 style="font-size: 16px;">Form Input Nilai Evaluasi</h3>
-                <span class="status-pill" id="status-input-txt">Siap Input / Update Data</span>
+        <!-- LEMBAR RAPOR RESMI -->
+        <section class="raport-paper" id="raport-sheet">
+            <!-- Kop Yayasan -->
+            <div class="kop-yayasan">
+                <img src="logo.png" alt="Logo YNHQ">
+                <div class="kop-text">
+                    <h2>YAYASAN NUURU HIDAAYATIL QUR'AAN</h2>
+                    <h3>MA'HAD TAHFIDZ &amp; DINIYAH SIFAHMI</h3>
+                    <p>Jl. Jend. AH Nasution Gg. Jamaras 3 RT 003/001 Kel. Jatihandap Kec. Mandalajati Bandung 40195</p>
+                </div>
             </div>
 
-            <!-- Tab Buttons Sub-Penilaian -->
-            <div class="tab-menu">
-                <button type="button" class="tab-menu-btn active" data-tab="tab-tahsin">1. Tahsin</button>
-                <button type="button" class="tab-menu-btn" data-tab="tab-tasmi">2. Tasmi'</button>
-                <button type="button" class="tab-menu-btn" data-tab="tab-mhq">3. MHQ</button>
-                <button type="button" class="tab-menu-btn" data-tab="tab-matan">4. Matan</button>
-                <button type="button" class="tab-menu-btn" data-tab="tab-deskripsi">5. Deskripsi Rapor</button>
+            <div class="raport-doc-title">
+                <h4>LAPORAN HASIL BELAJAR &amp; MUTABA'AH SANTRI</h4>
+                <span id="disp-periode">Semester Ganjil — Tahun Ajaran 2026/2027</span>
             </div>
 
-            <form id="form-raport-utama" novalidate>
-                <!-- 1. TAB TAHSIN -->
-                <div class="tab-pane active" id="tab-tahsin">
-                    <div class="row-grid">
-                        <div class="field-group">
-                            <label for="tahsin-kitab">Pilih Kitab Tahsin</label>
-                            <select id="tahsin-kitab">
-                                <option value="Fathurrahman">Fathurrahman</option>
-                                <option value="Talaqqi Al-Qur'an">Talaqqi Al-Qur'an</option>
-                                <option value="Ummi / Iqro">Ummi / Iqro</option>
-                                <option value="Tajwid Asy-Syafii">Tajwid Asy-Syafii</option>
-                            </select>
-                        </div>
-                        <div class="field-group">
-                            <label for="tahsin-soal-hal">Soal Halaman Ke- (1-10)</label>
-                            <input type="number" id="tahsin-soal-hal" min="1" max="10" value="1">
-                        </div>
-                    </div>
+            <!-- Identitas Santri -->
+            <div class="identitas-grid">
+                <div class="id-row"><span class="lbl">Nama Lengkap Santri</span><span class="val" id="disp-nama">-</span></div>
+                <div class="id-row"><span class="lbl">Kelas / Program</span><span class="val" id="disp-kelas">Taud 1</span></div>
+                <div class="id-row"><span class="lbl">Nomor Induk (NIS)</span><span class="val" id="disp-nis">-</span></div>
+                <div class="id-row"><span class="lbl">Jenis Kelamin</span><span class="val" id="disp-jk">-</span></div>
+            </div>
 
-                    <div class="row-grid" style="margin-top: 10px;">
-                        <div class="field-group">
-                            <label for="tahsin-kelancaran">Kelancaran [50%]</label>
-                            <input type="number" id="tahsin-kelancaran" min="0" max="100" placeholder="20-100">
-                        </div>
-                        <div class="field-group">
-                            <label for="tahsin-bacaan">Bacaan / Tajwid [40%]</label>
-                            <input type="number" id="tahsin-bacaan" min="0" max="100" placeholder="50-95">
-                        </div>
-                        <div class="field-group">
-                            <label for="tahsin-adab">Adab [10%]</label>
-                            <input type="number" id="tahsin-adab" min="0" max="100" placeholder="50-100">
-                        </div>
-                    </div>
+            <!-- A. Tabel Kategori Mata Pelajaran Sesuai Kelas -->
+            <div class="section-label">
+                <span>A. Capaian Materi &amp; Kategori Pelajaran Kelas (<span id="disp-kelas-sub">Taud 1</span>)</span>
+            </div>
 
-                    <div class="estimation-box">
-                        <label>Estimasi Nilai Sub-Total Tahsin:</label>
-                        <span class="estimation-val" id="tahsin-subtotal-val">0.0</span>
-                    </div>
+            <div class="table-wrap">
+                <table class="raport-table">
+                    <thead>
+                        <tr>
+                            <th class="center" style="width: 40px;">No</th>
+                            <th style="width: 32%;">Kategori Mata Pelajaran</th>
+                            <th class="center" style="width: 85px;">Rata-rata Harian</th>
+                            <th class="center" style="width: 85px;">Nilai Evaluasi</th>
+                            <th class="center" style="width: 80px;">Nilai Akhir</th>
+                            <th class="center" style="width: 95px;">Predikat</th>
+                            <th>Rincian Bab / Deskripsi Capaian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="raport-tbody">
+                        <tr>
+                            <td colspan="7" class="center" style="padding: 20px; color: var(--muted);">Pilih santri terlebih dahulu untuk menampilkan kategori rapor.</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #f8fafc; font-weight: 800;">
+                            <td colspan="4" style="text-align: right;">RATA-RATA NILAI KESELURUHAN</td>
+                            <td class="center" id="disp-rata-total" style="font-size: 14px; color: var(--green-dark);">0</td>
+                            <td class="center" id="disp-predikat-total">-</td>
+                            <td id="disp-status-lulus" style="font-size: 11.5px; color: var(--green-dark);">-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
 
-                    <div class="field-group">
-                        <label for="tahsin-catatan">Catatan Per Halaman (Opsional)</label>
-                        <textarea id="tahsin-catatan" placeholder="Catatan evaluasi bacaan tahsin..."></textarea>
-                    </div>
+            <!-- B. Ringkasan Tahfidz & Kehadiran -->
+            <div class="bottom-summary-grid">
+                <!-- Rekap Tahfidz -->
+                <div>
+                    <div class="section-label"><span>B. Rekapitulasi Tahfidz Al-Qur'an</span></div>
+                    <table class="raport-table">
+                        <tr>
+                            <th style="width: 55%;">Total Setoran Hafalan</th>
+                            <td id="disp-total-baris">0 Baris (0 Halaman)</td>
+                        </tr>
+                        <tr>
+                            <th>Surat / Capaian Terakhir</th>
+                            <td id="disp-surat-terakhir">-</td>
+                        </tr>
+                        <tr>
+                            <th>Jumlah Pertemuan Setoran</th>
+                            <td id="disp-jml-setoran">0 Kali Setoran</td>
+                        </tr>
+                    </table>
                 </div>
 
-                <!-- 2. TAB TASMI' -->
-                <div class="tab-pane" id="tab-tasmi">
-                    <div class="row-grid">
-                        <div class="field-group">
-                            <label for="tasmi-juz">Juz / Surat Tasmi'</label>
-                            <input type="text" id="tasmi-juz" placeholder="Contoh: Juz 30 Sekali Duduk">
-                        </div>
-                        <div class="field-group">
-                            <label for="tasmi-nilai">Nilai Tasmi' (0-100)</label>
-                            <input type="number" id="tasmi-nilai" min="0" max="100" placeholder="0-100">
-                        </div>
-                    </div>
-                    <div class="field-group" style="margin-top: 10px;">
-                        <label for="tasmi-catatan">Catatan Tasmi'</label>
-                        <textarea id="tasmi-catatan" placeholder="Catatan kelancaran dan tajwid tasmi'..."></textarea>
-                    </div>
+                <!-- Rekap Kehadiran -->
+                <div>
+                    <div class="section-label"><span>C. Rekapitulasi Kehadiran</span></div>
+                    <table class="raport-table">
+                        <tr>
+                            <th style="width: 55%;">Hadir</th>
+                            <td id="disp-hadir">0 Hari</td>
+                        </tr>
+                        <tr>
+                            <th>Sakit / Izin</th>
+                            <td id="disp-sakit-izin">0 Sakit, 0 Izin</td>
+                        </tr>
+                        <tr>
+                            <th>Tanpa Keterangan (Alpa)</th>
+                            <td id="disp-alpa">0 Hari</td>
+                        </tr>
+                    </table>
                 </div>
+            </div>
 
-                <!-- 3. TAB MHQ -->
-                <div class="tab-pane" id="tab-mhq">
-                    <div class="row-grid">
-                        <div class="field-group">
-                            <label for="mhq-juz">Materi / Juz MHQ</label>
-                            <input type="text" id="mhq-juz" placeholder="Contoh: Musabaqah Juz 29-30">
-                        </div>
-                        <div class="field-group">
-                            <label for="mhq-nilai">Nilai MHQ (0-100)</label>
-                            <input type="number" id="mhq-nilai" min="0" max="100" placeholder="0-100">
-                        </div>
-                    </div>
-                    <div class="field-group" style="margin-top: 10px;">
-                        <label for="mhq-catatan">Catatan Evaluasi MHQ</label>
-                        <textarea id="mhq-catatan" placeholder="Catatan hasil lomba / simulasi MHQ..."></textarea>
-                    </div>
+            <!-- D. Catatan Pengampu / Wali Kelas -->
+            <div class="section-label"><span>D. Catatan &amp; Motivasi Pengampu Kelas</span></div>
+            <textarea id="input-catatan-pengampu" class="print-clean" placeholder="Tuliskan catatan perkembangan adab, hafalan, dan semangat belajar santri..."></textarea>
+
+            <!-- Tanda Tangan Resmi -->
+            <div class="signature-grid">
+                <div class="sig-box">
+                    <p class="role">Mengetahui,<br>Orang Tua / Wali Santri</p>
+                    <div class="sig-space"></div>
+                    <p class="name">( ........................................ )</p>
                 </div>
-
-                <!-- 4. TAB MATAN -->
-                <div class="tab-pane" id="tab-matan">
-                    <div class="row-grid">
-                        <div class="field-group">
-                            <label for="matan-kitab">Pilih Kitab Matan</label>
-                            <select id="matan-kitab">
-                                <option value="Matan Tuhfatul Athfal">Matan Tuhfatul Athfal</option>
-                                <option value="Matan Jazariyah">Matan Jazariyah</option>
-                                <option value="Matan Al-Jazari">Matan Al-Jazari</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-                        </div>
-                        <div class="field-group">
-                            <label for="matan-nilai">Nilai Hafalan Matan (0-100)</label>
-                            <input type="number" id="matan-nilai" min="0" max="100" placeholder="0-100">
-                        </div>
-                    </div>
-                    <div class="field-group" style="margin-top: 10px;">
-                        <label for="matan-catatan">Catatan Matan</label>
-                        <textarea id="matan-catatan" placeholder="Catatan bait matan yang disetorkan..."></textarea>
-                    </div>
+                <div class="sig-box">
+                    <p class="role">Bandung, <span id="disp-tgl-ttd">-</span><br>Pengampu / Wali Kelas</p>
+                    <div class="sig-space"></div>
+                    <p class="name">( ........................................ )</p>
                 </div>
-
-                <!-- 5. TAB DESKRIPSI RAPOR -->
-                <div class="tab-pane" id="tab-deskripsi">
-                    <div class="field-group">
-                        <label for="deskripsi-rapor">Deskripsi Rapor &amp; Catatan Pengasuh</label>
-                        <textarea id="deskripsi-rapor" style="min-height: 110px;" placeholder="Tuliskan narasi perkembangan hafalan, adab, dan motivasi santri untuk dicetak pada lembar rapor..."></textarea>
-                    </div>
+                <div class="sig-box">
+                    <p class="role">Menyetujui,<br>Pimpinan Ma'had YNHQ</p>
+                    <div class="sig-space"></div>
+                    <p class="name">( ........................................ )</p>
                 </div>
-
-                <button type="submit" class="btn btn-primary btn-block" id="btn-submit-raport" style="margin-top: 16px; font-size: 14px;">
-                    Simpan Nilai Evaluasi &amp; Rapor
-                </button>
-            </form>
+            </div>
         </section>
     </main>
 
     <footer>
-        <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>
-        Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
+        <strong>© 2026 Management Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> - Bandung
     </footer>
 
     <script>
@@ -502,83 +528,321 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
         const SESSION_KEY = "ynhq-supabase-session";
 
-        let currentPeriode = "PTS Ganjil";
         let currentSantriList = [];
+        let currentMutabaahRecords = [];
+
+        // KONFIGURASI KATEGORI RAPOR PER 5 KELAS (Sinkron dengan mutabaah.html)
+        const KATEGORI_RAPORT_KELAS = {
+            "Taud 1": [
+                { id: "tahfidz_sabaq", nama: "Tahfidz Al-Qur'an (Sabaq)", matchKeywords: ["sabaq"], tipe: "tahfidz" },
+                { id: "hijaiyah", nama: "Menulis & Membaca Huruf Hijaiyah", matchKeywords: ["hijaiyah"], tipe: "reguler" },
+                { id: "doa_hadist", nama: "Hafalan Doa & Hadits", matchKeywords: ["doa", "hadits", "hadist"], tipe: "reguler" },
+                { id: "hafalan_surat", nama: "Hafalan Surat Pendek", matchKeywords: ["surat pendek", "hafalan surat"], tipe: "reguler" },
+                { id: "fiqih", nama: "Fiqih & Adab Islami", matchKeywords: ["fiqih", "adab"], tipe: "reguler" },
+                {
+                    id: "praktek_wudhu",
+                    nama: "Praktek Wudhu (Per Sesi / Bab)",
+                    matchKeywords: ["wudhu"],
+                    tipe: "sub_sesi",
+                    bab: ["Niat Wudhu", "Mencuci Kedua Tangan", "Berkumur-kumur", "Basuh Muka", "Basuh Kedua Tangan", "Usap Kepala & Telinga", "Basuh Kedua Kaki", "Doa Setelah Wudhu"]
+                },
+                {
+                    id: "praktek_shalat",
+                    nama: "Praktek Shalat (Per Sesi / Bab)",
+                    matchKeywords: ["shalat", "sholat"],
+                    tipe: "sub_sesi",
+                    bab: ["Niat & Takbiratul Ihram", "Bacaan Al-Fatihah & Surat", "Ruku' & I'tidal", "Sujud & Duduk 2 Sujud", "Tasyahud & Salam"]
+                },
+                {
+                    id: "dzikir_sore",
+                    nama: "Dzikir Sore (Per Sesi / Bab)",
+                    matchKeywords: ["dzikir sore"],
+                    tipe: "sub_sesi",
+                    bab: ["Istighfar & Ta'awwudz", "Ayat Kursi", "Al-Ikhlas, Al-Falaq, An-Nas", "Doa Dzikir Petang"]
+                }
+            ],
+            "Taud 2": [
+                { id: "tahfidz_sabaq", nama: "Tahfidz Al-Qur'an (Sabaq)", matchKeywords: ["sabaq"], tipe: "tahfidz" },
+                { id: "hijaiyah", nama: "Baca Tulis Hijaiyah", matchKeywords: ["hijaiyah"], tipe: "reguler" },
+                { id: "hafalan", nama: "Hafalan Surat / Doa", matchKeywords: ["hafalan"], tipe: "reguler" },
+                {
+                    id: "praktek_wudhu",
+                    nama: "Praktek Wudhu (Per Sesi / Bab)",
+                    matchKeywords: ["wudhu"],
+                    tipe: "sub_sesi",
+                    bab: ["Niat Wudhu", "Mencuci Kedua Tangan", "Berkumur-kumur", "Basuh Muka", "Basuh Kedua Tangan", "Usap Kepala & Telinga", "Basuh Kedua Kaki", "Doa Setelah Wudhu"]
+                },
+                {
+                    id: "praktek_shalat",
+                    nama: "Praktek Shalat (Per Sesi / Bab)",
+                    matchKeywords: ["shalat", "sholat"],
+                    tipe: "sub_sesi",
+                    bab: ["Niat & Takbiratul Ihram", "Bacaan Al-Fatihah & Surat", "Ruku' & I'tidal", "Sujud & Duduk 2 Sujud", "Tasyahud & Salam"]
+                }
+            ],
+            "Mubtadi 1": [
+                { id: "hafalan", nama: "Hafalan Al-Qur'an (Sabaq)", matchKeywords: ["sabaq", "hafalan al-qur'an"], tipe: "tahfidz" },
+                { id: "tilawah", nama: "Tilawah Al-Qur'an", matchKeywords: ["tilawah"], tipe: "reguler" },
+                { id: "kitabah_sambung", nama: "Menulis Huruf Sambung", matchKeywords: ["sambung", "kitabah"], tipe: "reguler" },
+                { id: "murajaah", nama: "Murajaah (Sabqi / Manzil)", matchKeywords: ["murajaah", "murojaah"], tipe: "reguler" }
+            ],
+            "Mubtadi 2": [
+                { id: "hafalan", nama: "Hafalan Al-Qur'an (Sabaq)", matchKeywords: ["sabaq", "hafalan al-qur'an"], tipe: "tahfidz" },
+                { id: "qiroah_kitabah_abu", nama: "Qiro'ah + Kitabah (Buku Warna Abu)", matchKeywords: ["buku warna abu", "qiro'ah"], tipe: "reguler" },
+                { id: "kitabah", nama: "Kitabah (Menulis Arab)", matchKeywords: ["kitabah (menulis)"], tipe: "reguler" },
+                { id: "doa_dzikir", nama: "Doa & Dzikir (Hisnul Muslim + Buku Ust. Yazid)", matchKeywords: ["hisnul muslim", "doa & dzikir"], tipe: "reguler" }
+            ],
+            "Mutawassith": [
+                { id: "hafalan_kitab", nama: "Hafalan Al-Qur'an & Matan", matchKeywords: ["sabaq", "hafalan matan"], tipe: "tahfidz" },
+                { id: "baca_kitab", nama: "Baca Kitab (Riyadhah / Fathurrahman)", matchKeywords: ["baca kitab", "baca & telaah"], tipe: "reguler" },
+                { id: "telaah_kitab", nama: "Telaah & Pemahaman Kitab", matchKeywords: ["telaah kitab", "baca & telaah"], tipe: "reguler" }
+            ]
+        };
 
         function checkAuth() {
-            const sessionRaw = localStorage.getItem(SESSION_KEY);
-            if (!sessionRaw) window.location.href = "login.html";
+            if (!localStorage.getItem(SESSION_KEY)) window.location.href = "login.html";
         }
 
         function getAuthToken() {
-            const sessionRaw = localStorage.getItem(SESSION_KEY);
-            if (!sessionRaw) return SUPABASE_ANON_KEY;
-            try {
-                const session = JSON.parse(sessionRaw);
-                return session.access_token || SUPABASE_ANON_KEY;
-            } catch (e) {
-                return SUPABASE_ANON_KEY;
-            }
+            const raw = localStorage.getItem(SESSION_KEY);
+            if (!raw) return SUPABASE_ANON_KEY;
+            try { return JSON.parse(raw).access_token || SUPABASE_ANON_KEY; }
+            catch (e) { return SUPABASE_ANON_KEY; }
         }
 
         async function supabaseFetch(path, options = {}) {
-            const token = getAuthToken();
-            const headers = {
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": "Bearer " + token,
-                "Content-Type": "application/json",
-                "Prefer": options.prefer || "return=representation",
-                ...options.headers
-            };
-
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
                 method: options.method || "GET",
-                headers: headers,
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": "Bearer " + getAuthToken(),
+                    "Content-Type": "application/json",
+                    "Prefer": options.prefer || "return=representation",
+                    ...options.headers
+                },
                 body: options.body ? JSON.stringify(options.body) : null
             });
 
-            if (!response.ok) {
-                let errMessage = "Terjadi kesalahan pada Supabase.";
-                try {
-                    const errJson = await response.json();
-                    errMessage = errJson.message || errJson.hint || errMessage;
-                } catch (e) {}
-                throw new Error(errMessage);
+            if (!res.ok) {
+                let msg = "Gagal terhubung ke database.";
+                try { const j = await res.json(); msg = j.message || j.hint || msg; } catch (e) {}
+                if (res.status === 401) {
+                    localStorage.removeItem(SESSION_KEY);
+                    window.location.href = "login.html";
+                    return null;
+                }
+                throw new Error(msg);
             }
-
-            if (response.status === 204) return null;
-            return await response.json();
+            if (res.status === 204) return null;
+            return await res.json();
         }
 
-        function showGlobalAlert(msg, kind) {
-            const alertBox = document.getElementById("global-alert");
-            if (alertBox) {
-                alertBox.textContent = msg;
-                alertBox.className = "message " + kind;
-                alertBox.hidden = false;
-                setTimeout(() => { alertBox.hidden = true; }, 4000);
-            }
+        function showAlert(msg, kind) {
+            const box = document.getElementById("global-alert");
+            box.textContent = msg;
+            box.className = "message " + kind;
+            box.hidden = false;
+            setTimeout(() => { box.hidden = true; }, 4000);
         }
 
-        // Populasikan daftar siswa berdasarkan kelas
-        async function loadSantriByKelas(programName) {
+        function getPredikat(nilai) {
+            const n = Number(nilai) || 0;
+            if (n >= 90) return { label: "A (Mumtaz)", cls: "pred-a" };
+            if (n >= 80) return { label: "B (Jayyid Jiddan)", cls: "pred-b" };
+            if (n >= 70) return { label: "C (Jayyid)", cls: "pred-c" };
+            if (n > 0)  return { label: "D (Maqbul)", cls: "pred-d" };
+            return { label: "-", cls: "" };
+        }
+
+        // Parse rekap harian dari mutabaah untuk 1 kategori mata pelajaran
+        function analyzeCategoryFromMutabaah(kat, records) {
+            if (kat.tipe === "tahfidz") {
+                const nilaiList = records.map(r => Number(r.sabaq_nilai)).filter(v => v > 0);
+                const avg = nilaiList.length ? Math.round(nilaiList.reduce((a, b) => a + b, 0) / nilaiList.length) : 0;
+                const latestSurat = records.find(r => r.sabaq_surat)?.sabaq_surat || "";
+                const totalBaris = records.reduce((sum, r) => sum + (Number(r.sabaq_baris) || 0), 0);
+                return {
+                    avgHarian: avg,
+                    completedBab: [],
+                    autoDesc: latestSurat ? `Capaian terakhir: ${latestSurat} (Total ${totalBaris} baris)` : ""
+                };
+            }
+
+            let collectedScores = [];
+            let masteredBabSet = new Set();
+            let latestMateri = "";
+
+            records.forEach(rec => {
+                const rawNote = String(rec.tahsin_catatan || "");
+                if (!rawNote) return;
+
+                // Format dari mutabaah.html: "[Judul] Bab Selesai: (A, B) Materi: X Nilai: 85 Ket: Y | ..."
+                const segments = rawNote.split("|").map(s => s.trim());
+                segments.forEach(seg => {
+                    const lowerSeg = seg.toLowerCase();
+                    const isMatch = kat.matchKeywords.some(kw => lowerSeg.includes(kw.toLowerCase()));
+                    if (!isMatch) return;
+
+                    const nilaiMatch = seg.match(/Nilai:\s*(\d+)/i);
+                    if (nilaiMatch && Number(nilaiMatch[1]) > 0) {
+                        collectedScores.push(Number(nilaiMatch[1]));
+                    }
+
+                    const babMatch = seg.match(/Bab Selesai:\s*\(([^)]+)\)/i);
+                    if (babMatch && babMatch[1]) {
+                        babMatch[1].split(",").map(b => b.trim()).forEach(b => masteredBabSet.add(b));
+                    }
+
+                    const materiMatch = seg.match(/Materi:\s*(.*?)(?=\s+(?:Nilai:|Ket:)|$)/i);
+                    if (materiMatch && materiMatch[1] && !latestMateri) {
+                        latestMateri = materiMatch[1].trim();
+                    }
+                });
+            });
+
+            const avg = collectedScores.length
+                ? Math.round(collectedScores.reduce((a, b) => a + b, 0) / collectedScores.length)
+                : 0;
+
+            let autoDesc = "";
+            if (kat.tipe === "sub_sesi") {
+                const doneCount = masteredBabSet.size;
+                const totalBab = kat.bab.length;
+                autoDesc = `Lulus ${doneCount} dari ${totalBab} sesi/bab praktek.`;
+            } else if (latestMateri) {
+                autoDesc = `Materi terakhir: ${latestMateri}`;
+            }
+
+            return {
+                avgHarian: avg,
+                completedBab: Array.from(masteredBabSet),
+                autoDesc: autoDesc
+            };
+        }
+
+        function recalculateTotals() {
+            const rows = document.querySelectorAll("#raport-tbody tr[data-kat-id]");
+            let sumAkhir = 0;
+            let countScored = 0;
+
+            rows.forEach(row => {
+                const avgHarian = Number(row.dataset.avgHarian) || 0;
+                const ujianInput = row.querySelector(".input-nilai-raport");
+                const ujianVal = ujianInput.value !== "" ? Number(ujianInput.value) : null;
+
+                let nilaiAkhir = 0;
+                if (avgHarian > 0 && ujianVal !== null) {
+                    nilaiAkhir = Math.round((avgHarian + ujianVal) / 2);
+                } else if (ujianVal !== null) {
+                    nilaiAkhir = ujianVal;
+                } else if (avgHarian > 0) {
+                    nilaiAkhir = avgHarian;
+                }
+
+                const cellAkhir = row.querySelector(".cell-nilai-akhir");
+                const cellPred = row.querySelector(".cell-predikat");
+
+                cellAkhir.textContent = nilaiAkhir > 0 ? nilaiAkhir : "-";
+                const pred = getPredikat(nilaiAkhir);
+                cellPred.innerHTML = pred.label !== "-"
+                    ? `<span class="badge-predikat ${pred.cls}">${pred.label}</span>`
+                    : "-";
+
+                if (nilaiAkhir > 0) {
+                    sumAkhir += nilaiAkhir;
+                    countScored++;
+                }
+            });
+
+            const rataTotal = countScored > 0 ? (sumAkhir / countScored).toFixed(1) : "0";
+            document.getElementById("disp-rata-total").textContent = rataTotal;
+
+            const predTotal = getPredikat(Number(rataTotal));
+            document.getElementById("disp-predikat-total").innerHTML = predTotal.label !== "-"
+                ? `<span class="badge-predikat ${predTotal.cls}">${predTotal.label}</span>`
+                : "-";
+
+            document.getElementById("disp-status-lulus").textContent = Number(rataTotal) >= 70
+                ? "Status: Tuntas / Memenuhi Standar Ma'had"
+                : (Number(rataTotal) > 0 ? "Status: Perlu Bimbingan Tambahan" : "-");
+        }
+
+        function renderRaportTable(kelasName, mutabaahRecords, savedKategoriMap = {}) {
+            const tbody = document.getElementById("raport-tbody");
+            const kategoriList = KATEGORI_RAPORT_KELAS[kelasName] || KATEGORI_RAPORT_KELAS["Taud 1"];
+
+            document.getElementById("disp-kelas-sub").textContent = kelasName;
+            tbody.innerHTML = "";
+
+            kategoriList.forEach((kat, idx) => {
+                const stats = analyzeCategoryFromMutabaah(kat, mutabaahRecords);
+                const savedItem = savedKategoriMap[kat.id] || {};
+
+                const avgHarian = savedItem.rata_harian !== undefined ? savedItem.rata_harian : stats.avgHarian;
+                const nilaiUjian = savedItem.nilai_ujian !== undefined && savedItem.nilai_ujian !== null ? savedItem.nilai_ujian : "";
+                const ketText = savedItem.keterangan !== undefined ? savedItem.keterangan : stats.autoDesc;
+
+                let babHtml = "";
+                if (kat.tipe === "sub_sesi" && Array.isArray(kat.bab)) {
+                    babHtml = `<div class="bab-pills">`;
+                    kat.bab.forEach(bName => {
+                        const isDone = stats.completedBab.some(cb => cb.toLowerCase() === bName.toLowerCase());
+                        babHtml += `<span class="bab-pill ${isDone ? 'bab-done' : 'bab-pending'}">${isDone ? '✓' : '•'} ${bName}</span>`;
+                    });
+                    babHtml += `</div>`;
+                }
+
+                const tr = document.createElement("tr");
+                tr.dataset.katId = kat.id;
+                tr.dataset.katNama = kat.nama;
+                tr.dataset.avgHarian = avgHarian;
+
+                tr.innerHTML = `
+                    <td class="center"><strong>${idx + 1}</strong></td>
+                    <td>
+                        <strong>${kat.nama}</strong>
+                        ${babHtml}
+                    </td>
+                    <td class="center">${avgHarian > 0 ? avgHarian : "-"}</td>
+                    <td class="center">
+                        <input type="number" class="input-nilai-raport" min="0" max="100" value="${nilaiUjian}" placeholder="0-100">
+                    </td>
+                    <td class="center cell-nilai-akhir" style="font-weight: 800;">-</td>
+                    <td class="center cell-predikat">-</td>
+                    <td>
+                        <input type="text" class="input-ket-raport" value="${ketText.replace(/"/g, '&quot;')}" placeholder="Keterangan capaian...">
+                    </td>
+                `;
+
+                tr.querySelector(".input-nilai-raport").addEventListener("input", recalculateTotals);
+                tbody.appendChild(tr);
+            });
+
+            recalculateTotals();
+        }
+
+        async function loadSantriByKelas(kelasName) {
             const selectSiswa = document.getElementById("select-siswa");
             selectSiswa.innerHTML = `<option value="">-- Memuat Santri... --</option>`;
 
             try {
-                let query = "santri?select=*&order=nama_lengkap.asc";
-                if (programName) {
-                    query += `&program=eq.${encodeURIComponent(programName)}`;
+                let list = await supabaseFetch(`santri?select=*&kelas=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
+                if (!Array.isArray(list) || list.length === 0) {
+                    const fallback = await supabaseFetch(`santri?select=*&program=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
+                    if (Array.isArray(fallback)) list = fallback;
                 }
-                
-                const list = await supabaseFetch(query);
-                currentSantriList = Array.isArray(list) ? list : [];
 
-                selectSiswa.innerHTML = `<option value="">-- Pilih Siswa --</option>`;
+                currentSantriList = Array.isArray(list) ? list : [];
+                selectSiswa.innerHTML = `<option value="">-- Pilih Santri --</option>`;
+
+                if (currentSantriList.length === 0) {
+                    selectSiswa.innerHTML = `<option value="">-- Tidak Ada Santri di ${kelasName} --</option>`;
+                    return;
+                }
+
                 currentSantriList.forEach(s => {
                     const opt = document.createElement("option");
                     opt.value = s.nis;
-                    opt.dataset.nama = s.nama_lengkap;
                     opt.textContent = `${s.nama_lengkap} (${s.nis})`;
                     selectSiswa.appendChild(opt);
                 });
@@ -587,186 +851,176 @@
             }
         }
 
-        // Kalkulasi Sub-Total Nilai Tahsin: (Kelancaran * 0.5) + (Bacaan * 0.4) + (Adab * 0.1)
-        function calculateTahsinSubtotal() {
-            const kelancaran = Number(document.getElementById("tahsin-kelancaran").value) || 0;
-            const bacaan = Number(document.getElementById("tahsin-bacaan").value) || 0;
-            const adab = Number(document.getElementById("tahsin-adab").value) || 0;
-
-            const subtotal = (kelancaran * 0.50) + (bacaan * 0.40) + (adab * 0.10);
-            document.getElementById("tahsin-subtotal-val").textContent = subtotal.toFixed(1);
-            return subtotal;
-        }
-
-        // Fetch data nilai evaluasi yang sudah ada di database untuk periode & nis terpilih
-        async function loadExistingEvaluasiData() {
+        async function loadStudentRaportData() {
+            const kelas = document.getElementById("select-kelas").value;
             const nis = document.getElementById("select-siswa").value;
-            const statusTxt = document.getElementById("status-input-txt");
+            const semester = document.getElementById("select-semester").value;
+            const tahunAjaran = document.getElementById("input-tahun-ajaran").value.trim() || "2026/2027";
 
-            if (!nis) {
-                statusTxt.textContent = "Pilih Siswa Terlebih Dahulu";
-                resetFormInputs();
+            document.getElementById("disp-periode").textContent = `${semester} — Tahun Ajaran ${tahunAjaran}`;
+            document.getElementById("disp-kelas").textContent = kelas;
+
+            const santri = currentSantriList.find(s => String(s.nis) === String(nis));
+            if (!santri) {
+                document.getElementById("disp-nama").textContent = "-";
+                document.getElementById("disp-nis").textContent = "-";
+                document.getElementById("disp-jk").textContent = "-";
+                renderRaportTable(kelas, [], {});
                 return;
             }
 
+            document.getElementById("disp-nama").textContent = santri.nama_lengkap;
+            document.getElementById("disp-nis").textContent = santri.nis;
+            document.getElementById("disp-jk").textContent = santri.jenis_kelamin || "-";
+
             try {
-                const list = await supabaseFetch(`evaluasi_raport?santri_nis=eq.${encodeURIComponent(nis)}&periode=eq.${encodeURIComponent(currentPeriode)}`);
-                
-                if (Array.isArray(list) && list.length > 0) {
-                    const data = list[0];
-                    statusTxt.textContent = `Data ${currentPeriode} Ditemukan (Edit Mode)`;
+                // 1. Ambil seluruh catatan mutaba'ah santri
+                const mutabaahList = await supabaseFetch(`mutabaah?santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc`);
+                currentMutabaahRecords = Array.isArray(mutabaahList) ? mutabaahList : [];
 
-                    // Populate form fields
-                    document.getElementById("tahsin-kitab").value = data.tahsin_kitab || "Fathurrahman";
-                    document.getElementById("tahsin-soal-hal").value = data.tahsin_soal_hal || 1;
-                    document.getElementById("tahsin-kelancaran").value = data.tahsin_kelancaran || "";
-                    document.getElementById("tahsin-bacaan").value = data.tahsin_bacaan || "";
-                    document.getElementById("tahsin-adab").value = data.tahsin_adab || "";
-                    document.getElementById("tahsin-catatan").value = data.tahsin_catatan || "";
+                // Hitung Rekap Kehadiran
+                let hadir = 0, sakit = 0, izin = 0, alpa = 0;
+                currentMutabaahRecords.forEach(m => {
+                    const st = String(m.kehadiran || "").toLowerCase();
+                    if (st === "hadir") hadir++;
+                    else if (st === "sakit") sakit++;
+                    else if (st === "izin") izin++;
+                    else if (st === "alpa") alpa++;
+                });
 
-                    document.getElementById("tasmi-juz").value = data.tasmi_juz || "";
-                    document.getElementById("tasmi-nilai").value = data.tasmi_nilai || "";
-                    document.getElementById("tasmi-catatan").value = data.tasmi_catatan || "";
+                document.getElementById("disp-hadir").textContent = `${hadir} Hari`;
+                document.getElementById("disp-sakit-izin").textContent = `${sakit} Sakit, ${izin} Izin`;
+                document.getElementById("disp-alpa").textContent = `${alpa} Hari`;
 
-                    document.getElementById("mhq-juz").value = data.mhq_juz || "";
-                    document.getElementById("mhq-nilai").value = data.mhq_nilai || "";
-                    document.getElementById("mhq-catatan").value = data.mhq_catatan || "";
+                // Hitung Rekap Tahfidz
+                const setoranList = currentMutabaahRecords.filter(m => m.sabaq_surat || Number(m.sabaq_baris) > 0);
+                const totalBaris = setoranList.reduce((acc, m) => acc + (Number(m.sabaq_baris) || 0), 0);
+                const estHalaman = (totalBaris / 15).toFixed(1);
+                const lastSurat = setoranList[0]?.sabaq_surat || "-";
 
-                    document.getElementById("matan-kitab").value = data.matan_kitab || "Matan Tuhfatul Athfal";
-                    document.getElementById("matan-nilai").value = data.matan_nilai || "";
-                    document.getElementById("matan-catatan").value = data.matan_catatan || "";
+                document.getElementById("disp-total-baris").textContent = `${totalBaris} Baris (± ${estHalaman} Halaman)`;
+                document.getElementById("disp-surat-terakhir").textContent = lastSurat;
+                document.getElementById("disp-jml-setoran").textContent = `${setoranList.length} Kali Setoran`;
 
-                    document.getElementById("deskripsi-rapor").value = data.deskripsi_rapor || "";
-
-                    calculateTahsinSubtotal();
-                } else {
-                    statusTxt.textContent = "Data Baru (Siap Input)";
-                    resetFormInputs();
+                // 2. Cek apakah sudah ada data rapor tersimpan untuk semester & tahun ajaran ini
+                let savedMap = {};
+                try {
+                    const existingRaport = await supabaseFetch(
+                        `raport?santri_nis=eq.${encodeURIComponent(nis)}&semester=eq.${encodeURIComponent(semester)}&tahun_ajaran=eq.${encodeURIComponent(tahunAjaran)}`
+                    );
+                    if (Array.isArray(existingRaport) && existingRaport.length > 0) {
+                        const rData = existingRaport[0];
+                        document.getElementById("input-catatan-pengampu").value = rData.catatan_pengampu || "";
+                        if (Array.isArray(rData.nilai_kategori)) {
+                            rData.nilai_kategori.forEach(item => { savedMap[item.id] = item; });
+                        }
+                    } else {
+                        document.getElementById("input-catatan-pengampu").value = "";
+                    }
+                } catch (e) {
+                    // Jika tabel raport belum dibuat di SQL Editor, tetap tampilkan data dari mutaba'ah
                 }
-            } catch (err) {
-                statusTxt.textContent = "Siap Input";
-            }
-        }
 
-        function resetFormInputs() {
-            document.getElementById("form-raport-utama").reset();
-            document.getElementById("tahsin-subtotal-val").textContent = "0.0";
+                renderRaportTable(kelas, currentMutabaahRecords, savedMap);
+            } catch (err) {
+                showAlert("Gagal memuat rincian mutaba'ah santri: " + err.message, "error");
+            }
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             checkAuth();
 
-            // Event Selector Periode
-            document.querySelectorAll(".btn-periode").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    document.querySelectorAll(".btn-periode").forEach(b => b.classList.remove("active"));
-                    this.classList.add("active");
-                    currentPeriode = this.dataset.periode;
-                    document.getElementById("badge-periode-aktif").textContent = currentPeriode;
-                    loadExistingEvaluasiData();
-                });
-            });
-
-            // Event Tab Sub-Penilaian
-            document.querySelectorAll(".tab-menu-btn").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    document.querySelectorAll(".tab-menu-btn").forEach(b => b.classList.remove("active"));
-                    document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-
-                    this.classList.add("active");
-                    document.getElementById(this.dataset.tab).classList.add("active");
-                });
-            });
-
-            // Event Live Calculation Tahsin
-            ["tahsin-kelancaran", "tahsin-bacaan", "tahsin-adab"].forEach(id => {
-                document.getElementById(id).addEventListener("input", calculateTahsinSubtotal);
+            const now = new Date();
+            document.getElementById("disp-tgl-ttd").textContent = now.toLocaleDateString("id-ID", {
+                day: "numeric", month: "long", year: "numeric"
             });
 
             const selectKelas = document.getElementById("select-kelas");
             const selectSiswa = document.getElementById("select-siswa");
+            const selectSemester = document.getElementById("select-semester");
+            const inputTahun = document.getElementById("input-tahun-ajaran");
 
-            selectKelas.addEventListener("change", function(e) {
-                loadSantriByKelas(e.target.value);
+            selectKelas.addEventListener("change", async function(e) {
+                await loadSantriByKelas(e.target.value);
+                loadStudentRaportData();
             });
 
-            selectSiswa.addEventListener("change", function() {
-                loadExistingEvaluasiData();
+            selectSiswa.addEventListener("change", loadStudentRaportData);
+            selectSemester.addEventListener("change", loadStudentRaportData);
+            inputTahun.addEventListener("change", loadStudentRaportData);
+
+            // Tarik ulang nilai terbaru dari Mutaba'ah (reset nilai_ujian tersimpan ke kalkulasi mutaba'ah)
+            document.getElementById("btn-sync-mutabaah").addEventListener("click", function() {
+                const kelas = selectKelas.value;
+                renderRaportTable(kelas, currentMutabaahRecords, {});
+                showAlert("Nilai harian & capaian bab berhasil disinkronkan ulang dari Mutaba'ah!", "success");
             });
 
-            // Submit Form Evaluasi & Rapor
-            document.getElementById("form-raport-utama").addEventListener("submit", async function(e) {
-                e.preventDefault();
-
+            // Simpan Rapor ke Supabase
+            document.getElementById("btn-save-raport").addEventListener("click", async function() {
                 const nis = selectSiswa.value;
-                const selectedOpt = selectSiswa.options[selectSiswa.selectedIndex];
-                const namaSantri = selectedOpt ? selectedOpt.dataset.nama : "";
-
-                if (!nis || !namaSantri) {
-                    showGlobalAlert("Silakan pilih siswa terlebih dahulu.", "error");
+                const santri = currentSantriList.find(s => String(s.nis) === String(nis));
+                if (!santri) {
+                    showAlert("Silakan pilih santri terlebih dahulu sebelum menyimpan rapor.", "error");
                     return;
                 }
 
-                const submitBtn = document.getElementById("btn-submit-raport");
-                submitBtn.disabled = true;
-                submitBtn.textContent = "Menyimpan Nilai Rapor...";
+                const btn = this;
+                btn.disabled = true;
 
-                const subtotalTahsin = calculateTahsinSubtotal();
+                const kategoriPayload = [];
+                document.querySelectorAll("#raport-tbody tr[data-kat-id]").forEach(row => {
+                    const ujianVal = row.querySelector(".input-nilai-raport").value;
+                    const akhirTxt = row.querySelector(".cell-nilai-akhir").textContent;
+                    kategoriPayload.push({
+                        id: row.dataset.katId,
+                        nama: row.dataset.katNama,
+                        rata_harian: Number(row.dataset.avgHarian) || 0,
+                        nilai_ujian: ujianVal !== "" ? Number(ujianVal) : null,
+                        nilai_akhir: akhirTxt !== "-" ? Number(akhirTxt) : 0,
+                        keterangan: row.querySelector(".input-ket-raport").value.trim()
+                    });
+                });
+
+                const hadirCount = parseInt(document.getElementById("disp-hadir").textContent) || 0;
+                const alpaCount = parseInt(document.getElementById("disp-alpa").textContent) || 0;
+                const sakitIzinTxt = document.getElementById("disp-sakit-izin").textContent.match(/(\d+)\s*Sakit,\s*(\d+)\s*Izin/);
+                const totalBaris = parseInt(document.getElementById("disp-total-baris").textContent) || 0;
 
                 const payload = {
-                    periode: currentPeriode,
-                    tahun_ajaran: "2026/2027",
-                    kelas: selectKelas.value || null,
-                    santri_nis: nis,
-                    nama_santri: namaSantri,
-
-                    // 1. Tahsin
-                    tahsin_kitab: document.getElementById("tahsin-kitab").value,
-                    tahsin_soal_hal: Number(document.getElementById("tahsin-soal-hal").value) || 1,
-                    tahsin_kelancaran: Number(document.getElementById("tahsin-kelancaran").value) || 0,
-                    tahsin_bacaan: Number(document.getElementById("tahsin-bacaan").value) || 0,
-                    tahsin_adab: Number(document.getElementById("tahsin-adab").value) || 0,
-                    tahsin_subtotal: subtotalTahsin,
-                    tahsin_catatan: document.getElementById("tahsin-catatan").value.trim() || null,
-
-                    // 2. Tasmi'
-                    tasmi_juz: document.getElementById("tasmi-juz").value.trim() || null,
-                    tasmi_nilai: Number(document.getElementById("tasmi-nilai").value) || 0,
-                    tasmi_catatan: document.getElementById("tasmi-catatan").value.trim() || null,
-
-                    // 3. MHQ
-                    mhq_juz: document.getElementById("mhq-juz").value.trim() || null,
-                    mhq_nilai: Number(document.getElementById("mhq-nilai").value) || 0,
-                    mhq_catatan: document.getElementById("mhq-catatan").value.trim() || null,
-
-                    // 4. Matan
-                    matan_kitab: document.getElementById("matan-kitab").value || null,
-                    matan_nilai: Number(document.getElementById("matan-nilai").value) || 0,
-                    matan_catatan: document.getElementById("matan-catatan").value.trim() || null,
-
-                    // 5. Deskripsi Rapor
-                    deskripsi_rapor: document.getElementById("deskripsi-rapor").value.trim() || null
+                    santri_nis: santri.nis,
+                    nama_santri: santri.nama_lengkap,
+                    kelas: selectKelas.value,
+                    semester: selectSemester.value,
+                    tahun_ajaran: inputTahun.value.trim() || "2026/2027",
+                    hadir: hadirCount,
+                    sakit: sakitIzinTxt ? Number(sakitIzinTxt[1]) : 0,
+                    izin: sakitIzinTxt ? Number(sakitIzinTxt[2]) : 0,
+                    alpa: alpaCount,
+                    total_baris_tahfidz: totalBaris,
+                    capaian_tahfidz: document.getElementById("disp-surat-terakhir").textContent,
+                    nilai_kategori: kategoriPayload,
+                    rata_rata_akhir: Number(document.getElementById("disp-rata-total").textContent) || 0,
+                    catatan_pengampu: document.getElementById("input-catatan-pengampu").value.trim(),
+                    tanggal_cetak: new Date().toISOString().slice(0, 10)
                 };
 
                 try {
-                    // Gunakan Upsert (Prefer: resolution=merge-duplicates) agar jika data siswa & periode sudah ada, otomatis mengupdate
-                    await supabaseFetch("evaluasi_raport", {
+                    await supabaseFetch("raport?on_conflict=santri_nis,semester,tahun_ajaran", {
                         method: "POST",
                         prefer: "resolution=merge-duplicates,return=representation",
                         body: payload
                     });
-
-                    showGlobalAlert(`Berhasil menyimpan nilai Rapor ${currentPeriode} untuk ${namaSantri}!`, "success");
-                    loadExistingEvaluasiData();
+                    showAlert(`Rapor ${santri.nama_lengkap} (${selectKelas.value}) berhasil disimpan!`, "success");
                 } catch (err) {
-                    showGlobalAlert(err.message, "error");
+                    showAlert("Gagal menyimpan rapor: " + err.message, "error");
                 } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "Simpan Nilai Evaluasi & Rapor";
+                    btn.disabled = false;
                 }
             });
 
-            loadSantriByKelas("");
+            // Inisialisasi awal
+            loadSantriByKelas(selectKelas.value).then(loadStudentRaportData);
         });
     </script>
 </body>

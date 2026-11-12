@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#27ae60">
-    <title>SIFAHMI - Mutaba'ah Harian &amp; Tahfidz</title>
+    <meta name="theme-color" content="#1b5e20">
+    <title>SIFAHMI - Mutaba'ah Harian 5 Kelas</title>
     <style>
         :root {
             color-scheme: light;
             --green: #27ae60;
             --green-dark: #1b5e20;
             --green-light: #e9f8ef;
-            --ink: #2c3e50;
-            --muted: #7f8c8d;
-            --line: #dfe5e8;
-            --page: #f4f7f9;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --page: #f8fafc;
             --white: #ffffff;
-            --danger: #e74c3c;
-            --blue: #2980b9;
-            --purple: #8e44ad;
-            --card-header-tahfidz: #1b5e20;
-            --card-header-tahsin: #2c3e50;
-            --card-header-khat: #1a365d;
+            --danger: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +28,7 @@
             min-height: 100%;
             background: var(--page);
             color: var(--ink);
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body { display: flex; flex-direction: column; }
@@ -40,7 +38,7 @@
             flex-shrink: 0;
             background: var(--white);
             border-bottom: 1px solid var(--line);
-            padding: 12px 24px;
+            padding: 14px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -49,13 +47,12 @@
         }
 
         .brand-header { display: flex; align-items: center; gap: 12px; }
-        .brand-header img { width: 40px; height: 40px; object-fit: contain; }
+        .brand-header img { width: 38px; height: 38px; object-fit: contain; }
 
         .brand-info h1 {
             font-size: 16px;
-            color: var(--green);
+            color: var(--green-dark);
             font-weight: 800;
-            letter-spacing: 0.5px;
             line-height: 1.2;
             display: flex;
             align-items: center;
@@ -64,7 +61,7 @@
         }
 
         .brand-info h1 span.page-title-text { color: var(--ink); font-weight: 700; }
-        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 2px; }
+        .brand-info p { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
 
         .btn-back {
             display: flex;
@@ -72,84 +69,81 @@
             gap: 6px;
             padding: 8px 14px;
             border: 1px solid var(--line);
-            border-radius: 8px;
+            border-radius: 10px;
             background: var(--white);
             color: var(--ink);
             text-decoration: none;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.2s;
         }
+        .btn-back:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-light); }
 
-        .btn-back:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
-
-        /* Layout Container */
         main.container {
-            max-width: 900px;
+            max-width: 920px;
             width: 100%;
             margin: 0 auto;
-            padding: 16px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
 
-        /* Card Panels */
+        /* Embossed Card Depth */
         .card {
             background: var(--white);
-            border-radius: 14px;
-            padding: 18px;
-            border: 1px solid var(--line);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: inset 0 1.5px 0 0 rgba(255, 255, 255, 1), 0 8px 20px -4px rgba(15, 23, 42, 0.05);
         }
 
-        .card-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--ink);
-            margin-bottom: 14px;
-        }
+        .card-title { font-size: 17px; font-weight: 800; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.3px; }
 
-        .field-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
+        .field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 
-        label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
+        label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
         input, select, textarea {
             width: 100%;
-            min-height: 40px;
-            padding: 9px 12px;
+            min-height: 42px;
+            padding: 10px 14px;
             border: 1px solid var(--line);
-            border-radius: 8px;
+            border-radius: 10px;
             outline: none;
             background: #fff;
             color: var(--ink);
             font: inherit;
-            font-size: 13px;
+            font-size: 13.5px;
         }
 
-        textarea { min-height: 65px; resize: vertical; }
-        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .12); }
+        textarea { min-height: 70px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, .15); }
 
-        /* Action Buttons */
-        .btn {
-            min-height: 42px;
-            padding: 0 16px;
-            border: 0;
-            border-radius: 9px;
-            font: inherit;
-            font-size: 13px;
+        /* Dynamic Schedule Banner */
+        .schedule-badge-banner {
+            background: linear-gradient(135deg, #1b5e20, #27ae60);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-size: 13.5px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 14px rgba(27, 94, 32, 0.22);
+        }
+
+        /* Buttons */
+        .btn {
+            min-height: 44px;
+            padding: 0 18px;
+            border: 0;
+            border-radius: 12px;
+            font: inherit;
+            font-size: 13.5px;
+            font-weight: 800;
             cursor: pointer;
             transition: all .2s;
             display: inline-flex;
@@ -159,37 +153,86 @@
         }
 
         .btn-block { width: 100%; }
-        .btn-primary { background: var(--green); color: #fff; }
-        .btn-primary:hover { background: var(--green-dark); }
+        .btn-primary { background: var(--green-dark); color: #fff; box-shadow: 0 4px 14px rgba(27, 94, 32, 0.25); }
+        .btn-primary:hover { background: #144718; transform: translateY(-1px); }
         .btn-purple { background: var(--purple); color: #fff; }
-        .btn-purple:hover { background: #732d91; }
-        .btn-outline { background: #f0f7f3; color: var(--green-dark); border: 1px solid #c8e6c9; }
-        .btn-outline:hover { background: #dcedc8; }
-        .btn-secondary { background: #f0f3f5; color: var(--muted); }
-        .btn-secondary:hover { background: #e2e7eb; color: var(--ink); }
+        .btn-purple:hover { background: #6d28d9; }
+        .btn-outline { background: #f8fafc; color: var(--ink); border: 1px solid var(--line); }
 
-        /* Callout Box - Presensi Sekelas */
-        .callout-box {
-            background: #f4f6fb;
-            border: 1px dashed #ced6e0;
+        /* Sub-Sesi Checklist Bab Grid */
+        .subsession-box {
+            background: #f8fafc;
+            border: 1px solid var(--line);
             border-radius: 12px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
+            padding: 14px;
+            margin-top: 8px;
+            margin-bottom: 12px;
         }
 
-        .callout-box p { font-size: 12px; color: var(--muted); margin-top: 2px; }
-        .callout-box h4 { font-size: 13px; color: var(--ink); font-weight: 700; }
+        .subsession-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--green-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-        /* Riwayat Last 5 Items */
+        .subsession-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+
+        .subsession-item {
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .subsession-item input[type="checkbox"] { width: 16px; height: 16px; min-height: auto; cursor: pointer; }
+
+        /* Section Headers */
+        .section-header {
+            padding: 12px 16px;
+            border-radius: 14px 14px 0 0;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-tahfidz { background: var(--green-dark); }
+        .header-pelajaran { background: #1e293b; }
+
+        .form-block {
+            background: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: inset 0 1px 0 #fff, 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .form-block h5 { font-size: 13.5px; color: var(--green-dark); font-weight: 800; margin-bottom: 12px; }
+        .row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+
+        /* 5 Riwayat Box */
         .history-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
         .history-item {
-            background: #fafbfc;
+            background: #f8fafc;
             border: 1px solid var(--line);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 12px 14px;
             display: flex;
             flex-direction: column;
@@ -197,409 +240,154 @@
         }
 
         .history-header { display: flex; align-items: center; justify-content: space-between; }
-        .history-date { font-weight: 700; font-size: 13px; color: var(--ink); }
+        .history-date { font-weight: 800; font-size: 13px; color: var(--ink); }
 
-        .badge-presence {
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 700;
-        }
+        .badge-presence { padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 800; }
         .presence-hadir { background: #e9f8ef; color: #1e8449; }
         .presence-sakit { background: #fef5e7; color: #d35400; }
         .presence-izin { background: #eaf3fb; color: #24577a; }
         .presence-alpa { background: #fdecea; color: #a93226; }
 
-        .history-details { font-size: 12px; color: var(--muted); line-height: 1.5; }
-        .history-details strong { color: var(--ink); }
-
-        /* Progress Bar Target */
-        .progress-box { margin-top: 12px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
-        .progress-bar-bg { width: 100%; height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.4s ease; }
-
-        /* Form Sub-Sections (Tahfidz, Tahsin, Khat) */
-        .section-header {
-            padding: 10px 14px;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .header-tahfidz { background: var(--card-header-tahfidz); }
-        .header-tahsin { background: var(--card-header-tahsin); }
-        .header-khat { background: var(--card-header-khat); }
-        .section-header span.tag-optional { font-size: 10px; opacity: 0.8; font-weight: 400; }
-
-        .form-block {
-            background: #fafcfb;
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 12px;
-        }
-
-        .form-block h5 { font-size: 13px; color: var(--green-dark); margin-bottom: 10px; }
-        .row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
-
-        /* Modal Pop-Up Presensi Sekelas */
+        /* Modal Presensi */
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.45);
-            backdrop-filter: blur(4px);
-            display: grid;
-            place-items: center;
-            z-index: 1000;
-            padding: 16px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.25s ease;
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px);
+            display: grid; place-items: center; z-index: 1000; padding: 16px; opacity: 0; visibility: hidden; transition: all 0.25s ease;
         }
-
         .modal-overlay.active { opacity: 1; visibility: visible; }
-
-        .modal-card {
-            background: #fff;
-            width: min(100%, 550px);
-            max-height: 85vh;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { font-size: 16px; color: var(--ink); font-weight: 700; }
+        .modal-card { background: #fff; width: min(100%, 550px); max-height: 85vh; border-radius: 18px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 16px; color: var(--ink); font-weight: 800; }
         .btn-close-modal { background: transparent; border: none; font-size: 22px; color: var(--muted); cursor: pointer; }
-        .modal-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
-        .modal-footer { padding: 12px 18px; border-top: 1px solid var(--line); background: #fdfdfd; display: flex; justify-content: flex-end; gap: 8px; }
+        .modal-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+        .modal-footer { padding: 14px 20px; border-top: 1px solid var(--line); background: #fdfdfd; display: flex; justify-content: flex-end; gap: 8px; }
 
         .batch-santri-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
-        .batch-santri-row:last-child { border-bottom: 0; }
-
         .presence-options { display: flex; gap: 8px; }
-        .presence-options label { font-size: 11px; text-transform: none; cursor: pointer; display: flex; align-items: center; gap: 3px; font-weight: 600; color: var(--ink); }
+        .presence-options label { font-size: 11px; text-transform: none; cursor: pointer; display: flex; align-items: center; gap: 3px; font-weight: 700; color: var(--ink); }
 
-        .message { margin-bottom: 14px; padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.4; }
+        .message { margin-bottom: 14px; padding: 10px 14px; border-radius: 10px; font-size: 12.5px; line-height: 1.4; }
         .message[hidden] { display: none !important; }
         .message.error { background: #fdecea; color: #a93226; border: 1px solid #fadbd8; }
         .message.success { background: #e9f8ef; color: #1e8449; border: 1px solid #d4efdf; }
 
-        footer {
-            flex-shrink: 0;
-            background: var(--white);
-            border-top: 1px solid var(--line);
-            padding: 12px 16px;
-            color: #95a5a6;
-            text-align: center;
-            font-size: 11px;
-            line-height: 1.6;
-            margin-top: auto;
-        }
-        footer strong { color: var(--muted); }
+        footer { background: var(--white); border-top: 1px solid var(--line); padding: 16px; color: #94a3b8; text-align: center; font-size: 11.5px; margin-top: auto; }
     </style>
 </head>
 <body>
 
-    <!-- Header Topbar -->
     <header class="top-bar">
         <div class="brand-header">
             <img src="logo.png" alt="Logo YNHQ">
             <div class="brand-info">
-                <h1>SIFAHMI <span class="page-title-text">- PORTAL MUTABAAH</span></h1>
-                <p>PORTAL PENGAMPU TAHFIDZ &amp; HARIAN SANTRI</p>
+                <h1>SIFAHMI <span class="page-title-text">- MUTABAAH DINAMIS</span></h1>
+                <p>PORTAL JADWAL MUTABAAH 5 KELAS MA'HAD</p>
             </div>
         </div>
-
-        <div class="nav-actions">
-            <a href="dashboard.html" class="btn-back">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                <span>Dashboard</span>
-            </a>
-        </div>
+        <a href="dashboard.html" class="btn-back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Dashboard</span>
+        </a>
     </header>
 
     <main class="container">
         <div class="message" id="global-alert" hidden></div>
 
-        <!-- Section 1: Filter Kelas & Siswa -->
+        <!-- Filter 5 Kelas -->
         <section class="card">
-            <h3 class="card-title">Input &amp; Koreksi Mutaba'ah Harian</h3>
+            <h3 class="card-title">Filter Kelas &amp; Santri</h3>
             
-            <div class="field-group">
-                <label for="select-kelas">PILIH KELAS</label>
-                <select id="select-kelas">
-                    <option value="">-- Semua / Pilih Kelas --</option>
-                    <option value="Taud">Taud</option>
-                    <option value="Mubtadi 1">Mubtadi 1</option>
-                    <option value="Mubtadi 2">Mubtadi 2</option>
-                    <option value="Mutawassith">Mutawassith</option>
-                </select>
+            <div class="row-grid">
+                <div class="field-group">
+                    <label for="select-kelas">PILIH KELAS MA'HAD</label>
+                    <select id="select-kelas">
+                        <option value="Taud 1">Taud 1</option>
+                        <option value="Taud 2">Taud 2</option>
+                        <option value="Mubtadi 1">Mubtadi 1</option>
+                        <option value="Mubtadi 2">Mubtadi 2</option>
+                        <option value="Mutawassith">Mutawassith</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label for="input-tanggal-mutabaah">TANGGAL MUTABAAH</label>
+                    <input type="date" id="input-tanggal-mutabaah">
+                </div>
             </div>
 
-            <button type="button" class="btn btn-outline btn-block" id="btn-progress-pekanan" style="margin-bottom: 12px;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-                <span>Lihat Progress Pekanan Sekelas</span>
-            </button>
-
             <div class="field-group">
-                <label for="select-siswa">PILIH SISWA / SANTRI</label>
+                <label for="select-siswa">PILIH SANTRI</label>
                 <select id="select-siswa">
-                    <option value="">-- Pilih Kelas Terlebih Dahulu --</option>
+                    <option value="">-- Memuat Santri... --</option>
                 </select>
             </div>
-
-            <button type="button" class="btn btn-outline btn-block" id="btn-olahan-siswa">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                <span>Lihat Olahan Data Siswa Ini</span>
-            </button>
         </section>
 
-        <!-- Section 2: Callout Pencatatan Kehadiran Sekelas -->
-        <section class="callout-box">
-            <div>
-                <h4>PENCATATAN KEHADIRAN KELAS</h4>
-                <p>Isi presensi kehadiran seluruh santri sekelas sekaligus melalui pop-up modal.</p>
-            </div>
+        <!-- Presensi Sekelas Button -->
+        <div style="display: flex; justify-content: flex-end;">
             <button type="button" class="btn btn-purple" id="btn-open-batch-presence">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
-                <span>+ Input Kehadiran Siswa</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
+                <span>+ Input Presensi Sekelas</span>
             </button>
-        </section>
+        </div>
 
-        <!-- Section 3: 5 Riwayat Terakhir & Target -->
+        <!-- 5 Riwayat Terakhir -->
         <section class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h4 style="font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase;">5 RIWAYAT TERAKHIR</h4>
-                <small style="color: var(--green-dark); font-weight: 700; cursor: pointer;" onclick="fetchRiwayatSiswa()">Lihat Semua</small>
+                <h4 style="font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase;">5 RIWAYAT TERAKHIR SANTRI</h4>
+                <small style="color: var(--green-dark); font-weight: 700; cursor: pointer;" onclick="fetchRiwayatSiswa()">Refresh</small>
             </div>
-
             <div class="history-list" id="history-container">
-                <div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Pilih siswa untuk melihat 5 riwayat terakhir.</div>
-            </div>
-
-            <div class="progress-box">
-                <div class="progress-header">
-                    <span>Progress Target Tahunan</span>
-                    <span id="target-percent-txt">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="target-progress-bar"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 4px;">
-                    <span id="target-baris-txt">0 / 300 Baris</span>
-                    <span>Target: 1 Juz (300 Baris)</span>
-                </div>
-            </div>
-
-            <div class="field-group" style="margin-top: 14px; margin-bottom: 0;">
-                <label for="input-tanggal-mutabaah">Tanggal Input Setoran / Mutaba'ah</label>
-                <input type="date" id="input-tanggal-mutabaah">
+                <div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Pilih santri untuk melihat riwayat.</div>
             </div>
         </section>
 
-        <!-- Form Input Utama Mutabaah -->
+        <!-- FORM MUTABAAH HARIAN DINAMIS -->
         <form id="form-mutabaah-utama" novalidate>
 
-            <!-- A. INPUT TAHFIDZ & ADAB -->
-            <section class="card" style="padding: 0; overflow: hidden;">
-                <div class="section-header header-tahfidz">
-                    <span>A. Input Tahfidz</span>
-                    <span class="tag-optional">Tidak wajib diisi semua</span>
-                </div>
+            <!-- Status Banner Hari & Kelas -->
+            <div class="schedule-badge-banner" id="schedule-banner">
+                <span id="txt-hari-jadwal">Hari: Senin</span>
+                <span id="txt-kelas-jadwal">Kelas: Taud 1</span>
+            </div>
 
+            <!-- A. TAHFIDZ (Hafalan Utama) -->
+            <section class="card" style="padding: 0; overflow: hidden; margin-bottom: 16px;">
+                <div class="section-header header-tahfidz">
+                    <span>A. Tahfidz Al-Qur'an (Hafalan Utama)</span>
+                </div>
                 <div style="padding: 16px;">
-                    <!-- 1. Sabaq -->
                     <div class="form-block">
-                        <h5>1. Sabaq (Hafalan Baru)</h5>
-                        <div class="field-group">
-                            <label>Surat / Hal</label>
-                            <input type="text" id="sabaq-surat" placeholder="Contoh: At-Tahrim (8 B)">
-                        </div>
+                        <h5>Setoran Sabaq (Hafalan Baru)</h5>
                         <div class="row-grid">
+                            <div class="field-group">
+                                <label>Surat / Hal</label>
+                                <input type="text" id="sabaq-surat" placeholder="Contoh: An-Naba 1-15">
+                            </div>
                             <div class="field-group">
                                 <label>Jml Baris</label>
                                 <input type="number" id="sabaq-baris" min="0" placeholder="0">
                             </div>
                             <div class="field-group">
-                                <label>Nilai (0-100)</label>
-                                <input type="number" id="sabaq-nilai" min="0" max="100" placeholder="Contoh: 85">
-                            </div>
-                        </div>
-                        <div class="field-group">
-                            <label>Catatan Sabaq</label>
-                            <textarea id="sabaq-catatan" placeholder="Catatan kelancaran sabaq..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- 2. Sabqi -->
-                    <div class="form-block">
-                        <h5>2. Sabqi (Murojaah Baru)</h5>
-                        <div class="row-grid">
-                            <div class="field-group">
-                                <label>Surat / Hal</label>
-                                <input type="text" id="sabqi-surat" placeholder="Contoh: Al-Mulk 1-15">
-                            </div>
-                            <div class="field-group">
-                                <label>Penerima Setoran</label>
-                                <select id="sabqi-penerima">
-                                    <option value="Ust. Pengampu">Ust. Pengampu</option>
-                                    <option value="Asisten Ustadz">Asisten Ustadz</option>
-                                    <option value="Teman Sebaya">Teman Sebaya</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="field-group">
-                            <label>Catatan Sabqi</label>
-                            <textarea id="sabqi-catatan" placeholder="Catatan murojaah sabqi..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- 3. Manzil -->
-                    <div class="form-block">
-                        <h5>3. Manzil (Murojaah Lama)</h5>
-                        <div class="row-grid" style="align-items: center;">
-                            <div class="field-group">
-                                <label>Surat / Hal</label>
-                                <input type="text" id="manzil-surat" placeholder="Contoh: Juz 29">
-                            </div>
-                            <div style="margin-top: 12px;">
-                                <label style="text-transform: none; cursor: pointer;">
-                                    <input type="checkbox" id="manzil-ulang" style="width: auto; min-height: auto;"> Status: Ulang
-                                </label>
-                            </div>
-                        </div>
-                        <div class="field-group">
-                            <label>Catatan Manzil</label>
-                            <textarea id="manzil-catatan" placeholder="Catatan manzil..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- 4. Persiapan Sidang -->
-                    <div class="form-block">
-                        <h5>4. Persiapan Sidang (Prasidang)</h5>
-                        <div class="row-grid">
-                            <div class="field-group">
-                                <label>Juz (Angka)</label>
-                                <input type="number" id="prasidang-juz" placeholder="Contoh: 30">
-                            </div>
-                            <div class="field-group">
-                                <label>Bagian (Surat/Hal)</label>
-                                <input type="text" id="prasidang-bagian" placeholder="Hal 1-10">
-                            </div>
-                        </div>
-                        <div class="field-group">
-                            <label>Nilai (0-100)</label>
-                            <input type="number" id="prasidang-nilai" min="0" max="100" placeholder="0-100">
-                        </div>
-                        <div class="field-group">
-                            <label>Catatan Prasidang</label>
-                            <textarea id="prasidang-catatan" placeholder="Catatan prasidang..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- 5. Adab -->
-                    <div class="form-block">
-                        <h5>5. Adab &amp; Catatan Evaluasi Adab</h5>
-                        <div class="row-grid">
-                            <div class="field-group">
-                                <label>Predikat Adab</label>
-                                <select id="adab-predikat">
-                                    <option value="Sangat Baik">Sangat Baik (A)</option>
-                                    <option value="Baik" selected>Baik (B)</option>
-                                    <option value="Cukup">Cukup (C)</option>
-                                    <option value="Perlu Bimbingan">Perlu Bimbingan (D)</option>
-                                </select>
-                            </div>
-                            <div class="field-group">
-                                <label>Catatan Evaluasi Adab</label>
-                                <textarea id="adab-catatan" placeholder="Rincian evaluasi adab..."></textarea>
+                                <label>Nilai Kelancaran (0-100)</label>
+                                <input type="number" id="sabaq-nilai" min="0" max="100" placeholder="0-100">
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- B. INPUT TAHSIN -->
+            <!-- B. PELAJARAN HARIAN TEMATIK DINAMIS (KATEGORI PER KELAS & HARI) -->
             <section class="card" style="padding: 0; overflow: hidden;">
-                <div class="section-header header-tahsin">
-                    <span>B. Input Tahsin</span>
+                <div class="section-header header-pelajaran">
+                    <span id="title-pelajaran-dinamis">B. Pelajaran Harian Tematik</span>
                 </div>
-                <div style="padding: 16px;">
-                    <div class="field-group">
-                        <label>Pilih Kitab / Jilid</label>
-                        <select id="tahsin-kitab">
-                            <option value="">-- Pilih Kitab --</option>
-                            <option value="Talaqqi Al-Qur'an">Talaqqi Al-Qur'an</option>
-                            <option value="Fathurrahman">Fathurrahman</option>
-                            <option value="Ummi / Iqro">Ummi / Iqro</option>
-                            <option value="Tajwid Asy-Syafii">Tajwid Asy-Syafii</option>
-                            <option value="LAINNYA">✍️ + Input Kitab Manual / Lainnya</option>
-                        </select>
-                        <input type="text" id="tahsin-kitab-custom" placeholder="Ketik nama kitab tahsin..." style="margin-top: 6px;" hidden>
-                    </div>
-                    <div class="row-grid">
-                        <div class="field-group">
-                            <label>Hal / Jilid</label>
-                            <input type="text" id="tahsin-hal" placeholder="Contoh: Hal 1-4">
-                        </div>
-                        <div class="field-group">
-                            <label>Nilai</label>
-                            <input type="number" id="tahsin-nilai" min="0" max="100" placeholder="0-100">
-                        </div>
-                    </div>
-                    <div class="field-group">
-                        <label>Catatan Tahsin</label>
-                        <textarea id="tahsin-catatan" placeholder="Catatan bacaan tahsin..."></textarea>
-                    </div>
+                <div style="padding: 16px;" id="dynamic-pelajaran-container">
+                    <!-- Konten Di-generate Otomatis -->
                 </div>
             </section>
 
-            <!-- C. INPUT KHAT / KITABAH -->
-            <section class="card" style="padding: 0; overflow: hidden;">
-                <div class="section-header header-khat">
-                    <span>C. Input Khat / Kitabah</span>
-                </div>
-                <div style="padding: 16px;">
-                    <div class="field-group">
-                        <label>Pilih Kitab / Buku Khat</label>
-                        <select id="khat-kitab">
-                            <option value="">-- Pilih Kitab / Buku --</option>
-                            <option value="Khat Naskhi">Khat Naskhi</option>
-                            <option value="Khat Riq'ah">Khat Riq'ah</option>
-                            <option value="Buku Imla'">Buku Imla'</option>
-                            <option value="LAINNYA">✍️ + Input Kitab Manual / Lainnya</option>
-                        </select>
-                        <input type="text" id="khat-kitab-custom" placeholder="Ketik nama kitab/buku khat..." style="margin-top: 6px;" hidden>
-                    </div>
-                    <div class="row-grid">
-                        <div class="field-group">
-                            <label>Bagian / Hal</label>
-                            <input type="text" id="khat-hal" placeholder="Hal 10">
-                        </div>
-                        <div class="field-group">
-                            <label>Nilai</label>
-                            <input type="number" id="khat-nilai" min="0" max="100" placeholder="0-100">
-                        </div>
-                    </div>
-                    <div class="field-group">
-                        <label>Catatan Khat</label>
-                        <textarea id="khat-catatan" placeholder="Catatan kebersihan & keindahan khat..."></textarea>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary btn-block" id="btn-submit-mutabaah" style="margin-top: 10px; font-size: 15px;">
-                Simpan Data Mutaba'ah
+            <button type="submit" class="btn btn-primary btn-block" id="btn-submit-mutabaah" style="margin-top: 16px; font-size: 15px;">
+                Simpan Data Mutaba'ah Harian
             </button>
         </form>
     </main>
@@ -612,21 +400,17 @@
                 <button type="button" class="btn-close-modal" id="btn-close-presence">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="message" id="presence-modal-alert" hidden></div>
-                <div id="batch-santri-container">
-                    <p style="text-align: center; color: var(--muted);">Pilih kelas terlebih dahulu di halaman utama.</p>
-                </div>
+                <div id="batch-santri-container"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btn-cancel-presence">Batal</button>
+                <button type="button" class="btn btn-outline" id="btn-cancel-presence">Batal</button>
                 <button type="button" class="btn btn-purple" id="btn-save-presence">Simpan Kehadiran Sekelas</button>
             </div>
         </div>
     </div>
 
     <footer>
-        <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>
-        Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
+        <strong>© 2026 Management Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> - Bandung
     </footer>
 
     <script>
@@ -637,6 +421,110 @@
         const SESSION_KEY = "ynhq-supabase-session";
 
         let currentSantriList = [];
+
+        // STRUKTUR MATRIKS JADWAL PELAJARAN HARIAN (5 KELAS MA'HAD)
+        const JADWAL_PELAJARAN = {
+            "Taud 1": {
+                "Senin": [
+                    { id: "hijaiyah", nama: "Menulis & Membaca Huruf Hijaiyah", tipe: "nilai_catatan" },
+                    { id: "doa_hadist", nama: "Hafalan Doa / Hadits", tipe: "nilai_catatan" }
+                ],
+                "Selasa": [
+                    { id: "hijaiyah", nama: "Menulis & Membaca Huruf Hijaiyah", tipe: "nilai_catatan" },
+                    { id: "hafalan_surat", nama: "Hafalan Surat Pendek", tipe: "nilai_catatan" }
+                ],
+                "Rabu": [
+                    { id: "hijaiyah", nama: "Menulis & Membaca Huruf Hijaiyah", tipe: "nilai_catatan" },
+                    { id: "fiqih", nama: "Fiqih & Adab Islami", tipe: "nilai_catatan" }
+                ],
+                "Kamis": [
+                    { 
+                        id: "praktek_wudhu", 
+                        nama: "Praktek Wudhu (Per Sesi / Bab)", 
+                        tipe: "sub_sesi", 
+                        bab: ["Niat Wudhu", "Mencuci Kedua Tangan", "Berkumur-kumur", "Basuh Muka", "Basuh Kedua Tangan", "Usap Kepala & Telinga", "Basuh Kedua Kaki", "Doa Setelah Wudhu"] 
+                    },
+                    { 
+                        id: "praktek_shalat", 
+                        nama: "Praktek Shalat (Per Sesi / Bab)", 
+                        tipe: "sub_sesi", 
+                        bab: ["Niat & Takbiratul Ihram", "Bacaan Al-Fatihah & Surat", "Ruku' & I'tidal", "Sujud & Duduk 2 Sujud", "Tasyahud & Salam"] 
+                    },
+                    { id: "hafalan_surat", nama: "Hafalan Surat Pendek", tipe: "nilai_catatan" },
+                    { 
+                        id: "dzikir_sore", 
+                        nama: "Dzikir Sore (Per Sesi / Bab)", 
+                        tipe: "sub_sesi", 
+                        bab: ["Istighfar & Ta'awwudz", "Ayat Kursi", "Al-Ikhlas, Al-Falaq, An-Nas", "Doa Dzikir Petang"] 
+                    }
+                ],
+                "Jumat": [{ id: "adab_jumat", nama: "Adab & Amalan Barokah Jumat", tipe: "nilai_catatan" }]
+            },
+            "Taud 2": {
+                "Senin": [{ id: "hijaiyah", nama: "Baca Tulis Hijaiyah", tipe: "nilai_catatan" }],
+                "Selasa": [{ id: "hijaiyah", nama: "Baca Tulis Hijaiyah", tipe: "nilai_catatan" }],
+                "Rabu": [{ id: "hafalan", nama: "Hafalan Surat / Doa", tipe: "nilai_catatan" }],
+                "Kamis": [
+                    { 
+                        id: "praktek_wudhu", 
+                        nama: "Praktek Wudhu (Per Sesi / Bab)", 
+                        tipe: "sub_sesi", 
+                        bab: ["Niat Wudhu", "Mencuci Kedua Tangan", "Berkumur-kumur", "Basuh Muka", "Basuh Kedua Tangan", "Usap Kepala & Telinga", "Basuh Kedua Kaki", "Doa Setelah Wudhu"] 
+                    },
+                    { 
+                        id: "praktek_shalat", 
+                        nama: "Praktek Shalat (Per Sesi / Bab)", 
+                        tipe: "sub_sesi", 
+                        bab: ["Niat & Takbiratul Ihram", "Bacaan Al-Fatihah & Surat", "Ruku' & I'tidal", "Sujud & Duduk 2 Sujud", "Tasyahud & Salam"] 
+                    }
+                ],
+                "Jumat": [{ id: "adab_jumat", nama: "Adab & Amalan Barokah Jumat", tipe: "nilai_catatan" }]
+            },
+            "Mubtadi 1": {
+                "Senin": [
+                    { id: "hafalan", nama: "Hafalan Al-Qur'an (Sabaq)", tipe: "nilai_catatan" },
+                    { id: "tilawah", nama: "Tilawah Al-Qur'an", tipe: "nilai_catatan" }
+                ],
+                "Selasa": [
+                    { id: "hafalan", nama: "Hafalan Al-Qur'an (Sabaq)", tipe: "nilai_catatan" },
+                    { id: "kitabah_sambung", nama: "Menulis Huruf Sambung", tipe: "nilai_catatan" }
+                ],
+                "Rabu": [
+                    { id: "hafalan", nama: "Hafalan Al-Qur'an (Sabaq)", tipe: "nilai_catatan" },
+                    { id: "tilawah", nama: "Tilawah Al-Qur'an", tipe: "nilai_catatan" }
+                ],
+                "Kamis": [
+                    { id: "hafalan", nama: "Hafalan Al-Qur'an (Sabaq)", tipe: "nilai_catatan" },
+                    { id: "murajaah", nama: "Murajaah (Sabqi / Manzil)", tipe: "nilai_catatan" }
+                ],
+                "Jumat": [{ id: "adab_jumat", nama: "Adab & Amalan Barokah Jumat", tipe: "nilai_catatan" }]
+            },
+            "Mubtadi 2": {
+                "Senin": [{ id: "qiroah_kitabah_abu", nama: "Qiro'ah + Kitabah (Buku Warna Abu)", tipe: "nilai_catatan" }],
+                "Selasa": [{ id: "qiroah_kitabah_abu", nama: "Qiro'ah + Kitabah (Buku Warna Abu)", tipe: "nilai_catatan" }],
+                "Rabu": [
+                    { id: "kitabah", nama: "Kitabah (Menulis)", tipe: "nilai_catatan" },
+                    { id: "doa_dzikir", nama: "Doa & Dzikir (Hisnul Muslim + Buku Ust. Yazid)", tipe: "nilai_catatan" }
+                ],
+                "Kamis": [{ id: "hafalan", nama: "Hafalan Al-Qur'an", tipe: "nilai_catatan" }],
+                "Jumat": [{ id: "adab_jumat", nama: "Adab & Amalan Barokah Jumat", tipe: "nilai_catatan" }]
+            },
+            "Mutawassith": {
+                "Senin": [{ id: "baca_telaah_kitab", nama: "Baca & Telaah Kitab (Riyadhah / Fathurrahman)", tipe: "nilai_catatan" }],
+                "Selasa": [
+                    { id: "baca_kitab", nama: "Baca Kitab (Riyadhah / Fathurrahman)", tipe: "nilai_catatan" },
+                    { id: "telaah_kitab", nama: "Telaah Kitab", tipe: "nilai_catatan" },
+                    { id: "hafalan_kitab", nama: "Hafalan Matan / Ayat", tipe: "nilai_catatan" }
+                ],
+                "Rabu": [{ id: "baca_telaah_kitab", nama: "Baca & Telaah Kitab (Riyadhah / Fathurrahman)", tipe: "nilai_catatan" }],
+                "Kamis": [
+                    { id: "baca_kitab", nama: "Baca Kitab (Riyadhah / Fathurrahman)", tipe: "nilai_catatan" },
+                    { id: "telaah_kitab", nama: "Telaah Kitab", tipe: "nilai_catatan" },
+                    { id: "hafalan_kitab", nama: "Hafalan Matan / Ayat", tipe: "nilai_catatan" }
+                ],
+                "Jumat": [{ id: "adab_jumat", nama: "Adab & Amalan Barokah Jumat", tipe: "nilai_catatan" }]
+            }
+        };
 
         function checkAuth() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
@@ -676,14 +564,6 @@
                     const errJson = await response.json();
                     errMessage = errJson.message || errJson.hint || errMessage;
                 } catch (e) {}
-
-                if (errMessage.toLowerCase().includes("jwt expired") || response.status === 401) {
-                    localStorage.removeItem(SESSION_KEY);
-                    alert("Sesi login Anda telah berakhir. Silakan login kembali.");
-                    window.location.href = "login.html";
-                    return null;
-                }
-
                 throw new Error(errMessage);
             }
 
@@ -701,30 +581,106 @@
             }
         }
 
-        // Load santri berdasarkan kelas dari database Supabase
+        function renderDynamicSubjects() {
+            const selectKelas = document.getElementById("select-kelas").value || "Taud 1";
+            const dateVal = document.getElementById("input-tanggal-mutabaah").value;
+
+            const dateObj = dateVal ? new Date(dateVal) : new Date();
+            const daysNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const namaHari = daysNames[dateObj.getDay()];
+
+            document.getElementById("txt-hari-jadwal").textContent = `Hari: ${namaHari}`;
+            document.getElementById("txt-kelas-jadwal").textContent = `Kelas: ${selectKelas}`;
+
+            const container = document.getElementById("dynamic-pelajaran-container");
+            container.innerHTML = "";
+
+            const listPelajaran = JADWAL_PELAJARAN[selectKelas]?.[namaHari] || [];
+
+            if (listPelajaran.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--muted); padding: 18px; font-size: 13px;">Tidak ada jadwal pelajaran khusus untuk ${selectKelas} pada hari ${namaHari}.</div>`;
+                return;
+            }
+
+            listPelajaran.forEach((subj) => {
+                const block = document.createElement("div");
+                block.className = "form-block";
+
+                let html = `<h5>${subj.nama}</h5>`;
+
+                if (subj.tipe === "sub_sesi") {
+                    html += `
+                        <div class="subsession-box">
+                            <div class="subsession-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>Checklist Kelancaran Per-Bab / Sesi:</span>
+                            </div>
+                            <div class="subsession-grid">
+                    `;
+                    subj.bab.forEach((b) => {
+                        html += `
+                            <label class="subsession-item">
+                                <input type="checkbox" name="subsession_${subj.id}" value="${b}">
+                                <span>${b}</span>
+                            </label>
+                        `;
+                    });
+                    html += `
+                            </div>
+                        </div>
+                        <div class="row-grid" style="margin-top: 8px;">
+                            <div class="field-group">
+                                <label>Nilai Kelancaran (0-100)</label>
+                                <input type="number" id="nilai_${subj.id}" min="0" max="100" placeholder="0-100">
+                            </div>
+                            <div class="field-group">
+                                <label>Catatan Ustadz</label>
+                                <input type="text" id="catatan_${subj.id}" placeholder="Catatan singkat...">
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="row-grid">
+                            <div class="field-group">
+                                <label>Pencapaian / Halaman / Surat</label>
+                                <input type="text" id="materi_${subj.id}" placeholder="Ketik rincian materi...">
+                            </div>
+                            <div class="field-group">
+                                <label>Nilai (0-100)</label>
+                                <input type="number" id="nilai_${subj.id}" min="0" max="100" placeholder="0-100">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Catatan Kelancaran</label>
+                            <input type="text" id="catatan_${subj.id}" placeholder="Catatan Ustadz...">
+                        </div>
+                    `;
+                }
+
+                block.innerHTML = html;
+                container.appendChild(block);
+            });
+        }
+
         async function loadSantriByKelas(kelasName) {
             const selectSiswa = document.getElementById("select-siswa");
             selectSiswa.innerHTML = `<option value="">-- Memuat Santri... --</option>`;
 
             try {
                 let query = "santri?select=*&order=nama_lengkap.asc";
-                if (kelasName) {
-                    query += `&kelas=eq.${encodeURIComponent(kelasName)}`;
-                }
+                if (kelasName) query += `&kelas=eq.${encodeURIComponent(kelasName)}`;
                 
                 let list = await supabaseFetch(query);
 
-                // Fallback pencarian jika menggunakan kolom lama
                 if ((!Array.isArray(list) || list.length === 0) && kelasName) {
-                    let fallbackList = await supabaseFetch(`santri?select=*&program=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
-                    if (Array.isArray(fallbackList) && fallbackList.length > 0) {
-                        list = fallbackList;
-                    }
+                    let fallback = await supabaseFetch(`santri?select=*&program=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
+                    if (Array.isArray(fallback) && fallback.length > 0) list = fallback;
                 }
 
                 currentSantriList = Array.isArray(list) ? list : [];
 
-                selectSiswa.innerHTML = `<option value="">-- Pilih Siswa / Santri --</option>`;
+                selectSiswa.innerHTML = `<option value="">-- Pilih Santri --</option>`;
                 if (currentSantriList.length === 0) {
                     selectSiswa.innerHTML = `<option value="">-- Tidak Ada Santri di Kelas Ini --</option>`;
                     return;
@@ -742,15 +698,13 @@
             }
         }
 
-        // Fetch 5 Riwayat Terakhir siswa
         async function fetchRiwayatSiswa() {
             const selectSiswa = document.getElementById("select-siswa");
             const nis = selectSiswa.value;
             const container = document.getElementById("history-container");
 
             if (!nis) {
-                container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Pilih siswa untuk melihat 5 riwayat terakhir.</div>`;
-                updateProgressBar(0);
+                container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Pilih santri untuk melihat riwayat.</div>`;
                 return;
             }
 
@@ -761,15 +715,11 @@
                 container.innerHTML = "";
 
                 if (!Array.isArray(list) || list.length === 0) {
-                    container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Belum ada riwayat mutaba'ah untuk siswa ini.</div>`;
-                    updateProgressBar(0);
+                    container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Belum ada riwayat mutaba'ah.</div>`;
                     return;
                 }
 
-                let totalBaris = 0;
                 list.forEach(item => {
-                    if (item.sabaq_baris) totalBaris += Number(item.sabaq_baris);
-
                     const div = document.createElement("div");
                     div.className = "history-item";
 
@@ -778,139 +728,47 @@
                     if (item.kehadiran === "Izin") presenceBadge = "presence-izin";
                     if (item.kehadiran === "Alpa") presenceBadge = "presence-alpa";
 
-                    let details = [];
-                    if (item.sabaq_surat) details.push(`<strong>[Sabaq]</strong> ${item.sabaq_surat} (${item.sabaq_baris || 0} B) - Nilai: ${item.sabaq_nilai || '-'}`);
-                    if (item.tahsin_kitab) details.push(`<strong>[Tahsin]</strong> ${item.tahsin_kitab} - Hal: ${item.tahsin_hal || '-'}`);
-
                     div.innerHTML = `
                         <div class="history-header">
                             <span class="history-date">${item.tanggal}</span>
                             <span class="badge-presence ${presenceBadge}">${item.kehadiran}</span>
                         </div>
-                        <div class="history-details">
-                            ${details.length > 0 ? details.join("<br>") : "<em>Tidak ada rincian setoran.</em>"}
+                        <div style="font-size: 12px; color: var(--muted); line-height: 1.5;">
+                            ${item.sabaq_surat ? `<strong>[Sabaq]</strong> ${item.sabaq_surat} (${item.sabaq_baris || 0} B)<br>` : ''}
+                            ${item.tahsin_catatan ? item.tahsin_catatan : ''}
                         </div>
                     `;
                     container.appendChild(div);
                 });
-
-                updateProgressBar(totalBaris);
-
             } catch (err) {
-                container.innerHTML = `<div style="text-align: center; color: var(--danger); font-size: 12px; padding: 12px;">Gagal memuat riwayat.</div>`;
+                container.innerHTML = `<div style="text-align: center; color: var(--danger); font-size: 12px; padding: 12px;">Gagal memuat.</div>`;
             }
-        }
-
-        function updateProgressBar(baris) {
-            const maxBaris = 300;
-            const percent = Math.min(Math.round((baris / maxBaris) * 100), 100);
-            document.getElementById("target-percent-txt").textContent = `${percent}%`;
-            document.getElementById("target-progress-bar").style.width = `${percent}%`;
-            document.getElementById("target-baris-txt").textContent = `${baris} / ${maxBaris} Baris`;
-        }
-
-        function renderBatchPresenceModal() {
-            const container = document.getElementById("batch-santri-container");
-            container.innerHTML = "";
-
-            if (currentSantriList.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--muted); padding: 16px;">Tidak ada santri di kelas ini.</p>`;
-                return;
-            }
-
-            currentSantriList.forEach((s, idx) => {
-                const row = document.createElement("div");
-                row.className = "batch-santri-row";
-                row.innerHTML = `
-                    <div><strong>${idx + 1}. ${s.nama_lengkap}</strong></div>
-                    <div class="presence-options">
-                        <label><input type="radio" name="presence_${s.nis}" value="Hadir" checked> Hadir</label>
-                        <label><input type="radio" name="presence_${s.nis}" value="Sakit"> Sakit</label>
-                        <label><input type="radio" name="presence_${s.nis}" value="Izin"> Izin</label>
-                        <label><input type="radio" name="presence_${s.nis}" value="Alpa"> Alpa</label>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             checkAuth();
 
-            document.getElementById("input-tanggal-mutabaah").valueAsDate = new Date();
+            const dateInput = document.getElementById("input-tanggal-mutabaah");
+            dateInput.valueAsDate = new Date();
 
             const selectKelas = document.getElementById("select-kelas");
             const selectSiswa = document.getElementById("select-siswa");
-            const tahsinKitabSelect = document.getElementById("tahsin-kitab");
-            const tahsinKitabCustom = document.getElementById("tahsin-kitab-custom");
-            const khatKitabSelect = document.getElementById("khat-kitab");
-            const khatKitabCustom = document.getElementById("khat-kitab-custom");
-
-            // Event handler dropdown Kitab Manual (Tahsin & Khat)
-            tahsinKitabSelect.addEventListener("change", function(e) {
-                tahsinKitabCustom.hidden = e.target.value !== "LAINNYA";
-                if (e.target.value === "LAINNYA") tahsinKitabCustom.focus();
-            });
-
-            khatKitabSelect.addEventListener("change", function(e) {
-                khatKitabCustom.hidden = e.target.value !== "LAINNYA";
-                if (e.target.value === "LAINNYA") khatKitabCustom.focus();
-            });
 
             selectKelas.addEventListener("change", function(e) {
                 loadSantriByKelas(e.target.value);
+                renderDynamicSubjects();
             });
 
-            selectSiswa.addEventListener("change", function() {
-                fetchRiwayatSiswa();
+            dateInput.addEventListener("change", function() {
+                renderDynamicSubjects();
             });
 
-            // Pop-Up Modal Presensi Sekelas
-            const presenceModal = document.getElementById("presence-modal");
-            document.getElementById("btn-open-batch-presence").addEventListener("click", function() {
-                renderBatchPresenceModal();
-                presenceModal.classList.add("active");
-            });
+            selectSiswa.addEventListener("change", fetchRiwayatSiswa);
 
-            document.getElementById("btn-close-presence").addEventListener("click", () => presenceModal.classList.remove("active"));
-            document.getElementById("btn-cancel-presence").addEventListener("click", () => presenceModal.classList.remove("active"));
+            loadSantriByKelas(selectKelas.value);
+            renderDynamicSubjects();
 
-            // Submit Presensi Sekelas Batch
-            document.getElementById("btn-save-presence").addEventListener("click", async function() {
-                if (currentSantriList.length === 0) return;
-
-                const submitBtn = this;
-                submitBtn.disabled = true;
-                submitBtn.textContent = "Menyimpan...";
-
-                const tgl = document.getElementById("input-tanggal-mutabaah").value;
-                const kelas = selectKelas.value || "Umum";
-
-                const batchPayload = currentSantriList.map(s => {
-                    const selectedPresence = document.querySelector(`input[name="presence_${s.nis}"]:checked`)?.value || "Hadir";
-                    return {
-                        tanggal: tgl,
-                        kelas: kelas,
-                        santri_nis: s.nis,
-                        nama_santri: s.nama_lengkap,
-                        kehadiran: selectedPresence
-                    };
-                });
-
-                try {
-                    await supabaseFetch("mutabaah", { method: "POST", body: batchPayload });
-                    presenceModal.classList.remove("active");
-                    showGlobalAlert(`Berhasil mencatat kehadiran ${batchPayload.length} santri sekelas!`, "success");
-                    fetchRiwayatSiswa();
-                } catch (err) {
-                    showGlobalAlert(err.message, "error");
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "Simpan Kehadiran Sekelas";
-                }
-            });
-
-            // Submit Form Utama Mutabaah
+            // Submit Handling Form Dinamis (UPSERT Merge Ke Supabase)
             document.getElementById("form-mutabaah-utama").addEventListener("submit", async function(e) {
                 e.preventDefault();
 
@@ -919,84 +777,61 @@
                 const namaSantri = selectedOpt ? selectedOpt.dataset.nama : "";
 
                 if (!nis || !namaSantri) {
-                    showGlobalAlert("Silakan pilih kelas dan siswa terlebih dahulu.", "error");
+                    showGlobalAlert("Silakan pilih kelas dan santri terlebih dahulu.", "error");
                     return;
                 }
 
                 const submitBtn = document.getElementById("btn-submit-mutabaah");
                 submitBtn.disabled = true;
-                submitBtn.textContent = "Menyimpan Data Mutaba'ah...";
+                submitBtn.textContent = "Menyimpan Data...";
 
-                // Penanganan nilai Kitab (Dropown vs Manual)
-                let finalTahsinKitab = tahsinKitabSelect.value;
-                if (finalTahsinKitab === "LAINNYA") {
-                    finalTahsinKitab = tahsinKitabCustom.value.trim();
-                }
+                // Kompilasi Catatan Pelajaran Dinamis
+                let detailPelajaranTxt = [];
+                document.querySelectorAll(".form-block").forEach(blk => {
+                    const title = blk.querySelector("h5")?.textContent || "";
+                    const checkedSubs = Array.from(blk.querySelectorAll("input[type='checkbox']:checked")).map(c => c.value);
+                    const textMateri = blk.querySelector("input[id^='materi_']")?.value.trim();
+                    const nilaiVal = blk.querySelector("input[id^='nilai_']")?.value;
+                    const catatVal = blk.querySelector("input[id^='catatan_']")?.value.trim();
 
-                let finalKhatKitab = khatKitabSelect.value;
-                if (finalKhatKitab === "LAINNYA") {
-                    finalKhatKitab = khatKitabCustom.value.trim();
-                }
+                    let itemSummary = `[${title}]`;
+                    if (checkedSubs.length > 0) itemSummary += ` Bab Selesai: (${checkedSubs.join(", ")})`;
+                    if (textMateri) itemSummary += ` Materi: ${textMateri}`;
+                    if (nilaiVal) itemSummary += ` Nilai: ${nilaiVal}`;
+                    if (catatVal) itemSummary += ` Ket: ${catatVal}`;
+
+                    if (checkedSubs.length > 0 || textMateri || nilaiVal || catatVal) {
+                        detailPelajaranTxt.push(itemSummary);
+                    }
+                });
 
                 const payload = {
-                    tanggal: document.getElementById("input-tanggal-mutabaah").value,
-                    kelas: selectKelas.value || null,
+                    tanggal: dateInput.value,
+                    kelas: selectKelas.value || "Taud 1",
                     santri_nis: nis,
                     nama_santri: namaSantri,
                     kehadiran: "Hadir",
-
-                    // A. Tahfidz & Adab
                     sabaq_surat: document.getElementById("sabaq-surat").value.trim() || null,
                     sabaq_baris: Number(document.getElementById("sabaq-baris").value) || 0,
                     sabaq_nilai: Number(document.getElementById("sabaq-nilai").value) || null,
-                    sabaq_catatan: document.getElementById("sabaq-catatan").value.trim() || null,
-
-                    sabqi_surat: document.getElementById("sabqi-surat").value.trim() || null,
-                    sabqi_penerima: document.getElementById("sabqi-penerima").value || null,
-                    sabqi_catatan: document.getElementById("sabqi-catatan").value.trim() || null,
-
-                    manzil_surat: document.getElementById("manzil-surat").value.trim() || null,
-                    manzil_ulang: document.getElementById("manzil-ulang").checked,
-                    manzil_catatan: document.getElementById("manzil-catatan").value.trim() || null,
-
-                    prasidang_juz: Number(document.getElementById("prasidang-juz").value) || null,
-                    prasidang_bagian: document.getElementById("prasidang-bagian").value.trim() || null,
-                    prasidang_nilai: Number(document.getElementById("prasidang-nilai").value) || null,
-                    prasidang_catatan: document.getElementById("prasidang-catatan").value.trim() || null,
-
-                    adab_predikat: document.getElementById("adab-predikat").value || null,
-                    adab_catatan: document.getElementById("adab-catatan").value.trim() || null,
-
-                    // B. Tahsin
-                    tahsin_kitab: finalTahsinKitab || null,
-                    tahsin_hal: document.getElementById("tahsin-hal").value.trim() || null,
-                    tahsin_nilai: Number(document.getElementById("tahsin-nilai").value) || null,
-                    tahsin_catatan: document.getElementById("tahsin-catatan").value.trim() || null,
-
-                    // C. Khat
-                    khat_kitab: finalKhatKitab || null,
-                    khat_hal: document.getElementById("khat-hal").value.trim() || null,
-                    khat_nilai: Number(document.getElementById("khat-nilai").value) || null,
-                    khat_catatan: document.getElementById("khat-catatan").value.trim() || null
+                    tahsin_catatan: detailPelajaranTxt.length > 0 ? detailPelajaranTxt.join(" | ") : null
                 };
 
                 try {
-                    await supabaseFetch("mutabaah", { method: "POST", body: payload });
-                    showGlobalAlert(`Data Mutaba'ah ${namaSantri} berhasil disimpan!`, "success");
-                    this.reset();
-                    tahsinKitabCustom.hidden = true;
-                    khatKitabCustom.hidden = true;
-                    document.getElementById("input-tanggal-mutabaah").valueAsDate = new Date();
+                    await supabaseFetch("mutabaah?on_conflict=santri_nis,tanggal", {
+                        method: "POST",
+                        prefer: "resolution=merge-duplicates,return=representation",
+                        body: payload
+                    });
+                    showGlobalAlert(`Mutaba'ah ${namaSantri} berhasil disimpan!`, "success");
                     fetchRiwayatSiswa();
                 } catch (err) {
                     showGlobalAlert(err.message, "error");
                 } finally {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = "Simpan Data Mutaba'ah";
+                    submitBtn.textContent = "Simpan Data Mutaba'ah Harian";
                 }
             });
-
-            loadSantriByKelas("");
         });
     </script>
 </body>

@@ -3,36 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#27ae60">
-    <title>Dashboard Admin - SIFAHMI</title>
+    <meta name="theme-color" content="#1b5e20">
+    <title>SIFAHMI - Executive Emboss Dashboard</title>
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             color-scheme: light;
             --green: #27ae60;
-            --green-dark: #219150;
+            --green-dark: #1b5e20;
             --green-light: #e9f8ef;
-            --ink: #2c3e50;
-            --muted: #7f8c8d;
-            --line: #dfe5e8;
-            --page: #f4f7f9;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --page: #f1f5f9;
             --white: #ffffff;
-            --danger: #e74c3c;
+            --danger: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
+            --sidebar-width: 260px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            min-height: 100vh;
+        html, body {
+            height: 100%;
             background: var(--page);
             color: var(--ink);
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
         }
 
-        /* Top Header Navigation */
-        header.top-bar {
+        body { display: flex; width: 100vw; height: 100vh; }
+
+        /* Overlay Sidebar Mobile */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(6px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        /* Sidebar Adaptive */
+        aside.sidebar {
+            width: var(--sidebar-width);
             background: var(--white);
+            border-right: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.03);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .sidebar-header img { width: 38px; height: 38px; object-fit: contain; }
+        .sidebar-header .brand-title h2 { font-size: 17px; color: var(--green-dark); font-weight: 800; letter-spacing: -0.3px; }
+        .sidebar-header .brand-title p { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+        }
+
+        .nav-category {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin: 14px 10px 4px 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 12px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover { background: var(--green-light); color: var(--green-dark); }
+        .nav-item.active { 
+            background: var(--green-dark); 
+            color: #fff; 
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 6px 16px rgba(27, 94, 32, 0.3); 
+        }
+        .nav-item svg { width: 19px; height: 19px; flex-shrink: 0; }
+
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--line); }
+
+        .btn-logout {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #fee2e2;
+            background: #fef2f2;
+            color: var(--danger);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+        .btn-logout:hover { background: var(--danger); color: #fff; border-color: var(--danger); box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3); }
+
+        /* Content Wrapper */
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        header.top-bar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--line);
             padding: 14px 24px;
             display: flex;
@@ -40,393 +155,724 @@
             justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            z-index: 90;
         }
 
-        .brand-header {
+        .toggle-btn {
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 8px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink);
+            box-shadow: inset 0 1px 0 #fff, 0 2px 6px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+        .toggle-btn:hover { background: var(--green-light); color: var(--green-dark); }
+
+        .page-title { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.3px; }
+
+        main.container {
+            flex: 1;
+            padding: 24px;
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        /* Hero Banner Embossed Gradient */
+        .hero-banner {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 45%, #27ae60 100%);
+            border-radius: 22px;
+            padding: 26px 30px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                inset 0 1.5px 0 0 rgba(255, 255, 255, 0.4),
+                0 14px 28px -6px rgba(27, 94, 32, 0.35);
+        }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            right: -20px;
+            bottom: -40px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+
+        .hero-text h2 { font-size: 23px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.4px; }
+        .hero-text p { font-size: 13.5px; opacity: 0.92; max-width: 520px; line-height: 1.5; }
+
+        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; z-index: 2; }
+        .btn-hero {
+            padding: 11px 18px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-hero:hover { 
+            background: #ffffff; 
+            color: var(--green-dark); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* EFEK EMBOSS & DEPTH UTAMA PADA KARTU */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .stat-card, .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 22px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            /* Double Shadow untuk efek Emboss Timbul */
+            box-shadow: 
+                inset 0 1.5px 0 0 rgba(255, 255, 255, 1),
+                0 1px 3px 0 rgba(0, 0, 0, 0.02),
+                0 10px 25px -5px rgba(15, 23, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Floating Accent Top Line */
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            border-radius: 20px 20px 0 0;
+        }
+        .stat-card.santri-card::before { background: linear-gradient(90deg, #27ae60, #2e7d32); }
+        .stat-card.kas-card::before { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+        .stat-card.mutabaah-card::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+
+        .stat-card:hover, .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 
+                inset 0 1.5px 0 0 rgba(255, 255, 255, 1),
+                0 18px 36px -8px rgba(15, 23, 42, 0.12); 
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-card-header span { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--muted); 
+            text-transform: uppercase; 
+            letter-spacing: 0.7px; 
+        }
+        
+        /* Icon dengan Emboss Inner Shadow & Glow */
+        .stat-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .icon-green { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: #1b5e20; }
+        .icon-purple { background: linear-gradient(135deg, #f3e8ff, #e9d5ff); color: #6b21a8; }
+        .icon-blue { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e40af; }
+
+        .stat-main-val { 
+            font-size: 30px; 
+            font-weight: 800; 
+            color: var(--ink); 
+            letter-spacing: -0.8px;
+            line-height: 1.1;
+        }
+
+        .stat-sub-info {
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-
-        .brand-header img {
-            width: 44px;
-            height: 44px;
-            object-fit: contain;
-        }
-
-        .brand-info h1 {
-            font-size: 16px;
-            color: var(--green);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
-        }
-
-        .brand-info p {
-            font-size: 11px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 12.5px;
             color: var(--muted);
-            font-weight: 600;
-            text-transform: uppercase;
         }
 
-        .user-nav {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .stat-sub-info strong { color: var(--ink); }
+
+        /* Grid Layout Utama */
+        .dashboard-main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
         }
 
-        .user-profile {
-            text-align: right;
-            display: none;
+        @media (max-width: 991px) {
+            .dashboard-main-grid { grid-template-columns: 1fr; }
         }
 
-        .user-email {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--ink);
-        }
-
-        .user-role {
-            font-size: 11px;
-            color: var(--green);
-            font-weight: 600;
-        }
-
-        .btn-logout {
-            padding: 8px 16px;
-            border: 1px solid #fadbd8;
-            border-radius: 8px;
-            background: #fdf2e9;
-            color: var(--danger);
-            font: inherit;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-logout:hover {
-            background: var(--danger);
-            color: var(--white);
-            border-color: var(--danger);
-        }
-
-        /* Container Layout */
-        main.container {
-            max-width: 1100px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 28px 16px 40px;
-            flex: 1;
-        }
-
-        .welcome-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 28px;
-            border: 1px solid var(--line);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        .card-header-flex {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        .welcome-text h2 {
-            font-size: 20px;
-            color: var(--ink);
-            margin-bottom: 4px;
-        }
+        .card-header-flex h3 { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
 
-        .welcome-text p {
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        .date-badge {
-            background: var(--green-light);
-            color: var(--green-dark);
+        .select-kelas-chart {
+            min-height: 40px;
             padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .section-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--ink);
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Feature Cards Grid */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-
-        .menu-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 22px;
             border: 1px solid var(--line);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--green);
-            box-shadow: 0 10px 24px rgba(39, 174, 96, 0.12);
-        }
-
-        .card-icon {
-            width: 48px;
-            height: 48px;
             border-radius: 12px;
-            background: var(--green-light);
-            color: var(--green);
-            display: grid;
-            place-items: center;
-            margin-bottom: 16px;
-        }
-
-        .card-icon svg {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .card-title {
-            font-size: 16px;
+            font-size: 12.5px;
             font-weight: 700;
+            outline: none;
+            background: #fff;
             color: var(--ink);
-            margin-bottom: 6px;
+            box-shadow: inset 0 1px 0 #fff, 0 2px 6px rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .select-kelas-chart:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.15); }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
         }
 
-        .card-desc {
-            font-size: 12px;
-            color: var(--muted);
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
+        /* Activity / Feed Item Embossed */
+        .feed-list { display: flex; flex-direction: column; gap: 10px; }
 
-        .card-action {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--green);
+        .feed-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            box-shadow: inset 0 1px 0 #fff, 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+        }
+        .feed-item:hover { background: #ffffff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+
+        .feed-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #e9f8ef, #c8e6c9);
+            color: var(--green-dark);
+            font-weight: 800;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
-        .card-action svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            transition: transform 0.2s;
-        }
+        .feed-content h5 { font-size: 13.5px; color: var(--ink); font-weight: 700; }
+        .feed-content p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .feed-time { font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px; }
 
-        .menu-card:hover .card-action svg {
-            transform: translateX(4px);
-        }
-
-        /* Footer */
         footer {
-            margin-top: auto;
             background: var(--white);
             border-top: 1px solid var(--line);
-            padding: 20px 16px;
-            color: #95a5a6;
+            padding: 16px 24px;
+            color: #94a3b8;
             text-align: center;
-            font-size: 11px;
-            line-height: 1.6;
+            font-size: 11.5px;
+            margin-top: auto;
         }
 
-        footer strong {
-            display: block;
-            margin-bottom: 4px;
-            color: var(--muted);
-        }
-
-        @media (min-width: 576px) {
-            .user-profile { display: block; }
-        }
-
-        @media (max-width: 480px) {
-            header.top-bar { padding: 12px 16px; }
-            .brand-info h1 { font-size: 14px; }
-            .welcome-card { padding: 18px; }
+        @media (max-width: 767px) {
+            aside.sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                transform: translateX(-100%);
+            }
+            aside.sidebar.active { transform: translateX(0); }
+            .hero-banner { flex-direction: column; align-items: flex-start; gap: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <header class="top-bar">
-        <div class="brand-header">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar Responsive -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <img src="logo.png" alt="Logo YNHQ">
-            <div class="brand-info">
-                <h1>SIFAHMI</h1>
-                <p>Yayasan Nuuru Hidaayatil Qur'aan</p>
+            <div class="brand-title">
+                <h2>SIFAHMI</h2>
+                <p>YNHQ BANDUNG</p>
             </div>
         </div>
 
-        <div class="user-nav">
-            <div class="user-profile">
-                <div class="user-email" id="user-email-display">admin@santri.com</div>
-                <div class="user-role">Administrator</div>
-            </div>
-            <button class="btn-logout" id="logout-button" type="button">Keluar</button>
+        <nav class="sidebar-nav">
+            <span class="nav-category">UTAMA</span>
+            <a href="dashboard.html" class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard Utama</span>
+            </a>
+
+            <span class="nav-category">AKADEMIK &amp; SANTRI</span>
+            <a href="santri.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Data Santri</span>
+            </a>
+            <a href="mutabaah.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <span>Mutaba'ah Harian</span>
+            </a>
+            <a href="raport.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Evaluasi &amp; Rapor</span>
+            </a>
+
+            <span class="nav-category">KEUANGAN MA'HAD</span>
+            <a href="buku-kas.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                <span>Buku Kas Utama</span>
+            </a>
+            <a href="infaq.html" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Infaq Mobile (Cepat)</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button type="button" class="btn-logout" id="btn-logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Keluar Sesi Login</span>
+            </button>
         </div>
-    </header>
+    </aside>
 
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Welcome Card -->
-        <section class="welcome-card">
-            <div class="welcome-text">
-                <h2>Selamat Datang di Panel Admin</h2>
-                <p>Kelola data santri, pencatatan kas, mutabaah harian, serta pendaftaran pengguna.</p>
+    <!-- Content Area -->
+    <div class="wrapper">
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <button type="button" class="toggle-btn" id="btn-toggle-sidebar" title="Toggle Sidebar">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <span class="page-title">Ringkasan Sistem Ma'had</span>
             </div>
-            <div class="date-badge" id="current-date">--</div>
-        </section>
+            <small style="color: var(--muted); font-weight: 700; font-size: 12px;" id="current-date-txt">-</small>
+        </header>
 
-        <!-- Main Menus -->
-        <h3 class="section-title">Menu Utamasi</h3>
-        <section class="menu-grid">
-            <!-- 1. Data Santri -->
-            <a href="santri.html" class="menu-card">
-                <div>
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <main class="container">
+            <!-- Hero Banner Embossed -->
+            <section class="hero-banner">
+                <div class="hero-text">
+                    <h2>Ahlan wa Sahlan, Pengelola Ma'had 👋</h2>
+                    <p>Pantau rekapan mutaba'ah santri, kehadiran sekelas, dan posisi kas infaq harian dalam satu sistem terpadu.</p>
+                </div>
+                <div class="hero-actions">
+                    <a href="mutabaah.html" class="btn-hero">📖 Setor Mutaba'ah</a>
+                    <a href="infaq.html" class="btn-hero">💰 Terima Infaq</a>
+                </div>
+            </section>
+
+            <!-- Card Grid Timbul / Emboss -->
+            <section class="summary-grid">
+                <!-- 1. Santri Aktif & Gender -->
+                <div class="stat-card santri-card">
+                    <div>
+                        <div class="stat-card-header">
+                            <span>SANTRI TERDAFTAR</span>
+                            <div class="stat-card-icon icon-green">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-main-val" id="val-total-santri">0 Santri</div>
                     </div>
-                    <div class="card-title">Input Data Santri</div>
-                    <div class="card-desc">Tambah, perbarui, dan kelola informasi biodata santri beserta status keaktifan.</div>
-                </div>
-                <div class="card-action">
-                    <span>Buka Data Santri</span>
-                    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </div>
-            </a>
-
-            <!-- 2. Buku Kas -->
-            <a href="buku-kas.html" class="menu-card">
-                <div>
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="6.01" y2="15"/><line x1="10" y1="15" x2="14" y2="15"/></svg>
+                    <div class="stat-sub-info">
+                        <span>Laki-laki: <strong id="val-santri-l">0</strong></span>
+                        <span>•</span>
+                        <span>Perempuan: <strong id="val-santri-p">0</strong></span>
                     </div>
-                    <div class="card-title">Buku Kas Ledger</div>
-                    <div class="card-desc">Pencatatan arus transaksi pemasukan dan pengeluaran keuangan yayasan.</div>
                 </div>
-                <div class="card-action">
-                    <span>Buka Buku Kas</span>
-                    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </div>
-            </a>
 
-            <!-- 3. Mutabaah Santri -->
-            <a href="mutabaah.html" class="menu-card">
-                <div>
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <!-- 2. Saldo Kas Bulan Berjalan -->
+                <div class="stat-card kas-card">
+                    <div>
+                        <div class="stat-card-header">
+                            <span id="label-bulan-kas">SALDO KAS BULAN INI</span>
+                            <div class="stat-card-icon icon-purple">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-main-val" id="val-saldo-bulan-ini" style="color: var(--green-dark);">Rp 0</div>
                     </div>
-                    <div class="card-title">Mutabaah Santri</div>
-                    <div class="card-desc">Evaluasi hafalan Al-Qur'an, catat capaian ziadah, muraja'ah, dan amalan harian.</div>
-                </div>
-                <div class="card-action">
-                    <span>Buka Mutabaah</span>
-                    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </div>
-            </a>
-
-            <!-- 4. Register Akun User -->
-            <a href="daftar-akun.html" class="menu-card">
-                <div>
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    <div class="stat-sub-info">
+                        <span>Masuk: <strong id="val-masuk-bulan-ini" style="color: var(--green);">Rp 0</strong></span>
+                        <span>•</span>
+                        <span>Keluar: <strong id="val-keluar-bulan-ini" style="color: var(--danger);">Rp 0</strong></span>
                     </div>
-                    <div class="card-title">Daftar Akun User</div>
-                    <div class="card-desc">Registrasi dan pembuatan akun pengguna baru untuk pengajar atau wali santri.</div>
                 </div>
-                <div class="card-action">
-                    <span>Kelola Akun</span>
-                    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </div>
-            </a>
-        </section>
-    </main>
 
-    <!-- Footer -->
-    <footer>
-        <strong>© 2026 Manajemen Santri<br>YAYASAN NUURU HIDAAYATIL QUR'AAN</strong>
-        Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001<br>
-        Kel. Jatihandap Kec. Mandalajati Bandung 40195
-    </footer>
+                <!-- 3. Total Setoran Pekan Ini -->
+                <div class="stat-card mutabaah-card">
+                    <div>
+                        <div class="stat-card-header">
+                            <span>TOTAL INPUT MUTABAAH</span>
+                            <div class="stat-card-icon icon-blue">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-main-val" id="val-total-mutabaah">0 Catatan</div>
+                    </div>
+                    <div class="stat-sub-info">
+                        <span>Terhubung Real-time via Supabase</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Layout 2 Kolom Grafik & Feed -->
+            <div class="dashboard-main-grid">
+                <!-- Left: Grafik Kehadiran Embossed -->
+                <section class="card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3>Grafik Kehadiran Santri</h3>
+                            <p style="font-size: 12px; color: var(--muted); margin-top: 2px;">Rekap status Hadir, Sakit, Izin, dan Alpa</p>
+                        </div>
+
+                        <select id="select-kelas-chart" class="select-kelas-chart">
+                            <option value="">-- Semua Kelas --</option>
+                            <option value="Taud">Taud</option>
+                            <option value="Mubtadi 1">Mubtadi 1</option>
+                            <option value="Mubtadi 2">Mubtadi 2</option>
+                            <option value="Mutawassith">Mutawassith</option>
+                        </select>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Right: Recent Activity / Feed Terbaru -->
+                <section class="card">
+                    <div class="card-header-flex">
+                        <h3>Setoran Terbaru</h3>
+                        <small style="color: var(--green-dark); font-weight: 700; cursor: pointer;" onclick="loadRecentMutabaahFeed()">Refresh</small>
+                    </div>
+
+                    <div class="feed-list" id="feed-container">
+                        <div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Memuat setoran terbaru...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <strong>© 2026 Management Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> - Bandung
+        </footer>
+    </div>
 
     <script>
         "use strict";
 
+        const SUPABASE_URL = "https://dfakfkngujlhbcrhxmmk.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYWtma25ndWpsaGJjcmh4bW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1Njg0ODAsImV4cCI6MjEwOTE0NDQ4MH0.BPCdp7Y4JLjLHdV4Rd1mRTkWwDctyD3qC-_aUFX_CS4";
         const SESSION_KEY = "ynhq-supabase-session";
 
-        // Cek Sesi Autentikasi
+        let attendanceChartInstance = null;
+        let cachedMutabaahData = [];
+
         function checkAuth() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
-            if (!sessionRaw) {
-                // Jika tidak ada sesi, kembalikan ke halaman login
-                window.location.href = "login.html";
-                return;
-            }
+            if (!sessionRaw) window.location.href = "login.html";
+        }
 
+        function getAuthToken() {
+            const sessionRaw = localStorage.getItem(SESSION_KEY);
+            if (!sessionRaw) return SUPABASE_ANON_KEY;
             try {
                 const session = JSON.parse(sessionRaw);
-                const userEmail = session.user ? session.user.email : (session.email || "Admin");
-                document.getElementById("user-email-display").textContent = userEmail;
+                return session.access_token || SUPABASE_ANON_KEY;
             } catch (e) {
-                localStorage.removeItem(SESSION_KEY);
-                window.location.href = "login.html";
+                return SUPABASE_ANON_KEY;
             }
         }
 
-        // Tanggal Format Indonesia
-        function setFormattedDate() {
+        async function supabaseFetch(path, options = {}) {
+            const token = getAuthToken();
+            const headers = {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json",
+                "Prefer": options.prefer || "return=representation",
+                ...options.headers
+            };
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                method: options.method || "GET",
+                headers: headers,
+                body: options.body ? JSON.stringify(options.body) : null
+            });
+
+            if (!response.ok) {
+                let errMessage = "Terjadi kesalahan pada Supabase.";
+                try {
+                    const errJson = await response.json();
+                    errMessage = errJson.message || errJson.hint || errMessage;
+                } catch (e) {}
+
+                if (errMessage.toLowerCase().includes("jwt expired") || response.status === 401) {
+                    localStorage.removeItem(SESSION_KEY);
+                    alert("Sesi login Anda telah berakhir. Silakan login kembali.");
+                    window.location.href = "login.html";
+                    return null;
+                }
+
+                throw new Error(errMessage);
+            }
+
+            if (response.status === 204) return null;
+            return await response.json();
+        }
+
+        function formatRupiah(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+        }
+
+        async function loadSantriSummary() {
+            try {
+                const list = await supabaseFetch("santri?select=jenis_kelamin,status");
+                if (!Array.isArray(list)) return;
+
+                const activeList = list.filter(s => s.status === "Aktif" || !s.status);
+                const countL = activeList.filter(s => s.jenis_kelamin === "Laki-laki").length;
+                const countP = activeList.filter(s => s.jenis_kelamin === "Perempuan").length;
+
+                document.getElementById("val-total-santri").textContent = `${activeList.length} Santri`;
+                document.getElementById("val-santri-l").textContent = countL;
+                document.getElementById("val-santri-p").textContent = countP;
+            } catch (err) {
+                console.error("Gagal memuat ringkasan santri:", err);
+            }
+        }
+
+        async function loadKasSummary() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const monthStr = now.toLocaleDateString('id-ID', { month: 'long' });
+            
+            document.getElementById("label-bulan-kas").textContent = `SALDO KAS (${monthStr.toUpperCase()} ${year})`;
+
+            try {
+                const list = await supabaseFetch("buku_kas?select=tanggal,jenis,nominal");
+                if (!Array.isArray(list)) return;
+
+                const curMonthNum = now.getMonth() + 1;
+                let masukBulanIni = 0;
+                let keluarBulanIni = 0;
+                let totalSaldoKumulatif = 0;
+
+                list.forEach(item => {
+                    const itemDate = new Date(item.tanggal);
+                    const nom = Number(item.nominal) || 0;
+
+                    if (item.jenis === "MASUK" || item.jenis === "INFAQ" || item.jenis === "Pemasukan") {
+                        totalSaldoKumulatif += nom;
+                        if (itemDate.getFullYear() === year && (itemDate.getMonth() + 1) === curMonthNum) {
+                            masukBulanIni += nom;
+                        }
+                    } else if (item.jenis === "KELUAR" || item.jenis === "Pengeluaran") {
+                        totalSaldoKumulatif -= nom;
+                        if (itemDate.getFullYear() === year && (itemDate.getMonth() + 1) === curMonthNum) {
+                            keluarBulanIni += nom;
+                        }
+                    }
+                });
+
+                document.getElementById("val-saldo-bulan-ini").textContent = formatRupiah(totalSaldoKumulatif);
+                document.getElementById("val-masuk-bulan-ini").textContent = formatRupiah(masukBulanIni);
+                document.getElementById("val-keluar-bulan-ini").textContent = formatRupiah(keluarBulanIni);
+            } catch (err) {
+                console.error("Gagal memuat kas summary:", err);
+            }
+        }
+
+        async function loadAttendanceData() {
+            try {
+                const data = await supabaseFetch("mutabaah?select=kehadiran,kelas,tanggal");
+                cachedMutabaahData = Array.isArray(data) ? data : [];
+                document.getElementById("val-total-mutabaah").textContent = `${cachedMutabaahData.length} Catatan`;
+                renderChart(document.getElementById("select-kelas-chart").value);
+            } catch (err) {
+                console.error("Gagal memuat data kehadiran:", err);
+            }
+        }
+
+        async function loadRecentMutabaahFeed() {
+            const container = document.getElementById("feed-container");
+            container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Memuat setoran terbaru...</div>`;
+
+            try {
+                const list = await supabaseFetch("mutabaah?select=nama_santri,sabaq_surat,tahsin_kitab,tanggal&order=tanggal.desc&limit=4");
+                container.innerHTML = "";
+
+                if (!Array.isArray(list) || list.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Belum ada riwayat setoran.</div>`;
+                    return;
+                }
+
+                list.forEach(item => {
+                    const initials = String(item.nama_santri || "S").charAt(0).toUpperCase();
+                    const detail = item.sabaq_surat ? `Setoran Sabaq: ${item.sabaq_surat}` : (item.tahsin_kitab ? `Tahsin: ${item.tahsin_kitab}` : "Kehadiran dicatat");
+
+                    const div = document.createElement("div");
+                    div.className = "feed-item";
+                    div.innerHTML = `
+                        <div class="feed-avatar">${initials}</div>
+                        <div class="feed-content">
+                            <h5>${item.nama_santri}</h5>
+                            <p>${detail}</p>
+                            <div class="feed-time">${item.tanggal}</div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                container.innerHTML = `<div style="text-align: center; color: var(--danger); font-size: 12px; padding: 20px;">Gagal memuat feed.</div>`;
+            }
+        }
+
+        function renderChart(selectedKelas = "") {
+            let filtered = cachedMutabaahData;
+            if (selectedKelas) {
+                filtered = cachedMutabaahData.filter(item => String(item.kelas).toLowerCase() === selectedKelas.toLowerCase());
+            }
+
+            let hadir = 0, sakit = 0, izin = 0, alpa = 0;
+            filtered.forEach(item => {
+                const k = String(item.kehadiran).toLowerCase();
+                if (k === "hadir") hadir++;
+                else if (k === "sakit") sakit++;
+                else if (k === "izin") izin++;
+                else if (k === "alpa") alpa++;
+            });
+
+            const ctx = document.getElementById("attendanceChart").getContext("2d");
+
+            if (attendanceChartInstance) {
+                attendanceChartInstance.destroy();
+            }
+
+            attendanceChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Hadir', 'Sakit', 'Izin', 'Alpa'],
+                    datasets: [{
+                        label: `Jumlah Kehadiran ${selectedKelas ? '(' + selectedKelas + ')' : '(Semua Kelas)'}`,
+                        data: [hadir, sakit, izin, alpa],
+                        backgroundColor: [
+                            '#27ae60', // Hadir
+                            '#f59e0b', // Sakit
+                            '#3b82f6', // Izin
+                            '#ef4444'  // Alpa
+                        ],
+                        borderRadius: 10,
+                        barThickness: 44
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            checkAuth();
+
+            const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const today = new Date().toLocaleDateString('id-ID', options);
-            document.getElementById("current-date").textContent = today;
-        }
+            document.getElementById("current-date-txt").textContent = now.toLocaleDateString('id-ID', options);
 
-        // Handler Logout
-        document.getElementById("logout-button").addEventListener("click", function() {
-            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
-                localStorage.removeItem(SESSION_KEY);
-                window.location.href = "login.html";
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            const toggleBtn = document.getElementById("btn-toggle-sidebar");
+
+            function toggleSidebar() {
+                sidebar.classList.toggle("active");
+                overlay.classList.toggle("active");
             }
-        });
 
-        // Jalankan saat load
-        checkAuth();
-        setFormattedDate();
+            if (toggleBtn) toggleBtn.addEventListener("click", toggleSidebar);
+            if (overlay) overlay.addEventListener("click", toggleSidebar);
+
+            document.getElementById("btn-logout").addEventListener("click", function() {
+                if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+                    localStorage.removeItem(SESSION_KEY);
+                    window.location.href = "login.html";
+                }
+            });
+
+            document.getElementById("select-kelas-chart").addEventListener("change", function(e) {
+                renderChart(e.target.value);
+            });
+
+            loadSantriSummary();
+            loadKasSummary();
+            loadAttendanceData();
+            loadRecentMutabaahFeed();
+        });
     </script>
 </body>
 </html>
