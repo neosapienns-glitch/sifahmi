@@ -330,6 +330,8 @@
         }
         footer strong { color: var(--muted); }
     </style>
+    <link rel="stylesheet" href="./app-shell.css">
+    <script src="./app-shell.js" defer></script>
 </head>
 <body>
 
@@ -383,7 +385,9 @@
                             <th>No</th>
                             <th>Nama Pengguna</th>
                             <th>Hak Akses / Role</th>
-                            <th>Santri Terkait</th>
+                            <th>Kelas Diampu</th>
+                            <th>Username</th>
+                            <th>NIS Santri</th>
                             <th>Status</th>
                             <th style="text-align: center;">Aksi</th>
                         </tr>
@@ -414,8 +418,8 @@
                     </div>
 
                     <div class="field">
-                        <label for="email">Email Login <span class="req">*</span></label>
-                        <input id="email" type="email" placeholder="nama@email.com" required>
+                        <label for="login-username">Username Login <span class="req">*</span></label>
+                        <input id="login-username" type="text" placeholder="Username atau email administrator" required>
                     </div>
 
                     <div class="field">
@@ -428,6 +432,18 @@
                         </select>
                     </div>
 
+                    <div class="field" id="class-field" hidden>
+                        <label for="kelas-diampu">Kelas Tanggung Jawab <span class="req">*</span></label>
+                        <select id="kelas-diampu">
+                            <option value="">-- Pilih Satu Kelas --</option>
+                            <option value="Taud 1">Taud 1</option>
+                            <option value="Taud 2">Taud 2</option>
+                            <option value="Mubtadi 1">Mubtadi 1</option>
+                            <option value="Mubtadi 2">Mubtadi 2</option>
+                            <option value="Mutawassith">Mutawassith</option>
+                        </select>
+                    </div>
+
                     <div class="field" id="santri-field" hidden>
                         <label for="santri-terkait">Hubungkan dengan Santri</label>
                         <select id="santri-terkait">
@@ -436,8 +452,9 @@
                     </div>
 
                     <div class="field">
-                        <label for="password">Password Default <span class="req">*</span></label>
+                        <label for="password">Password Awal <span class="req">*</span></label>
                         <input id="password" type="password" minlength="6" placeholder="Minimal 6 karakter" required>
+                        <small id="password-help" style="display:block; margin-top:5px; color:var(--muted); font-size:11px;">Minimal 6 karakter.</small>
                     </div>
 
                     <div class="field">
@@ -514,6 +531,13 @@
             return await response.json();
         }
 
+        function manageUserErrorMessage(error) {
+            if (error instanceof TypeError && /fetch/i.test(error.message)) {
+                return "Edge Function manage-user tidak dapat dijangkau. Endpoint project Supabase saat ini belum menemukan fungsi tersebut. Deploy dengan `supabase functions deploy manage-user`, lalu buka halaman melalui server web (http://localhost), bukan file://.";
+            }
+            return error.message;
+        }
+
         function showGlobalAlert(msg, kind) {
             const alertBox = document.getElementById("global-alert");
             alertBox.textContent = msg;
@@ -539,25 +563,27 @@
 
                 santriList.forEach(s => {
                     const opt = document.createElement("option");
-                    opt.value = `${s.nama_lengkap} (${s.nis})`;
+                    opt.value = s.nis;
+                    opt.dataset.nama = s.nama_lengkap;
                     opt.textContent = `${s.nama_lengkap} - NIS: ${s.nis}`;
                     select.appendChild(opt);
                 });
             } catch (err) {
-                select.innerHTML = `<option value="-">-- Tidak ada data santri --</option>`;
+                select.innerHTML = `<option value="">-- Data santri gagal dimuat --</option>`;
+                showModalAlert("Gagal memuat daftar santri: " + err.message, "error");
             }
         }
 
                 async function renderUserTable(filterQuery = "") {
             const tbody = document.getElementById("user-table-body");
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">Memuat akun pengguna dari Supabase...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px;">Memuat akun pengguna dari Supabase...</td></tr>`;
 
             try {
                 const list = await supabaseFetch("profiles?select=*");
                 tbody.innerHTML = "";
 
                 if (!Array.isArray(list)) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 20px;">Gagal memuat akun pengguna.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--muted); padding: 20px;">Gagal memuat akun pengguna.</td></tr>`;
                     return;
                 }
 
@@ -571,7 +597,7 @@
                 });
 
                 if (filtered.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--muted); padding: 20px;">Tidak ada akun pengguna ditemukan.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--muted); padding: 20px;">Tidak ada akun pengguna ditemukan.</td></tr>`;
                     return;
                 }
 
@@ -581,11 +607,21 @@
                     let roleBadgeClass = "role-asatidz";
                     if (item.role === "Wali Murid") roleBadgeClass = "role-wali";
                     if (item.role === "Administrator") roleBadgeClass = "role-admin";
+                    const classCell = item.role === "Asatidz"
+                        ? `<select class="class-assignment" data-user-id="${item.id}" data-old-value="${item.kelas_diampu || ""}" aria-label="Kelas tanggung jawab ${item.nama_lengkap || "asatidz"}">
+                            <option value="">-- Pilih kelas --</option>
+                            ${["Taud 1", "Taud 2", "Mubtadi 1", "Mubtadi 2", "Mutawassith"].map(name =>
+                                `<option value="${name}" ${item.kelas_diampu === name ? "selected" : ""}>${name}</option>`
+                            ).join("")}
+                        </select>`
+                        : "-";
 
                     tr.innerHTML = `
                         <td>${index + 1}</td>
                         <td><strong>${item.nama_lengkap || '-'}</strong></td>
                         <td><span class="badge-role ${roleBadgeClass}">${item.role || '-'}</span></td>
+                        <td>${classCell}</td>
+                        <td>${item.username || "-"}</td>
                         <td>${item.santri_nis || "-"}</td>
                         <td><span class="badge-status status-aktif">${item.status || 'Aktif'}</span></td>
                         <td style="text-align: center;">
@@ -599,22 +635,103 @@
             }
         }
 
+        document.getElementById("user-table-body").addEventListener("change", async function(event) {
+            const select = event.target.closest(".class-assignment");
+            if (!select) return;
+            const previousValue = select.dataset.oldValue;
+            if (!select.value) {
+                select.value = previousValue;
+                return;
+            }
+            select.disabled = true;
+            try {
+                const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user`, {
+                    method: "POST",
+                    headers: {
+                        "apikey": SUPABASE_ANON_KEY,
+                        "Authorization": `Bearer ${session.access_token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        action: "assign-class",
+                        user_id: select.dataset.userId,
+                        kelas_diampu: select.value
+                    })
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(result.error || "Kelas tanggung jawab gagal diperbarui.");
+                select.dataset.oldValue = select.value;
+                showGlobalAlert(result.message, "success");
+            } catch (err) {
+                select.value = previousValue;
+                showGlobalAlert(manageUserErrorMessage(err), "error");
+            } finally {
+                select.disabled = false;
+            }
+        });
+
 
         async function deleteUser(id) {
             if (confirm("Apakah Anda yakin ingin menghapus profil pengguna ini?")) {
                 try {
-                    await supabaseFetch(`profiles?id=eq.${id}`, { method: "DELETE" });
+                    const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+                    const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user`, {
+                        method: "POST",
+                        headers: {
+                            "apikey": SUPABASE_ANON_KEY,
+                            "Authorization": `Bearer ${session.access_token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ action: "delete-account", user_id: id })
+                    });
+                    const result = await response.json().catch(() => ({}));
+                    if (!response.ok) throw new Error(result.error || "Akun gagal dihapus.");
                     renderUserTable(document.getElementById("search-input").value);
-                    showGlobalAlert("Profil akun pengguna berhasil dihapus.", "success");
+                    showGlobalAlert("Akun pengguna berhasil dihapus.", "success");
                 } catch (err) {
-                    showGlobalAlert(err.message, "error");
+                    showGlobalAlert(manageUserErrorMessage(err), "error");
                 }
             }
         }
 
         document.getElementById("role").addEventListener("change", function(e) {
             const santriField = document.getElementById("santri-field");
+            const classField = document.getElementById("class-field");
+            const usernameInput = document.getElementById("login-username");
+            const passwordInput = document.getElementById("password");
+            const confirmInput = document.getElementById("confirm-password");
+            const passwordHelp = document.getElementById("password-help");
             santriField.hidden = e.target.value !== "Wali Murid";
+            classField.hidden = e.target.value !== "Asatidz";
+            document.getElementById("kelas-diampu").required = e.target.value === "Asatidz";
+            document.getElementById("santri-terkait").required = e.target.value === "Wali Murid";
+            usernameInput.readOnly = e.target.value === "Wali Murid";
+            if (e.target.value === "Wali Murid") {
+                usernameInput.placeholder = "Otomatis menggunakan NIS santri";
+                passwordInput.value = "";
+                confirmInput.value = "";
+                passwordInput.placeholder = "Password awal sama dengan NIS";
+                passwordHelp.textContent = "Username dan password awal mengikuti NIS santri. NIS harus sedikitnya 6 karakter.";
+            } else {
+                usernameInput.placeholder = e.target.value === "Administrator" ? "nama@email.com" : "Username asatidz";
+                passwordInput.placeholder = "Minimal 6 karakter";
+                passwordHelp.textContent = "Minimal 6 karakter.";
+            }
+        });
+
+        document.getElementById("santri-terkait").addEventListener("change", function(e) {
+            const selected = e.target.options[e.target.selectedIndex];
+            const nis = e.target.value;
+            const username = document.getElementById("login-username");
+            const password = document.getElementById("password");
+            const confirm = document.getElementById("confirm-password");
+            const nameInput = document.getElementById("nama-lengkap");
+            if (!nis) return;
+            username.value = nis;
+            password.value = nis;
+            confirm.value = nis;
+            if (selected.dataset.nama) nameInput.value = `Wali ${selected.dataset.nama}`;
         });
 
         document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -632,6 +749,10 @@
         function openModal() {
             form.reset();
             document.getElementById("santri-field").hidden = true;
+            document.getElementById("class-field").hidden = true;
+            document.getElementById("santri-terkait").required = false;
+            document.getElementById("kelas-diampu").required = false;
+            document.getElementById("login-username").readOnly = false;
             document.getElementById("modal-alert").hidden = true;
             populateSantriDropdown();
             modal.classList.add("active");
@@ -649,7 +770,6 @@
             if (e.target === modal) closeModal();
         });
 
-        // Submit Registrasi Akun baru ke Supabase Auth (/auth/v1/signup)
         form.addEventListener("submit", async function (e) {
             e.preventDefault();
             if (!form.reportValidity()) return;
@@ -658,52 +778,62 @@
             submitBtn.disabled = true;
 
             const nama = document.getElementById("nama-lengkap").value.trim();
-            const email = document.getElementById("email").value.trim().toLowerCase();
+            const username = document.getElementById("login-username").value.trim();
             const role = document.getElementById("role").value;
             const santriNis = role === "Wali Murid" ? document.getElementById("santri-terkait").value : null;
-            const password = document.getElementById("password").value;
+            const kelasDiampu = role === "Asatidz" ? document.getElementById("kelas-diampu").value : null;
+            const password = role === "Wali Murid" ? santriNis : document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
 
-            if (password.length < 6) {
-                showModalAlert("Password minimal 6 karakter.", "error");
+            if (!username) {
+                showModalAlert("Username wajib diisi.", "error");
                 submitBtn.disabled = false;
                 return;
             }
 
-            if (password !== confirmPassword) {
+            if (password.length < 6) {
+                showModalAlert(role === "Wali Murid" ? "NIS santri harus sedikitnya 6 karakter agar dapat menjadi password awal." : "Password minimal 6 karakter.", "error");
+                submitBtn.disabled = false;
+                return;
+            }
+
+            if (role !== "Wali Murid" && password !== confirmPassword) {
                 showModalAlert("Password dan konfirmasi password tidak cocok.", "error");
                 submitBtn.disabled = false;
                 return;
             }
 
             try {
-                const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+                const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+                if (!session.access_token) throw new Error("Sesi administrator tidak ditemukan. Silakan login kembali.");
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user`, {
                     method: "POST",
                     headers: {
                         "apikey": SUPABASE_ANON_KEY,
+                        "Authorization": `Bearer ${session.access_token}`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        email: email,
-                        password: password,
-                        data: {
-                            full_name: nama,
-                            role: role,
-                            santri_nis: santriNis
-                        }
+                        action: "create-account",
+                        name: nama,
+                        username,
+                        role,
+                        password,
+                        santri_nis: santriNis,
+                        kelas_diampu: kelasDiampu
                     })
                 });
 
-                const result = await response.json();
+                const result = await response.json().catch(() => ({}));
                 if (!response.ok) {
-                    throw new Error(result.msg || result.message || "Gagal membuat akun pengguna baru.");
+                    throw new Error(result.error || result.msg || result.message || "Gagal membuat akun pengguna baru.");
                 }
 
                 closeModal();
                 renderUserTable();
-                showGlobalAlert(`Berhasil membuat akun baru untuk ${nama} (${role})`, "success");
+                showGlobalAlert(`Akun ${nama} (${role}) berhasil dibuat. Username: ${username}`, "success");
             } catch (err) {
-                showModalAlert(err.message, "error");
+                showModalAlert(manageUserErrorMessage(err), "error");
             } finally {
                 submitBtn.disabled = false;
             }

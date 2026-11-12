@@ -120,8 +120,8 @@
 
         <form id="auth-form" novalidate>
             <div class="field">
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" autocomplete="email" placeholder="nama@email.com" required>
+                <label for="email">Username / Email</label>
+                <input id="email" name="email" type="text" autocomplete="username" placeholder="Username (wali: NIS) atau email" required>
             </div>
 
             <div class="field">
@@ -152,19 +152,40 @@
         const passwordInput = document.getElementById("password");
 
         // Cek jika pengguna sudah memiliki sesi login aktif, langsung arahkan ke dashboard
-        (function checkExistingSession() {
+        (async function checkExistingSession() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
-            if (sessionRaw) {
-                try {
-                    const session = JSON.parse(sessionRaw);
-                    if (session.access_token) {
-                        window.location.href = "dashboard.html";
+            if (!sessionRaw) return;
+            let session;
+            try {
+                session = JSON.parse(sessionRaw);
+            } catch (e) {
+                localStorage.removeItem(SESSION_KEY);
+                return;
+            }
+            if (session.access_token) {
+                session.supabase_url = SUPABASE_URL;
+                session.supabase_anon_key = SUPABASE_ANON_KEY;
+                localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+                let metadata = session.user && session.user.user_metadata;
+                if (session.user?.id) {
+                    try {
+                        const response = await fetch(`${SUPABASE_URL}/rest/v1/profiles?select=role&id=eq.${encodeURIComponent(session.user.id)}`, {
+                            headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${session.access_token}` }
+                        });
+                        if (response.ok) metadata = { ...metadata, ...(await response.json())[0] };
+                    } catch (error) {
+                        console.error("Gagal memuat role dari profil:", error);
                     }
-                } catch (e) {
-                    localStorage.removeItem(SESSION_KEY);
                 }
+                window.location.href = landingPage(metadata);
             }
         })();
+
+        function landingPage(metadata) {
+            if (metadata && metadata.role === "Asatidz") return "dashboard-asatidz.html";
+            if (metadata && metadata.role === "Wali Murid") return "dashboard-wali.html";
+            return "dashboard.html";
+        }
 
         function setMessage(text, kind) {
             message.textContent = text;
@@ -206,7 +227,8 @@
             event.preventDefault();
             message.hidden = true;
 
-            const email = document.getElementById("email").value.trim();
+            const username = document.getElementById("email").value.trim();
+            const email = username.includes("@") ? username : `${username.toLowerCase()}@login.sifahmi.id`;
             const password = passwordInput.value;
 
             if (!form.reportValidity()) return;
@@ -221,13 +243,15 @@
                 });
                 
                 result.expires_at = Math.floor(Date.now() / 1000) + (result.expires_in || 3600);
+                result.supabase_url = SUPABASE_URL;
+                result.supabase_anon_key = SUPABASE_ANON_KEY;
                 localStorage.setItem(SESSION_KEY, JSON.stringify(result));
                 
                 setMessage("Login berhasil! Mengalihkan ke Dashboard...", "success");
 
                 // Berikan jeda 1 detik agar pengguna sempat melihat notifikasi sukses sebelum pindah halaman
                 setTimeout(function() {
-                    window.location.href = "dashboard.html";
+                    window.location.href = landingPage(result.user && result.user.user_metadata);
                 }, 1000);
 
             } catch (error) {

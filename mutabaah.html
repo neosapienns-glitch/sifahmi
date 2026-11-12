@@ -423,6 +423,7 @@
         const SESSION_KEY = "ynhq-supabase-session";
 
         let currentSantriList = [];
+        let currentTeacherContext = null;
 
         // STRUKTUR MATRIKS JADWAL PELAJARAN HARIAN (5 KELAS MA'HAD)
         const JADWAL_PELAJARAN = {
@@ -747,7 +748,7 @@
             }
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
             checkAuth();
 
             const dateInput = document.getElementById("input-tanggal-mutabaah");
@@ -755,6 +756,45 @@
 
             const selectKelas = document.getElementById("select-kelas");
             const selectSiswa = document.getElementById("select-siswa");
+
+            try {
+                const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+                const metadata = session.user?.user_metadata || {};
+                let role = metadata.role;
+                let profile = metadata;
+                if (session.user?.id) {
+                    const profiles = await supabaseFetch(`profiles?select=role,kelas_diampu,nama_lengkap&id=eq.${encodeURIComponent(session.user.id)}`);
+                    profile = { ...metadata, ...(profiles?.[0] || {}) };
+                    role = profiles?.[0]?.role || role;
+                }
+                if (role === "Wali Murid") {
+                    window.location.replace("dashboard-wali.html");
+                    return;
+                }
+                const dashboardLink = document.querySelector("header.top-bar .btn-back");
+                if (dashboardLink && role === "Asatidz") dashboardLink.href = "dashboard-asatidz.html";
+                if (role === "Asatidz") {
+                    const assignedClass = profile.kelas_diampu;
+                    if (!assignedClass) throw new Error("Akun asatidz belum memiliki kelas tanggung jawab.");
+                    currentTeacherContext = {
+                        id: session.user.id,
+                        className: assignedClass,
+                        name: profile.nama_lengkap || profile.full_name || "Asatidz",
+                    };
+                    selectKelas.value = assignedClass;
+                    selectKelas.disabled = true;
+                    const requestedClass = new URLSearchParams(window.location.search).get("kelas");
+                    if (requestedClass && requestedClass !== assignedClass) {
+                        window.history.replaceState({}, "", `mutabaah.html?kelas=${encodeURIComponent(assignedClass)}`);
+                    }
+                }
+            } catch (error) {
+                const message = /profiles\.kelas_diampu does not exist|could not find the .*column.*kelas_diampu|kelas_diampu.*schema cache/i.test(error.message)
+                    ? "Kolom kelas tanggung jawab belum tersedia di Supabase. Jalankan supabase/migrations/202611120002_add_kelas_diampu.sql, lalu muat ulang halaman."
+                    : error.message;
+                showGlobalAlert(message, "error");
+                return;
+            }
 
             selectKelas.addEventListener("change", function(e) {
                 loadSantriByKelas(e.target.value);
@@ -767,7 +807,7 @@
 
             selectSiswa.addEventListener("change", fetchRiwayatSiswa);
 
-            loadSantriByKelas(selectKelas.value);
+            loadSantriByKelas(currentTeacherContext?.className || selectKelas.value);
             renderDynamicSubjects();
 
             // Submit Handling Form Dinamis (UPSERT Merge Ke Supabase)
@@ -813,6 +853,9 @@
                     santri_nis: nis,
                     nama_santri: namaSantri,
                     kehadiran: "Hadir",
+                    nama_pengampu: currentTeacherContext
+                        ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
+                        : null,
                     sabaq_surat: document.getElementById("sabaq-surat").value.trim() || null,
                     sabaq_baris: Number(document.getElementById("sabaq-baris").value) || 0,
                     sabaq_nilai: Number(document.getElementById("sabaq-nilai").value) || null,

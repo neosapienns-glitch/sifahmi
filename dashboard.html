@@ -1040,8 +1040,26 @@
             });
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
             checkAuth();
+            const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+            let role = session.user?.user_metadata?.role;
+            if (session.user?.id) {
+                try {
+                    const profiles = await supabaseFetch(`profiles?select=role&id=eq.${encodeURIComponent(session.user.id)}`);
+                    role = profiles?.[0]?.role || role;
+                } catch (error) {
+                    console.error("Gagal memeriksa role pengguna:", error);
+                }
+            }
+            if (role === "Asatidz") {
+                window.location.replace("dashboard-asatidz.html");
+                return;
+            }
+            if (role === "Wali Murid") {
+                window.location.replace("dashboard-wali.html");
+                return;
+            }
 
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };

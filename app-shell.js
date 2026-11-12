@@ -1,5 +1,5 @@
 (() => {
-    const navigation = [
+    const allNavigation = [
         { category: "UTAMA" },
         { label: "Dashboard Utama", href: "dashboard.html", icon: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' },
         { category: "AKADEMIK & SANTRI" },
@@ -15,6 +15,19 @@
 
     const icon = (content) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${content}</svg>`;
     const currentPage = window.location.pathname.split("/").pop() || "dashboard.html";
+    let session = {};
+    try { session = JSON.parse(localStorage.getItem("ynhq-supabase-session") || "{}"); } catch (error) {}
+    const role = session.user?.user_metadata?.role;
+    const navigation = role === "Asatidz"
+        ? [
+            { category: "UTAMA" },
+            { label: "Dashboard Asatidz", href: "dashboard-asatidz.html", icon: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' },
+            { category: "AKADEMIK" },
+            allNavigation.find(item => item.href === "mutabaah.html"),
+        ]
+        : role === "Wali Murid"
+            ? [{ category: "UTAMA" }, { label: "Dashboard Wali", href: "dashboard-wali.html", icon: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' }]
+            : allNavigation;
     const aside = document.createElement("aside");
     aside.className = "app-shell-sidebar";
     aside.setAttribute("aria-label", "Navigasi utama");
