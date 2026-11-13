@@ -390,6 +390,91 @@
     </style>
     <link rel="stylesheet" href="./app-shell.css">
     <script src="./app-shell.js" defer></script>
+    <style>
+        @media (max-width: 767px) {
+            html,
+            body {
+                height: auto;
+                min-height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            body { min-height: 100dvh; }
+
+            .app-shell-content {
+                height: auto;
+                min-height: 100dvh;
+                overflow: visible;
+            }
+
+            main.container {
+                flex: 0 0 auto;
+                min-height: 0;
+                padding: 14px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .summary-card {
+                min-width: 0;
+                padding: 10px;
+            }
+
+            .summary-card label {
+                font-size: 9px;
+                letter-spacing: 0.2px;
+            }
+
+            .summary-card .val { font-size: 14px; }
+            .summary-card.saldo-akhir { grid-column: 1 / -1; }
+            .summary-card.saldo-akhir .val { font-size: 17px; }
+
+            .page-header { align-items: flex-start; }
+            .page-header h2 { font-size: 16px !important; }
+            .action-buttons { width: 100%; }
+            .action-buttons .btn {
+                flex: 1 1 140px;
+                min-width: 0;
+                padding: 0 8px;
+                font-size: 11px;
+            }
+
+            .card {
+                flex: 0 0 auto;
+                min-height: 0;
+                padding: 12px;
+            }
+
+            .filter-toolbar { align-items: stretch; }
+            .left-filters { width: 100%; align-items: stretch; }
+            .tab-group { width: 100%; }
+            .tab-btn {
+                flex: 1 1 0;
+                min-width: 0;
+                padding: 7px 4px;
+                font-size: 10px;
+                white-space: nowrap;
+            }
+
+            .month-select,
+            .search-input {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .table-responsive {
+                flex: 0 0 auto;
+                height: min(52vh, 420px);
+                min-height: 240px;
+            }
+
+            .table-responsive table { min-width: 850px; }
+        }
+    </style>
 </head>
 <body>
 
