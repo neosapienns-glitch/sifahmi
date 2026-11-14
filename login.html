@@ -27,21 +27,15 @@
             padding: 24px 14px;
             font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             color: var(--ink);
-            
-            /* =========================================================
-               LATAR BELAKANG KELAS MA'HAD YG LEBIH HIDUP DAN ALAMI
-               ========================================================= */
             background: 
                 linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(22, 128, 51, 0.45) 100%),
                 url('image_13.png') no-repeat center center;
             background-size: cover;
             background-attachment: fixed;
-            
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Blur halus di balik kartu agar teks dan form login selalu mudah dibaca */
         body::before {
             content: "";
             position: absolute;
@@ -52,7 +46,6 @@
             pointer-events: none;
         }
 
-        /* Stage Konten Login */
         .login-stage {
             position: relative;
             z-index: 2;
@@ -63,26 +56,21 @@
             padding: 10px 0;
         }
 
-        /* Kartu Login 3D Putih Berkelas (Soft Glass Effect) */
         .login-card {
             width: 100%;
             padding: 32px 30px;
             border-radius: 30px;
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.8);
-            
-            /* Bayangan Timbul Ganda (Double Depth Shadow) */
             box-shadow:
                 inset 0 1.5px 0 0 rgba(255, 255, 255, 1),
                 0 4px 6px -1px rgba(0, 0, 0, 0.05),
                 0 20px 40px -4px rgba(15, 23, 42, 0.35);
-            
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
 
-        /* Brand & Logo */
         .brand {
             text-align: center;
             margin-bottom: 4px;
@@ -123,7 +111,6 @@
             text-transform: uppercase;
         }
 
-        /* Alert Pesan Status */
         .message {
             padding: 10px 14px;
             border-radius: 12px;
@@ -144,7 +131,6 @@
             gap: 12px;
         }
 
-        /* Input Kapsul (Pill) dengan Ikon */
         .pill-field {
             position: relative;
             display: flex;
@@ -208,11 +194,16 @@
         }
         .btn-toggle-pass:hover { opacity: 1; }
 
-        /* Forgot Password Link */
         .forgot-row {
             display: flex;
-            justify-content: flex-end;
-            margin: -4px 6px 4px;
+            justify-content: space-between;
+            align-items: center;
+            margin: -2px 8px 4px;
+        }
+        .login-hint {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 600;
         }
         .forgot-link {
             background: none;
@@ -227,7 +218,6 @@
         }
         .forgot-link:hover { text-decoration: underline; color: var(--green-deep); }
 
-        /* Tombol Login 3D Glossy */
         .submit-3d {
             position: relative;
             width: 100%;
@@ -261,10 +251,7 @@
             pointer-events: none;
         }
 
-        .submit-3d:hover {
-            filter: brightness(1.05);
-        }
-
+        .submit-3d:hover { filter: brightness(1.05); }
         .submit-3d:active {
             transform: translateY(2px);
             box-shadow:
@@ -272,13 +259,8 @@
                 0 6px 12px rgba(22, 128, 51, 0.25),
                 inset 0 1px 2px rgba(255, 255, 255, 0.3);
         }
+        .submit-3d:disabled { cursor: wait; opacity: 0.75; }
 
-        .submit-3d:disabled {
-            cursor: wait;
-            opacity: 0.75;
-        }
-
-        /* Footer Info & Alamat Yayasan */
         .card-footer {
             margin-top: 8px;
         }
@@ -302,17 +284,18 @@
             background: linear-gradient(90deg, transparent, #86efac, transparent);
         }
 
-.address-pill {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Memposisikan isi ke tengah kotak */
-    gap: 9px;
-    padding: 8px 12px;
-    border-radius: 14px;
-    background: #f8fafc;
-    border: 1px solid #cbd5e1;
-    box-shadow: inset 0 1px 2px rgba(255,255,255,1);
-}
+        .address-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 8px 12px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,1);
+        }
+
         .address-pill svg {
             width: 18px;
             height: 18px;
@@ -320,13 +303,14 @@
             flex-shrink: 0;
         }
 
-.address-pill p {
-    font-size: 9.5px;
-    font-weight: 700;
-    color: var(--green-deep);
-    line-height: 1.35;
-    text-align: center; /* Membuat baris teks alamat rata tengah */
-}
+        .address-pill p {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: var(--green-deep);
+            line-height: 1.35;
+            text-align: center;
+        }
+
         @media (max-width: 420px) {
             .login-card { padding: 24px 20px 20px; border-radius: 24px; }
             h1 { font-size: 23px; }
@@ -337,7 +321,6 @@
 <body>
 
     <div class="login-stage">
-        <!-- Kartu Login 3D Modern -->
         <main class="login-card">
             <header class="brand">
                 <img src="./logo.png" alt="Logo Yayasan Nuuru Hidaayatil Qur'aan">
@@ -349,14 +332,14 @@
             <div class="message" id="form-message" role="status" aria-live="polite" hidden></div>
 
             <form id="auth-form" novalidate>
-                <!-- Input Email -->
+                <!-- Ubah type="text" agar menerima No. NIS maupun Email -->
                 <div class="pill-field">
                     <span class="pill-icon-left">
                         <svg viewBox="0 0 24 24" fill="currentColor" width="19" height="19">
                             <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
                         </svg>
                     </span>
-                    <input id="email" name="email" type="email" autocomplete="email" placeholder="Username / Email" required>
+                    <input id="email" name="email" type="text" autocomplete="username" placeholder="No. NIS / Email" required>
                 </div>
 
                 <!-- Input Password -->
@@ -366,7 +349,7 @@
                             <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
                         </svg>
                     </span>
-                    <input id="password" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Password" required>
+                    <input id="password" name="password" type="password" autocomplete="current-password" minlength="4" placeholder="Password" required>
                     <button type="button" class="btn-toggle-pass" id="toggle-password" aria-label="Tampilkan atau sembunyikan password" title="Lihat Password">
                         <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="19" height="19">
                             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
@@ -377,6 +360,7 @@
                 </div>
 
                 <div class="forgot-row">
+                    <span class="login-hint">Wali Murid: User &amp; Pass = No. NIS</span>
                     <button type="button" class="forgot-link" id="btn-forgot-password">Forgot Password?</button>
                 </div>
 
@@ -429,7 +413,7 @@
             }
         })();
 
-        // Fitur Lihat/Sembunyikan Password
+        // Toggle Lihat / Sembunyikan Password
         togglePasswordBtn.addEventListener("click", function () {
             const isHidden = passwordInput.type === "password";
             passwordInput.type = isHidden ? "text" : "password";
@@ -475,19 +459,87 @@
             return result;
         }
 
+        // Validasi Login Wali Murid menggunakan No. NIS
+        async function loginWaliMuridByNis(nis, password) {
+            // 1. Cek apakah NIS terdaftar sebagai akun Supabase Auth (misal format nis@santri.ynhq.id / nis@sifahmi.id)
+            const virtualDomains = ["santri.ynhq.id", "sifahmi.id", "ynhq.id"];
+            for (const domain of virtualDomains) {
+                try {
+                    const authRes = await authRequest("token?grant_type=password", {
+                        email: `${nis}@${domain}`,
+                        password: password
+                    });
+                    if (authRes && authRes.access_token) {
+                        authRes.role = "wali_murid";
+                        authRes.santri_nis = nis;
+                        return authRes;
+                    }
+                } catch (e) {
+                    // Lanjut ke pengecekan tabel santri
+                }
+            }
+
+            // 2. Cek langsung ke tabel 'santri' di Supabase (Default: username = NIS, password = NIS)
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/santri?nis=eq.${encodeURIComponent(nis)}&select=*`, {
+                method: "GET",
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!res.ok) {
+                throw new Error("Gagal memeriksa data NIS santri ke server.");
+            }
+
+            const rows = await res.json();
+            if (!Array.isArray(rows) || rows.length === 0) {
+                throw new Error("Nomor NIS tidak ditemukan. Periksa kembali No. NIS santri.");
+            }
+
+            const santri = rows[0];
+            // Password default = NIS, atau mencocokkan kolom password/pin jika ada di tabel santri
+            const expectedPass = String(santri.password || santri.pin || santri.nis).trim();
+            if (String(password).trim() !== expectedPass) {
+                throw new Error("Password salah. Default password wali murid adalah Nomor NIS santri.");
+            }
+
+            return {
+                access_token: SUPABASE_ANON_KEY,
+                token_type: "bearer",
+                role: "wali_murid",
+                santri_nis: santri.nis,
+                user: {
+                    id: santri.id,
+                    email: `${santri.nis}@wali.sifahmi`,
+                    user_metadata: {
+                        role: "wali_murid",
+                        nis: santri.nis,
+                        nama_santri: santri.nama_lengkap,
+                        kelas: santri.kelas || santri.program || ""
+                    }
+                }
+            };
+        }
+
         // Fitur Reset Password via Email Supabase
         forgotBtn.addEventListener("click", async function () {
-            const email = emailInput.value.trim();
-            if (!email) {
-                setMessage("Masukkan alamat email akun terlebih dahulu pada kolom di atas, lalu klik Forgot Password.", "error");
+            const identifier = emailInput.value.trim();
+            if (!identifier) {
+                setMessage("Masukkan email akun terlebih dahulu pada kolom di atas, lalu klik Forgot Password.", "error");
                 emailInput.focus();
+                return;
+            }
+            if (!identifier.includes("@")) {
+                setMessage("Untuk Wali Murid, password default adalah Nomor NIS santri. Hubungi admin Ma'had jika lupa NIS.", "error");
                 return;
             }
 
             forgotBtn.disabled = true;
             try {
-                await authRequest("recover", { email: email });
-                setMessage("Tautan reset password telah dikirim ke " + email + ". Silakan periksa kotak masuk / spam.", "success");
+                await authRequest("recover", { email: identifier });
+                setMessage("Tautan reset password telah dikirim ke " + identifier + ".", "success");
             } catch (err) {
                 setMessage("Gagal mengirim reset password: " + err.message, "error");
             } finally {
@@ -495,12 +547,12 @@
             }
         });
 
-        // Submit Login Supabase
+        // Submit Login (Otomatis deteksi Email Admin atau NIS Wali Murid)
         form.addEventListener("submit", async function (event) {
             event.preventDefault();
             message.hidden = true;
 
-            const email = emailInput.value.trim();
+            const identifier = emailInput.value.trim();
             const password = passwordInput.value;
 
             if (!form.reportValidity()) return;
@@ -509,23 +561,36 @@
             submitButton.textContent = "Memeriksa...";
 
             try {
-                const result = await authRequest("token?grant_type=password", {
-                    email: email,
-                    password: password
-                });
+                let result;
 
-                result.expires_at = Math.floor(Date.now() / 1000) + (result.expires_in || 3600);
+                if (identifier.includes("@")) {
+                    // Jalur 1: Login Admin / Pengampu (Email)
+                    result = await authRequest("token?grant_type=password", {
+                        email: identifier,
+                        password: password
+                    });
+                    result.role = "admin";
+                } else {
+                    // Jalur 2: Login Wali Murid (No. NIS)
+                    result = await loginWaliMuridByNis(identifier, password);
+                }
+
+                result.expires_at = Math.floor(Date.now() / 1000) + (result.expires_in || 86400);
                 localStorage.setItem(SESSION_KEY, JSON.stringify(result));
 
-                setMessage("Login berhasil! Mengalihkan ke Dashboard...", "success");
+                const namaSapaan = result.user?.user_metadata?.nama_santri
+                    ? `Wali Santri (${result.user.user_metadata.nama_santri})`
+                    : "Admin / Pengampu";
+
+                setMessage(`Login berhasil sebagai ${namaSapaan}! Mengalihkan...`, "success");
 
                 setTimeout(function () {
                     window.location.href = "dashboard.html";
-                }, 1000);
+                }, 900);
 
             } catch (error) {
-                console.error("Supabase Auth error:", error);
-                setMessage(error.message || "Email atau password tidak sesuai. Periksa kembali data masuk Anda.", "error");
+                console.error("Login error:", error);
+                setMessage(error.message || "Login gagal. Periksa kembali No. NIS / Email dan password Anda.", "error");
                 submitButton.disabled = false;
                 submitButton.textContent = "Login";
             }
