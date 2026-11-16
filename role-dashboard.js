@@ -168,10 +168,8 @@
         });
 
         try {
-            let students = await api(`santri?select=nis,nama_lengkap,kelas,program,status&kelas=eq.${encodeURIComponent(className)}&order=nama_lengkap.asc`);
-            if (!students.length) {
-                students = await api(`santri?select=nis,nama_lengkap,kelas,program,status&program=eq.${encodeURIComponent(className)}&order=nama_lengkap.asc`);
-            }
+            // Kolom program dihapus, murni menggunakan kelas
+            const students = await api(`santri?select=nis,nama_lengkap,kelas,status&kelas=eq.${encodeURIComponent(className)}&order=nama_lengkap.asc`);
             const activeStudents = students.filter(student => !student.status || student.status === "Aktif");
             document.getElementById("teacher-student-count").textContent = activeStudents.length;
             roster.replaceChildren();
@@ -205,13 +203,13 @@
                 history.innerHTML = '<p class="empty">Belum ada catatan mutaba\'ah di kelas ini.</p>';
             } else {
                 records.forEach(record => {
-                    const summary = [record.kehadiran,
+                    const summaryText = [record.kehadiran,
                         record.sabaq_surat ? `Hafalan baru: ${record.sabaq_surat}` : "",
                         record.setoran_surat ? `Setoran hafalan: ${record.setoran_surat}` : "",
                         record.tahsin_catatan,
                         record.nama_pengampu ? `Pengampu: ${record.nama_pengampu}` : ""]
                         .filter(Boolean).join(" • ");
-                    history.append(createHistoryItem(record.nama_santri || "Santri", summary, record.tanggal));
+                    history.append(createHistoryItem(record.nama_santri || "Santri", summaryText, record.tanggal));
                 });
             }
         } catch (error) {
@@ -229,11 +227,12 @@
         document.getElementById("guardian-nis").textContent = `NIS ${nis}`;
         document.getElementById("student-nis").textContent = `NIS: ${nis}`;
         try {
-            const students = await api(`santri?select=nis,nama_lengkap,kelas,program,status&nis=eq.${escapeFilter(nis)}&limit=1`);
+            // Kolom program dibersihkan dari select
+            const students = await api(`santri?select=nis,nama_lengkap,kelas,status&nis=eq.${escapeFilter(nis)}&limit=1`);
             const student = students[0];
             if (!student) throw new Error("Data santri terhubung tidak ditemukan.");
             document.getElementById("welcome-title").textContent = `Assalamu'alaikum, Wali ${student.nama_lengkap}`;
-            document.getElementById("student-class").textContent = `Kelas: ${student.kelas || student.program || "—"}`;
+            document.getElementById("student-class").textContent = `Kelas: ${student.kelas || "—"}`;
 
             const summary = await api("rpc/guardian_infaq_summary", { method: "POST", body: {} });
             const infaqSummary = Array.isArray(summary) ? summary[0] : summary;

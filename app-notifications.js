@@ -45,6 +45,11 @@
         session = null;
     }
 
+    // Meminta izin Web Notifications API agar muncul di bilah status ponsel
+    if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+    }
+
     function showStatus(message, isError = false) {
         status.textContent = message;
         status.style.color = isError ? "#a93226" : "";
@@ -71,9 +76,42 @@
         return response.status === 204 ? null : response.json();
     }
 
+    // Melacak notifikasi baru untuk memicu banner sistem di bilah notifikasi ponsel
+    let lastNotifIds = new Set();
+    
+    function triggerPhoneNotification(title, bodyText) {
+        if ("Notification" in window && Notification.permission === "granted") {
+            try {
+                if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification(title, {
+                            body: bodyText,
+                            icon: "./logo.png",
+                            badge: "./logo.png",
+                            vibrate: [200, 100, 200]
+                        });
+                    });
+                } else {
+                    new Notification(title, { body: bodyText, icon: "./logo.png" });
+                }
+            } catch (e) {
+                console.error("Gagal memunculkan notifikasi sistem:", e);
+            }
+        }
+    }
+
     function renderNotifications(notifications) {
         const unreadCount = notifications.filter(notification => !notification.read_at).length;
         count.textContent = `${unreadCount} belum dibaca di 20 notifikasi terbaru`;
+        
+        // Deteksi notifikasi unread baru untuk memunculkan notifikasi ponsel (bila ada data baru)
+        notifications.forEach(notification => {
+            if (!notification.read_at && !lastNotifIds.has(notification.id) && lastNotifIds.size > 0) {
+                triggerPhoneNotification(notification.title, notification.message);
+            }
+            lastNotifIds.add(notification.id);
+        });
+
         list.replaceChildren();
         if (!notifications.length) {
             const empty = document.createElement("p");
