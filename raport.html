@@ -664,7 +664,9 @@
                 const latestRecord = records.find(r => r.sabaq_surat || r.setoran_surat);
                 const latestSurat = [
                     latestRecord?.sabaq_surat ? `Hafalan baru: ${latestRecord.sabaq_surat}` : "",
-                    latestRecord?.setoran_surat ? `Setoran: ${latestRecord.setoran_surat}` : ""
+                    latestRecord?.sabaq_catatan ? `Catatan Ustadz: ${latestRecord.sabaq_catatan}` : "",
+                    latestRecord?.setoran_surat ? `Murojaah: ${latestRecord.setoran_surat}` : "",
+                    latestRecord?.setoran_catatan ? `Catatan Ustadz: ${latestRecord.setoran_catatan}` : ""
                 ].filter(Boolean).join(" • ");
                 const totalBaris = records.reduce((sum, r) =>
                     sum + (Number(r.sabaq_baris) || 0) + (Number(r.setoran_baris) || 0), 0);
@@ -908,7 +910,9 @@
                 const latestSetoran = setoranList[0];
                 const lastSurat = latestSetoran ? [
                     latestSetoran.sabaq_surat ? `Hafalan baru: ${latestSetoran.sabaq_surat}` : "",
-                    latestSetoran.setoran_surat ? `Setoran: ${latestSetoran.setoran_surat}` : ""
+                    latestSetoran.sabaq_catatan ? `Catatan Ustadz: ${latestSetoran.sabaq_catatan}` : "",
+                    latestSetoran.setoran_surat ? `Murojaah: ${latestSetoran.setoran_surat}` : "",
+                    latestSetoran.setoran_catatan ? `Catatan Ustadz: ${latestSetoran.setoran_catatan}` : ""
                 ].filter(Boolean).join(" • ") : "-";
 
                 document.getElementById("disp-total-baris").textContent = `${totalBaris} Baris (± ${estHalaman} Halaman)`;

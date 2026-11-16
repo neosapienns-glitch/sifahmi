@@ -239,8 +239,10 @@
             gap: 6px;
         }
 
-        .history-header { display: flex; align-items: center; justify-content: space-between; }
-        .history-date { font-weight: 800; font-size: 13px; color: var(--ink); }
+        .history-item time { color: var(--muted); font-size: 11px; font-weight: 800; }
+        .history-item .history-teacher { color: #475569; font-size: 12px; }
+        .history-details { margin: 0; padding-left: 19px; color: #475569; font-size: 12px; line-height: 1.6; }
+        .history-detail-empty { color: var(--muted); font-size: 12px; }
 
         .badge-presence { padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 800; }
         .presence-hadir { background: #e9f8ef; color: #1e8449; }
@@ -261,9 +263,10 @@
         .modal-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
         .modal-footer { padding: 14px 20px; border-top: 1px solid var(--line); background: #fdfdfd; display: flex; justify-content: flex-end; gap: 8px; }
 
-        .batch-santri-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
-        .presence-options { display: flex; gap: 8px; }
-        .presence-options label { font-size: 11px; text-transform: none; cursor: pointer; display: flex; align-items: center; gap: 3px; font-weight: 700; color: var(--ink); }
+        .batch-santri-row { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+        .batch-santri-controls { display: grid; grid-template-columns: minmax(110px,.4fr) minmax(0,1fr); gap: 8px; }
+        .batch-santri-controls select,.batch-santri-controls input { min-height: 38px; padding: 8px 10px; font-size: 12px; }
+        @media(max-width:520px){.batch-santri-controls{grid-template-columns:1fr}}
 
         .message { margin-bottom: 14px; padding: 10px 14px; border-radius: 10px; font-size: 12.5px; line-height: 1.4; }
         .message[hidden] { display: none !important; }
@@ -373,6 +376,10 @@
                                 <label>Nilai Kelancaran (0-100)</label>
                                 <input type="number" id="sabaq-nilai" min="0" max="100" placeholder="0-100">
                             </div>
+                            <div class="field-group">
+                                <label>Catatan Ustadz</label>
+                                <input type="text" id="sabaq-catatan" maxlength="500" placeholder="Catatan hafalan baru...">
+                            </div>
                         </div>
                     </div>
                     <div class="form-block">
@@ -389,6 +396,10 @@
                             <div class="field-group">
                                 <label>Nilai Kelancaran (0-100)</label>
                                 <input type="number" id="setoran-nilai" min="0" max="100" placeholder="0-100">
+                            </div>
+                            <div class="field-group">
+                                <label>Catatan Ustadz</label>
+                                <input type="text" id="setoran-catatan" maxlength="500" placeholder="Catatan murojaah...">
                             </div>
                         </div>
                     </div>
@@ -685,20 +696,16 @@
 
         async function loadSantriByKelas(kelasName) {
             const selectSiswa = document.getElementById("select-siswa");
+            currentSantriList = [];
             selectSiswa.innerHTML = `<option value="">-- Memuat Santri... --</option>`;
 
             try {
-                let query = "santri?select=*&order=nama_lengkap.asc";
+                let query = "santri?select=nis,nama_lengkap,kelas,status&order=nama_lengkap.asc";
                 if (kelasName) query += `&kelas=eq.${encodeURIComponent(kelasName)}`;
-                
-                let list = await supabaseFetch(query);
-
-                if ((!Array.isArray(list) || list.length === 0) && kelasName) {
-                    let fallback = await supabaseFetch(`santri?select=*&program=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
-                    if (Array.isArray(fallback) && fallback.length > 0) list = fallback;
-                }
-
-                currentSantriList = Array.isArray(list) ? list : [];
+                const list = await supabaseFetch(query);
+                currentSantriList = Array.isArray(list)
+                    ? list.filter(student => !student.status || student.status === "Aktif")
+                    : [];
 
                 selectSiswa.innerHTML = `<option value="">-- Pilih Santri --</option>`;
                 if (currentSantriList.length === 0) {
@@ -715,6 +722,137 @@
                 });
             } catch (err) {
                 selectSiswa.innerHTML = `<option value="">-- Gagal Memuat Santri --</option>`;
+                showGlobalAlert(`Santri gagal dimuat: ${err.message}`, "error");
+            }
+        }
+
+        function renderBatchPresence(existingRecords) {
+            const container = document.getElementById("batch-santri-container");
+            const existingByNis = new Map(existingRecords.map(record => [String(record.santri_nis), record]));
+            container.replaceChildren();
+
+            currentSantriList.forEach(student => {
+                const row = document.createElement("div");
+                row.className = "batch-santri-row";
+                row.dataset.nis = String(student.nis);
+                row.dataset.nama = student.nama_lengkap || "";
+
+                const name = document.createElement("strong");
+                name.textContent = `${student.nama_lengkap || "Santri"} (${student.nis})`;
+
+                const controls = document.createElement("div");
+                controls.className = "batch-santri-controls";
+                const status = document.createElement("select");
+                status.setAttribute("aria-label", `Status kehadiran ${student.nama_lengkap || "santri"}`);
+                const attendanceOptions = ["Hadir", "Sakit", "Izin", "Alpa"];
+                attendanceOptions.forEach(value => {
+                    const option = document.createElement("option");
+                    option.value = value;
+                    option.textContent = value;
+                    status.append(option);
+                });
+
+                const previous = existingByNis.get(String(student.nis));
+                status.value = attendanceOptions.includes(previous?.kehadiran) ? previous.kehadiran : "Hadir";
+
+                const reason = document.createElement("input");
+                reason.type = "text";
+                reason.maxLength = 500;
+                reason.placeholder = "Alasan tidak hadir (wajib)";
+                reason.setAttribute("aria-label", `Alasan tidak hadir ${student.nama_lengkap || "santri"}`);
+                reason.value = previous?.catatan_kehadiran || "";
+                reason.hidden = status.value === "Hadir";
+                status.addEventListener("change", () => {
+                    reason.hidden = status.value === "Hadir";
+                });
+
+                controls.append(status, reason);
+                row.append(name, controls);
+                container.append(row);
+            });
+        }
+
+        async function openBatchPresence() {
+            const modal = document.getElementById("presence-modal");
+            const container = document.getElementById("batch-santri-container");
+            const saveButton = document.getElementById("btn-save-presence");
+            const date = document.getElementById("input-tanggal-mutabaah").value;
+            const className = document.getElementById("select-kelas").value;
+
+            if (!currentSantriList.length) {
+                showGlobalAlert("Tidak ada santri aktif di kelas ini untuk dicatat.", "error");
+                return;
+            }
+            if (!date || !className) {
+                showGlobalAlert("Pilih tanggal dan kelas sebelum mengisi presensi.", "error");
+                return;
+            }
+
+            container.textContent = "Memuat presensi pada tanggal tersebut...";
+            saveButton.disabled = true;
+            modal.classList.add("active");
+            try {
+                const existing = await supabaseFetch(
+                    `mutabaah?select=santri_nis,kehadiran,catatan_kehadiran&kelas=eq.${encodeURIComponent(className)}&tanggal=eq.${encodeURIComponent(date)}`
+                );
+                renderBatchPresence(Array.isArray(existing) ? existing : []);
+                saveButton.disabled = false;
+            } catch (error) {
+                modal.classList.remove("active");
+                showGlobalAlert(`Presensi gagal dimuat: ${error.message}`, "error");
+            }
+        }
+
+        async function saveBatchPresence() {
+            const container = document.getElementById("batch-santri-container");
+            const saveButton = document.getElementById("btn-save-presence");
+            const date = document.getElementById("input-tanggal-mutabaah").value;
+            const className = document.getElementById("select-kelas").value;
+            const rows = Array.from(container.querySelectorAll(".batch-santri-row"));
+            const records = [];
+
+            for (const row of rows) {
+                const status = row.querySelector("select").value;
+                const reason = row.querySelector("input").value.trim();
+                if (status !== "Hadir" && !reason) {
+                    showGlobalAlert(`Isi alasan tidak hadir untuk ${row.dataset.nama || "santri"} terlebih dahulu.`, "error");
+                    row.querySelector("input").focus();
+                    return;
+                }
+                records.push({
+                    tanggal: date,
+                    kelas: className,
+                    santri_nis: row.dataset.nis,
+                    nama_santri: row.dataset.nama,
+                    kehadiran: status,
+                    catatan_kehadiran: status === "Hadir" ? null : reason,
+                    nama_pengampu: currentTeacherContext
+                        ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
+                        : null,
+                });
+            }
+
+            if (!records.length) {
+                showGlobalAlert("Tidak ada data presensi untuk disimpan.", "error");
+                return;
+            }
+
+            saveButton.disabled = true;
+            saveButton.textContent = "Menyimpan...";
+            try {
+                await supabaseFetch("mutabaah?on_conflict=santri_nis,tanggal", {
+                    method: "POST",
+                    prefer: "resolution=merge-duplicates,return=representation",
+                    body: records,
+                });
+                document.getElementById("presence-modal").classList.remove("active");
+                showGlobalAlert(`Presensi ${records.length} santri berhasil disimpan.`, "success");
+                fetchRiwayatSiswa();
+            } catch (error) {
+                showGlobalAlert(`Presensi gagal disimpan: ${error.message}`, "error");
+            } finally {
+                saveButton.disabled = false;
+                saveButton.textContent = "Simpan Kehadiran Sekelas";
             }
         }
 
@@ -731,7 +869,7 @@
             container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Memuat riwayat...</div>`;
 
             try {
-                const list = await supabaseFetch(`mutabaah?santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc&limit=5`);
+                const list = await supabaseFetch(`mutabaah?select=tanggal,kelas,nama_santri,nama_pengampu,kehadiran,catatan_kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan&santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc&limit=5`);
                 container.innerHTML = "";
 
                 if (!Array.isArray(list) || list.length === 0) {
@@ -740,42 +878,47 @@
                 }
 
                 list.forEach(item => {
-                    const div = document.createElement("div");
+                    const div = document.createElement("article");
                     div.className = "history-item";
+                    const date = document.createElement("time");
+                    date.textContent = `Tanggal: ${item.tanggal || "Tidak tersedia"}`;
+                    const teacher = document.createElement("p");
+                    teacher.className = "history-teacher";
+                    teacher.textContent = `Pengampu: ${item.nama_pengampu || "Tidak tercantum"}`;
+                    div.append(date, teacher);
 
-                    let presenceBadge = "presence-hadir";
-                    if (item.kehadiran === "Sakit") presenceBadge = "presence-sakit";
-                    if (item.kehadiran === "Izin") presenceBadge = "presence-izin";
-                    if (item.kehadiran === "Alpa") presenceBadge = "presence-alpa";
-
-                    div.innerHTML = `
-                        <div class="history-header">
-                            <span class="history-date">${item.tanggal}</span>
-                            <span class="badge-presence ${presenceBadge}">${item.kehadiran}</span>
-                        </div>
-                    `;
-                    const details = document.createElement("div");
-                    details.style.cssText = "font-size: 12px; color: var(--muted); line-height: 1.5;";
+                    const details = [];
+                    if (item.kelas) details.push(`Kelas: ${item.kelas}`);
+                    if (item.kehadiran) details.push(`Kehadiran: ${item.kehadiran}`);
+                    if (item.catatan_kehadiran) details.push(`Alasan tidak hadir: ${item.catatan_kehadiran}`);
                     if (item.sabaq_surat) {
-                        const newMemorization = document.createElement("div");
-                        newMemorization.textContent = `[Hafalan Baru] ${item.sabaq_surat} (${item.sabaq_baris || 0} baris)`;
-                        details.append(newMemorization);
+                        details.push(`Hafalan baru: ${item.sabaq_surat} (${item.sabaq_baris || 0} baris${item.sabaq_nilai == null ? "" : `, nilai ${item.sabaq_nilai}`})`);
                     }
+                    if (item.sabaq_catatan) details.push(`Catatan Ustadz (hafalan baru): ${item.sabaq_catatan}`);
                     if (item.setoran_surat) {
-                        const revision = document.createElement("div");
-                        revision.textContent = `[Setoran Hafalan] ${item.setoran_surat} (${item.setoran_baris || 0} baris)`;
-                        details.append(revision);
+                        details.push(`Murojaah: ${item.setoran_surat} (${item.setoran_baris || 0} baris${item.setoran_nilai == null ? "" : `, nilai ${item.setoran_nilai}`})`);
                     }
-                    if (item.tahsin_catatan) {
-                        const note = document.createElement("div");
-                        note.textContent = item.tahsin_catatan;
-                        details.append(note);
+                    if (item.setoran_catatan) details.push(`Catatan Ustadz (murojaah): ${item.setoran_catatan}`);
+                    if (item.tahsin_catatan) details.push(`Tahsin: ${item.tahsin_catatan}`);
+                    if (details.length) {
+                        const list = document.createElement("ul");
+                        list.className = "history-details";
+                        details.forEach(detail => {
+                            const line = document.createElement("li");
+                            line.textContent = detail;
+                            list.append(line);
+                        });
+                        div.append(list);
+                    } else {
+                        const empty = document.createElement("p");
+                        empty.className = "history-detail-empty";
+                        empty.textContent = "Tidak ada rincian tambahan.";
+                        div.append(empty);
                     }
-                    div.append(details);
                     container.appendChild(div);
                 });
             } catch (err) {
-                container.innerHTML = `<div style="text-align: center; color: var(--danger); font-size: 12px; padding: 12px;">Gagal memuat.</div>`;
+                container.textContent = `Riwayat gagal dimuat: ${err.message}`;
             }
         }
 
@@ -828,7 +971,7 @@
             }
 
             selectKelas.addEventListener("change", function(e) {
-                loadSantriByKelas(e.target.value);
+                loadSantriByKelas(e.target.value).then(fetchRiwayatSiswa);
                 renderDynamicSubjects();
             });
 
@@ -837,8 +980,21 @@
             });
 
             selectSiswa.addEventListener("change", fetchRiwayatSiswa);
+            document.getElementById("btn-open-batch-presence").addEventListener("click", openBatchPresence);
+            document.getElementById("btn-save-presence").addEventListener("click", saveBatchPresence);
+            document.getElementById("btn-close-presence").addEventListener("click", () => {
+                document.getElementById("presence-modal").classList.remove("active");
+            });
+            document.getElementById("btn-cancel-presence").addEventListener("click", () => {
+                document.getElementById("presence-modal").classList.remove("active");
+            });
+            document.getElementById("presence-modal").addEventListener("click", event => {
+                if (event.target.id === "presence-modal") {
+                    document.getElementById("presence-modal").classList.remove("active");
+                }
+            });
 
-            loadSantriByKelas(currentTeacherContext?.className || selectKelas.value);
+            loadSantriByKelas(currentTeacherContext?.className || selectKelas.value).then(fetchRiwayatSiswa);
             renderDynamicSubjects();
 
             // Submit Handling Form Dinamis (UPSERT Merge Ke Supabase)
@@ -878,25 +1034,31 @@
                     }
                 });
 
-                const payload = {
-                    tanggal: dateInput.value,
-                    kelas: selectKelas.value || "Taud 1",
-                    santri_nis: nis,
-                    nama_santri: namaSantri,
-                    kehadiran: "Hadir",
-                    nama_pengampu: currentTeacherContext
-                        ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
-                        : null,
-                    sabaq_surat: document.getElementById("sabaq-surat").value.trim() || null,
-                    sabaq_baris: Number(document.getElementById("sabaq-baris").value) || 0,
-                    sabaq_nilai: Number(document.getElementById("sabaq-nilai").value) || null,
-                    setoran_surat: document.getElementById("setoran-surat").value.trim() || null,
-                    setoran_baris: Number(document.getElementById("setoran-baris").value) || 0,
-                    setoran_nilai: Number(document.getElementById("setoran-nilai").value) || null,
-                    tahsin_catatan: detailPelajaranTxt.length > 0 ? detailPelajaranTxt.join(" | ") : null
-                };
-
                 try {
+                    const attendanceRecords = await supabaseFetch(
+                        `mutabaah?select=kehadiran,catatan_kehadiran&santri_nis=eq.${encodeURIComponent(nis)}&tanggal=eq.${encodeURIComponent(dateInput.value)}&limit=1`
+                    );
+                    const existingAttendance = Array.isArray(attendanceRecords) ? attendanceRecords[0] : null;
+                    const payload = {
+                        tanggal: dateInput.value,
+                        kelas: selectKelas.value || "Taud 1",
+                        santri_nis: nis,
+                        nama_santri: namaSantri,
+                        kehadiran: existingAttendance?.kehadiran || "Hadir",
+                        catatan_kehadiran: existingAttendance?.catatan_kehadiran || null,
+                        nama_pengampu: currentTeacherContext
+                            ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
+                            : null,
+                        sabaq_surat: document.getElementById("sabaq-surat").value.trim() || null,
+                        sabaq_baris: Number(document.getElementById("sabaq-baris").value) || 0,
+                        sabaq_nilai: Number(document.getElementById("sabaq-nilai").value) || null,
+                        sabaq_catatan: document.getElementById("sabaq-catatan").value.trim() || null,
+                        setoran_surat: document.getElementById("setoran-surat").value.trim() || null,
+                        setoran_baris: Number(document.getElementById("setoran-baris").value) || 0,
+                        setoran_nilai: Number(document.getElementById("setoran-nilai").value) || null,
+                        setoran_catatan: document.getElementById("setoran-catatan").value.trim() || null,
+                        tahsin_catatan: detailPelajaranTxt.length > 0 ? detailPelajaranTxt.join(" | ") : null
+                    };
                     await supabaseFetch("mutabaah?on_conflict=santri_nis,tanggal", {
                         method: "POST",
                         prefer: "resolution=merge-duplicates,return=representation",

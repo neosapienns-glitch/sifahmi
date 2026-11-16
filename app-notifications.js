@@ -26,7 +26,8 @@
         .app-notification-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
         .app-notification-header h2{font-size:15px}
         .app-notification-count,.app-notification-status{margin-top:4px;color:#64748b;font-size:11px}
-        .app-notification-refresh,.app-notification-read{padding:7px 10px;border:1px solid #d1d5db;border-radius:9px;background:#fff;color:#1b5e20;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+        .app-notification-refresh,.app-notification-read,.app-notification-delete{padding:7px 10px;border:1px solid #d1d5db;border-radius:9px;background:#fff;color:#1b5e20;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+        .app-notification-delete{color:#a93226}
         .app-notification-list{display:grid;gap:8px;margin-top:12px}
         .app-notification-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px;border:1px solid #edf1f5;border-radius:11px;background:#f8fafc}
         .app-notification-item.unread{border-color:#bbf7d0;background:#f0fdf4}
@@ -34,7 +35,7 @@
         .app-notification-item p{margin-top:4px;color:#475569;font-size:11px;line-height:1.55}
         .app-notification-item time{display:block;margin-top:6px;color:#94a3b8;font-size:10px}
         .app-notification-empty{color:#64748b;font-size:12px;line-height:1.6}
-        @media(max-width:520px){.app-notification-item{flex-direction:column}.app-notification-read{align-self:flex-start}}
+        @media(max-width:520px){.app-notification-item{flex-direction:column}.app-notification-read,.app-notification-delete{align-self:flex-start}}
     `;
     document.head.append(style);
 
@@ -102,7 +103,7 @@
 
     function renderNotifications(notifications) {
         const unreadCount = notifications.filter(notification => !notification.read_at).length;
-        count.textContent = `${unreadCount} belum dibaca di 20 notifikasi terbaru`;
+        count.textContent = `${unreadCount} belum dibaca • ${notifications.length} notifikasi terbaru`;
         
         // Deteksi notifikasi unread baru untuk memunculkan notifikasi ponsel (bila ada data baru)
         notifications.forEach(notification => {
@@ -144,6 +145,13 @@
                 button.dataset.notificationRead = notification.id;
                 button.textContent = "Tandai dibaca";
                 item.append(button);
+            } else if (document.body.dataset.dashboardRole === "Wali Murid") {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "app-notification-delete";
+                button.dataset.notificationDelete = notification.id;
+                button.textContent = "Hapus";
+                item.append(button);
             }
             list.append(item);
         });
@@ -153,7 +161,7 @@
         showStatus("");
         try {
             const notifications = await api(
-                "app_notifications?select=id,title,message,created_at,read_at&order=created_at.desc&limit=20"
+                "app_notifications?select=id,title,message,created_at,read_at&order=created_at.desc&limit=3"
             );
             renderNotifications(notifications);
         } catch (error) {
@@ -169,20 +177,40 @@
         }
 
         const readButton = event.target.closest("[data-notification-read]");
-        if (!readButton) return;
-        readButton.disabled = true;
+        if (readButton) {
+            readButton.disabled = true;
+            try {
+                await api(
+                    `app_notifications?id=eq.${encodeURIComponent(readButton.dataset.notificationRead)}&read_at=is.null`,
+                    {
+                        method: "PATCH",
+                        body: { read_at: new Date().toISOString() },
+                        prefer: "return=minimal",
+                    }
+                );
+                await loadNotifications();
+            } catch (error) {
+                readButton.disabled = false;
+                showStatus(error.message, true);
+            }
+            return;
+        }
+
+        const deleteButton = event.target.closest("[data-notification-delete]");
+        if (!deleteButton) return;
+        if (!window.confirm("Hapus notifikasi yang sudah dibaca ini?")) return;
+        deleteButton.disabled = true;
         try {
             await api(
-                `app_notifications?id=eq.${encodeURIComponent(readButton.dataset.notificationRead)}&read_at=is.null`,
+                `app_notifications?id=eq.${encodeURIComponent(deleteButton.dataset.notificationDelete)}&read_at=not.is.null`,
                 {
-                    method: "PATCH",
-                    body: { read_at: new Date().toISOString() },
+                    method: "DELETE",
                     prefer: "return=minimal",
                 }
             );
             await loadNotifications();
         } catch (error) {
-            readButton.disabled = false;
+            deleteButton.disabled = false;
             showStatus(error.message, true);
         }
     });

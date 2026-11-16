@@ -35,18 +35,20 @@
         .list-item { display:flex; justify-content:space-between; gap:12px; padding:12px; border:1px solid #eef2f6; border-radius:13px; background:#f8fafc; font-size:12px; }
         .list-item strong { color:var(--ink); }
         .list-item span { color:var(--muted); text-align:right; }
+        .history-item { padding:12px; border:1px solid #eef2f6; border-radius:13px; background:#f8fafc; }
+        .history-item h4 { font-size:12px; }
+        .history-item time { display:block; margin-bottom:6px; color:var(--muted); font-size:10px; font-weight:750; }
+        .history-item .history-teacher { margin:0 0 6px; color:#475569; font-size:11px; }
+        .history-details { margin:0; padding-left:19px; color:#475569; font-size:11px; line-height:1.65; }
+        .history-detail-empty { color:var(--muted); font-size:11px; }
         .empty { color:var(--muted); font-size:12px; line-height:1.6; }
-        .settings-form { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
-        .settings-form label { display:block; margin-bottom:5px; color:var(--muted); font-size:11px; font-weight:800; }
-        .settings-form input { width:100%; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:10px; font:inherit; }
-        .settings-form button { grid-column:1/-1; }
         .substitute-form { display:grid; grid-template-columns:1fr auto; gap:9px; margin-top:14px; }
         .substitute-form input { min-width:0; min-height:40px; padding:8px 11px; border:1px solid var(--line); border-radius:10px; font:inherit; }
         .role-message { display:none; margin-top:10px; padding:10px 12px; border-radius:10px; background:#e9f8ef; color:#1b5e20; font-size:12px; }
         .role-message.error { background:#fdecea; color:#a93226; }
         .role-message.visible { display:block; }
         @media(max-width:800px){ main.container{padding:18px 14px}.two-column{grid-template-columns:1fr} }
-        @media(max-width:540px){ .overview-grid{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:1/-1}.welcome-card{padding:19px}.welcome-card h2{font-size:20px}.class-banner{align-items:flex-start; flex-direction:column}.settings-form{grid-template-columns:1fr}.settings-form button{grid-column:auto}.role-topbar{padding:12px 14px} }
+        @media(max-width:540px){ .overview-grid{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:1/-1}.welcome-card{padding:19px}.welcome-card h2{font-size:20px}.class-banner{align-items:flex-start; flex-direction:column}.role-topbar{padding:12px 14px} }
     </style>
     <script src="./app-shell.js" defer></script>
     <script src="./role-dashboard.js" defer></script>
@@ -95,17 +97,6 @@
             <div class="role-message" id="substitute-message" role="status"></div>
         </section>
 
-        <section class="panel">
-            <h3>Ganti Username dan Password</h3>
-            <p class="panel-intro">Gunakan username unik dan password minimal 6 karakter. Kredensial baru berlaku untuk login berikutnya.</p>
-            <form class="settings-form" id="credentials-form">
-                <div><label for="new-username">Username baru</label><input id="new-username" required minlength="3" maxlength="40" autocomplete="username"></div>
-                <div><label for="new-password">Password baru</label><input id="new-password" type="password" required minlength="6" autocomplete="new-password"></div>
-                <div><label for="confirm-password">Ulangi password baru</label><input id="confirm-password" type="password" required minlength="6" autocomplete="new-password"></div>
-                <button class="primary-link" type="submit">Perbarui Kredensial</button>
-            </form>
-            <div class="role-message" id="credentials-message" role="status"></div>
-        </section>
     </main>
 </body>
 </html>

@@ -964,7 +964,7 @@
             container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Memuat setoran terbaru...</div>`;
 
             try {
-                const list = await supabaseFetch("mutabaah?select=nama_santri,sabaq_surat,setoran_surat,tahsin_kitab,tanggal&order=tanggal.desc&limit=4");
+                const list = await supabaseFetch("mutabaah?select=nama_santri,sabaq_surat,sabaq_catatan,setoran_surat,setoran_catatan,tahsin_kitab,tanggal&order=tanggal.desc&limit=4");
                 container.innerHTML = "";
 
                 if (!Array.isArray(list) || list.length === 0) {
@@ -976,20 +976,28 @@
                     const initials = String(item.nama_santri || "S").charAt(0).toUpperCase();
                     const detail = [
                         item.sabaq_surat ? `Hafalan baru: ${item.sabaq_surat}` : "",
+                        item.sabaq_catatan ? `Catatan Ustadz (hafalan baru): ${item.sabaq_catatan}` : "",
                         item.setoran_surat ? `Setoran hafalan: ${item.setoran_surat}` : "",
+                        item.setoran_catatan ? `Catatan Ustadz (murojaah): ${item.setoran_catatan}` : "",
                         item.tahsin_kitab ? `Tahsin: ${item.tahsin_kitab}` : ""
                     ].filter(Boolean).join(" • ") || "Kehadiran dicatat";
 
                     const div = document.createElement("div");
                     div.className = "feed-item";
-                    div.innerHTML = `
-                        <div class="feed-avatar">${initials}</div>
-                        <div class="feed-content">
-                            <h5>${item.nama_santri}</h5>
-                            <p>${detail}</p>
-                            <div class="feed-time">${item.tanggal}</div>
-                        </div>
-                    `;
+                    const avatar = document.createElement("div");
+                    avatar.className = "feed-avatar";
+                    avatar.textContent = initials;
+                    const content = document.createElement("div");
+                    content.className = "feed-content";
+                    const name = document.createElement("h5");
+                    name.textContent = item.nama_santri || "Santri";
+                    const description = document.createElement("p");
+                    description.textContent = detail;
+                    const time = document.createElement("div");
+                    time.className = "feed-time";
+                    time.textContent = item.tanggal || "Tanggal tidak tersedia";
+                    content.append(name, description, time);
+                    div.append(avatar, content);
                     container.appendChild(div);
                 });
             } catch (err) {

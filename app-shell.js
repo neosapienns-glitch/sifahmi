@@ -22,11 +22,17 @@
         ? [
             { category: "UTAMA" },
             { label: "Dashboard Asatidz", href: "dashboard-asatidz.html", icon: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' },
+            { label: "Ganti Username & Password", href: "pengaturan-akun.html", icon: '<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/><path d="M19 8v6M22 11h-6"/>' },
             { category: "AKADEMIK" },
             allNavigation.find(item => item.href === "mutabaah.html"),
         ]
         : role === "Wali Murid"
-            ? [{ category: "UTAMA" }, { label: "Dashboard Wali", href: "dashboard-wali.html", icon: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' }]
+            ? [
+                { category: "UTAMA" },
+                { label: "Dashboard Wali", href: "dashboard-wali.html", icon: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' },
+                { label: "Catatan Infaq", href: "catatan-infaq.html", icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' },
+                { label: "Ganti Username & Password", href: "pengaturan-akun.html", icon: '<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/><path d="M19 8v6M22 11h-6"/>' },
+            ]
             : allNavigation;
     const aside = document.createElement("aside");
     aside.className = "app-shell-sidebar";

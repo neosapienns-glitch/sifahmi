@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1b5e20">
+    <title>SIFAHMI - Catatan Infaq</title>
+    <link rel="stylesheet" href="./app-shell.css">
+    <style>
+        :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --green-dark:#1b5e20; --green:#27ae60; --page:#f1f5f9; }
+        *, *::before, *::after { box-sizing:border-box; }
+        html, body { background:var(--page); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+        .role-topbar { background:rgba(255,255,255,.8); border-bottom:1px solid var(--line); padding:14px 22px; display:flex; align-items:center; justify-content:space-between; }
+        .role-topbar h1 { font-size:16px; }
+        .role-topbar p { margin-top:3px; color:var(--muted); font-size:11px; }
+        main.container { width:min(100%,900px); margin:0 auto; padding:24px; display:flex; flex-direction:column; gap:16px; }
+        .infaq-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+        .stat-card,.panel { border:1px solid rgba(255,255,255,.85); border-radius:19px; background:rgba(255,255,255,.88); box-shadow:inset 0 1px #fff,0 12px 28px rgba(15,23,42,.055); }
+        .stat-card { padding:16px 18px; }
+        .stat-card span { color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.5px; }
+        .stat-card strong { display:block; margin-top:8px; font-size:22px; }
+        .panel { padding:20px; }
+        .panel h2 { font-size:15px; }
+        .panel-intro { margin-top:4px; color:var(--muted); font-size:11px; line-height:1.5; }
+        .monthly-tools,.monthly-pagination { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .monthly-tools { margin-top:14px; }
+        .monthly-tools label { color:var(--muted); font-size:11px; font-weight:800; }
+        .monthly-tools select { min-height:38px; padding:7px 11px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font:inherit; font-size:12px; }
+        .month-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+        .month-item { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:58px; padding:11px 13px; border:1px solid #e4efe7; border-radius:12px; background:#f8fcf9; }
+        .month-info { display:flex; align-items:center; gap:10px; min-width:0; }
+        .month-check { display:grid; place-items:center; width:24px; height:24px; flex:0 0 24px; border:1.5px solid #cbd5e1; border-radius:7px; color:#94a3b8; font-size:15px; font-weight:900; }
+        .month-item.is-paid .month-check { border-color:var(--green); background:#e9f8ef; color:var(--green-dark); }
+        .month-info strong { display:block; font-size:12px; }
+        .month-info small { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
+        .month-payment { text-align:right; }
+        .month-payment strong { display:block; font-size:12px; white-space:nowrap; }
+        .month-status { display:inline-block; margin-top:3px; color:#a16207; font-size:10px; font-weight:800; }
+        .month-item.is-paid .month-status { color:var(--green-dark); }
+        .monthly-pagination { margin-top:12px; }
+        .monthly-pagination button { min-height:36px; padding:0 12px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--ink); font:inherit; font-size:11px; font-weight:800; cursor:pointer; }
+        .monthly-pagination button:disabled { opacity:.45; cursor:not-allowed; }
+        .monthly-pagination span,.empty { color:var(--muted); font-size:11px; }
+        .empty { line-height:1.6; }
+        @media(max-width:650px){main.container{padding:17px 13px}.infaq-summary{grid-template-columns:1fr 1fr}.infaq-summary .stat-card:first-child{grid-column:1/-1}.role-topbar{padding:12px 14px}.month-item{padding:10px}.month-info{gap:7px}}
+    </style>
+    <script src="./app-shell.js" defer></script>
+    <script src="./role-dashboard.js" defer></script>
+</head>
+<body data-dashboard-page="guardian-infaq">
+    <header class="top-bar role-topbar">
+        <div><h1>Catatan Infaq</h1><p>Riwayat pembayaran infaq santri Anda</p></div>
+    </header>
+    <main class="container">
+        <section class="infaq-summary">
+            <article class="stat-card"><span>TOTAL INFAQ TERCATAT</span><strong id="infaq-total">—</strong></article>
+            <article class="stat-card"><span>INFAQ BULAN INI</span><strong id="infaq-month">—</strong></article>
+            <article class="stat-card"><span>JUMLAH TRANSAKSI</span><strong id="infaq-count">—</strong></article>
+        </section>
+        <section class="panel">
+            <h2>Checklist Pembayaran Infaq</h2>
+            <p class="panel-intro">Ringkasan dari catatan Infaq dan Buku Kas. Maksimal enam bulan ditampilkan per halaman.</p>
+            <div class="monthly-tools">
+                <label for="infaq-year">Tahun pembayaran</label>
+                <select id="infaq-year" aria-label="Pilih tahun pembayaran"></select>
+            </div>
+            <div class="month-list" id="infaq-month-list"><p class="empty">Memuat catatan infaq...</p></div>
+            <div class="monthly-pagination" aria-label="Navigasi halaman catatan infaq">
+                <button type="button" id="infaq-previous" disabled>Sebelumnya</button>
+                <span id="infaq-page-label">Halaman 1</span>
+                <button type="button" id="infaq-next" disabled>Berikutnya</button>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
