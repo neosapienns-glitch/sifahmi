@@ -227,14 +227,14 @@
         document.getElementById("guardian-nis").textContent = `NIS ${nis}`;
         document.getElementById("student-nis").textContent = `NIS: ${nis}`;
         try {
-            // Kolom program dibersihkan dari select
             const students = await api(`santri?select=nis,nama_lengkap,kelas,status&nis=eq.${escapeFilter(nis)}&limit=1`);
             const student = students[0];
             if (!student) throw new Error("Data santri terhubung tidak ditemukan.");
             document.getElementById("welcome-title").textContent = `Assalamu'alaikum, Wali ${student.nama_lengkap}`;
             document.getElementById("student-class").textContent = `Kelas: ${student.kelas || "—"}`;
 
-            const summary = await api("rpc/guardian_infaq_summary", { method: "POST", body: {} });
+            // Memanggil RPC dengan menyertakan parameter nis agar sesuai dengan fungsi di database Supabase
+            const summary = await api("rpc/guardian_infaq_summary", { method: "POST", body: { nis: nis } });
             const infaqSummary = Array.isArray(summary) ? summary[0] : summary;
             document.getElementById("infaq-total").textContent = formatRupiah(infaqSummary?.total_nominal || 0);
             document.getElementById("infaq-month").textContent = formatRupiah(infaqSummary?.total_bulan_ini || 0);
@@ -248,6 +248,7 @@
             container.innerHTML = `<p class="empty">Data wali santri gagal dimuat: ${error.message}</p>`;
         }
     }
+
 
     async function loadGuardianHistory(kind, nis, api, container) {
         container.innerHTML = '<p class="empty">Memuat riwayat...</p>';
