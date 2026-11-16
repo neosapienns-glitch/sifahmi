@@ -375,6 +375,23 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-block">
+                        <h5>Setoran Hafalan (Muraja'ah)</h5>
+                        <div class="row-grid">
+                            <div class="field-group">
+                                <label>Surat / Halaman yang Disetorkan</label>
+                                <input type="text" id="setoran-surat" placeholder="Contoh: Al-Mulk 1-10">
+                            </div>
+                            <div class="field-group">
+                                <label>Jumlah Baris</label>
+                                <input type="number" id="setoran-baris" min="0" placeholder="0">
+                            </div>
+                            <div class="field-group">
+                                <label>Nilai Kelancaran (0-100)</label>
+                                <input type="number" id="setoran-nilai" min="0" max="100" placeholder="0-100">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -736,11 +753,25 @@
                             <span class="history-date">${item.tanggal}</span>
                             <span class="badge-presence ${presenceBadge}">${item.kehadiran}</span>
                         </div>
-                        <div style="font-size: 12px; color: var(--muted); line-height: 1.5;">
-                            ${item.sabaq_surat ? `<strong>[Sabaq]</strong> ${item.sabaq_surat} (${item.sabaq_baris || 0} B)<br>` : ''}
-                            ${item.tahsin_catatan ? item.tahsin_catatan : ''}
-                        </div>
                     `;
+                    const details = document.createElement("div");
+                    details.style.cssText = "font-size: 12px; color: var(--muted); line-height: 1.5;";
+                    if (item.sabaq_surat) {
+                        const newMemorization = document.createElement("div");
+                        newMemorization.textContent = `[Hafalan Baru] ${item.sabaq_surat} (${item.sabaq_baris || 0} baris)`;
+                        details.append(newMemorization);
+                    }
+                    if (item.setoran_surat) {
+                        const revision = document.createElement("div");
+                        revision.textContent = `[Setoran Hafalan] ${item.setoran_surat} (${item.setoran_baris || 0} baris)`;
+                        details.append(revision);
+                    }
+                    if (item.tahsin_catatan) {
+                        const note = document.createElement("div");
+                        note.textContent = item.tahsin_catatan;
+                        details.append(note);
+                    }
+                    div.append(details);
                     container.appendChild(div);
                 });
             } catch (err) {
@@ -859,6 +890,9 @@
                     sabaq_surat: document.getElementById("sabaq-surat").value.trim() || null,
                     sabaq_baris: Number(document.getElementById("sabaq-baris").value) || 0,
                     sabaq_nilai: Number(document.getElementById("sabaq-nilai").value) || null,
+                    setoran_surat: document.getElementById("setoran-surat").value.trim() || null,
+                    setoran_baris: Number(document.getElementById("setoran-baris").value) || 0,
+                    setoran_nilai: Number(document.getElementById("setoran-nilai").value) || null,
                     tahsin_catatan: detailPelajaranTxt.length > 0 ? detailPelajaranTxt.join(" | ") : null
                 };
 

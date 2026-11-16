@@ -192,7 +192,7 @@
 
             const [summaryResult, records] = await Promise.all([
                 api("rpc/teacher_class_summary", { method: "POST", body: {} }),
-                api(`mutabaah?select=nama_santri,nama_pengampu,tanggal,kehadiran,sabaq_surat,tahsin_catatan&kelas=eq.${encodeURIComponent(className)}&order=tanggal.desc&limit=5`),
+                api(`mutabaah?select=nama_santri,nama_pengampu,tanggal,kehadiran,sabaq_surat,setoran_surat,tahsin_catatan&kelas=eq.${encodeURIComponent(className)}&order=tanggal.desc&limit=5`),
             ]);
             const summary = Array.isArray(summaryResult) ? summaryResult[0] : summaryResult;
             const attendanceTotal = Number(summary?.total_kehadiran) || 0;
@@ -205,7 +205,10 @@
                 history.innerHTML = '<p class="empty">Belum ada catatan mutaba\'ah di kelas ini.</p>';
             } else {
                 records.forEach(record => {
-                    const summary = [record.kehadiran, record.sabaq_surat, record.tahsin_catatan,
+                    const summary = [record.kehadiran,
+                        record.sabaq_surat ? `Hafalan baru: ${record.sabaq_surat}` : "",
+                        record.setoran_surat ? `Setoran hafalan: ${record.setoran_surat}` : "",
+                        record.tahsin_catatan,
                         record.nama_pengampu ? `Pengampu: ${record.nama_pengampu}` : ""]
                         .filter(Boolean).join(" • ");
                     history.append(createHistoryItem(record.nama_santri || "Santri", summary, record.tanggal));
@@ -256,7 +259,7 @@
             } else if (kind === "infaq") {
                 endpoint = `infaq?select=tanggal,nominal,kategori,metode,catatan,nama_pembayar&santri_nis=eq.${escapeFilter(nis)}&order=tanggal.desc&limit=5`;
             } else {
-                endpoint = `mutabaah?select=tanggal,kelas,kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,tahsin_catatan,nama_pengampu&santri_nis=eq.${escapeFilter(nis)}&order=tanggal.desc&limit=5`;
+                endpoint = `mutabaah?select=tanggal,kelas,kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,setoran_surat,setoran_baris,setoran_nilai,tahsin_catatan,nama_pengampu&santri_nis=eq.${escapeFilter(nis)}&order=tanggal.desc&limit=5`;
             }
             const records = await api(endpoint);
             container.replaceChildren();
@@ -287,9 +290,8 @@
                 } else {
                     heading = `${record.kelas || "Mutaba'ah"} — ${record.kehadiran || "Catatan belajar"}`;
                     detail = [
-                        record.sabaq_surat ? `Setoran: ${record.sabaq_surat}` : "",
-                        record.sabaq_baris ? `${record.sabaq_baris} baris` : "",
-                        record.sabaq_nilai == null ? "" : `Nilai: ${record.sabaq_nilai}`,
+                        record.sabaq_surat ? `Hafalan baru: ${record.sabaq_surat} (${record.sabaq_baris || 0} baris${record.sabaq_nilai == null ? "" : `, nilai ${record.sabaq_nilai}`})` : "",
+                        record.setoran_surat ? `Setoran hafalan: ${record.setoran_surat} (${record.setoran_baris || 0} baris${record.setoran_nilai == null ? "" : `, nilai ${record.setoran_nilai}`})` : "",
                         record.tahsin_catatan || "",
                         record.nama_pengampu ? `Pengampu: ${record.nama_pengampu}` : "",
                     ].filter(Boolean).join(" • ");

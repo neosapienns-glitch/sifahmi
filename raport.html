@@ -659,10 +659,15 @@
         // Parse rekap harian dari mutabaah untuk 1 kategori mata pelajaran
         function analyzeCategoryFromMutabaah(kat, records) {
             if (kat.tipe === "tahfidz") {
-                const nilaiList = records.map(r => Number(r.sabaq_nilai)).filter(v => v > 0);
+                const nilaiList = records.flatMap(r => [Number(r.sabaq_nilai), Number(r.setoran_nilai)]).filter(v => v > 0);
                 const avg = nilaiList.length ? Math.round(nilaiList.reduce((a, b) => a + b, 0) / nilaiList.length) : 0;
-                const latestSurat = records.find(r => r.sabaq_surat)?.sabaq_surat || "";
-                const totalBaris = records.reduce((sum, r) => sum + (Number(r.sabaq_baris) || 0), 0);
+                const latestRecord = records.find(r => r.sabaq_surat || r.setoran_surat);
+                const latestSurat = [
+                    latestRecord?.sabaq_surat ? `Hafalan baru: ${latestRecord.sabaq_surat}` : "",
+                    latestRecord?.setoran_surat ? `Setoran: ${latestRecord.setoran_surat}` : ""
+                ].filter(Boolean).join(" • ");
+                const totalBaris = records.reduce((sum, r) =>
+                    sum + (Number(r.sabaq_baris) || 0) + (Number(r.setoran_baris) || 0), 0);
                 return {
                     avgHarian: avg,
                     completedBab: [],
@@ -895,10 +900,16 @@
                 document.getElementById("disp-alpa").textContent = `${alpa} Hari`;
 
                 // Hitung Rekap Tahfidz
-                const setoranList = currentMutabaahRecords.filter(m => m.sabaq_surat || Number(m.sabaq_baris) > 0);
-                const totalBaris = setoranList.reduce((acc, m) => acc + (Number(m.sabaq_baris) || 0), 0);
+                const setoranList = currentMutabaahRecords.filter(m =>
+                    m.sabaq_surat || Number(m.sabaq_baris) > 0 || m.setoran_surat || Number(m.setoran_baris) > 0);
+                const totalBaris = setoranList.reduce((acc, m) =>
+                    acc + (Number(m.sabaq_baris) || 0) + (Number(m.setoran_baris) || 0), 0);
                 const estHalaman = (totalBaris / 15).toFixed(1);
-                const lastSurat = setoranList[0]?.sabaq_surat || "-";
+                const latestSetoran = setoranList[0];
+                const lastSurat = latestSetoran ? [
+                    latestSetoran.sabaq_surat ? `Hafalan baru: ${latestSetoran.sabaq_surat}` : "",
+                    latestSetoran.setoran_surat ? `Setoran: ${latestSetoran.setoran_surat}` : ""
+                ].filter(Boolean).join(" • ") : "-";
 
                 document.getElementById("disp-total-baris").textContent = `${totalBaris} Baris (± ${estHalaman} Halaman)`;
                 document.getElementById("disp-surat-terakhir").textContent = lastSurat;

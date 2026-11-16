@@ -31,9 +31,9 @@
             /* =========================================================
                LATAR BELAKANG KELAS MA'HAD YG LEBIH HIDUP DAN ALAMI
                ========================================================= */
-            background: 
-                linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(22, 128, 51, 0.45) 100%),
-                url('image_13.png') no-repeat center center;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(39, 179, 77, 0.28), transparent 38%),
+                linear-gradient(135deg, #0f172a 0%, #168033 100%);
             background-size: cover;
             background-attachment: fixed;
             
@@ -356,7 +356,7 @@
                             <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
                         </svg>
                     </span>
-                    <input id="email" name="email" type="email" autocomplete="email" placeholder="Username / Email" required>
+                    <input id="email" name="email" type="text" autocomplete="username" placeholder="Username / Email" required>
                 </div>
 
                 <!-- Input Password -->
@@ -414,14 +414,27 @@
         const eyeIcon = document.getElementById("eye-icon");
         const forgotBtn = document.getElementById("btn-forgot-password");
 
+        function normalizeLoginIdentifier(identifier) {
+            const value = identifier.trim();
+            return value.includes("@") ? value : `${value.toLowerCase()}@login.sifahmi.id`;
+        }
+
+        function dashboardForRole(role) {
+            if (role === "Asatidz") return "dashboard-asatidz.html";
+            if (role === "Wali Murid") return "dashboard-wali.html";
+            return "dashboard.html";
+        }
+
         // Cek sesi login aktif
         (function checkExistingSession() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
             if (sessionRaw) {
                 try {
                     const session = JSON.parse(sessionRaw);
-                    if (session.access_token) {
-                        window.location.href = "dashboard.html";
+                    if (session.access_token && session.supabase_url && session.supabase_anon_key) {
+                        window.location.href = dashboardForRole(session.user?.user_metadata?.role);
+                    } else {
+                        localStorage.removeItem(SESSION_KEY);
                     }
                 } catch (e) {
                     localStorage.removeItem(SESSION_KEY);
@@ -483,6 +496,10 @@
                 emailInput.focus();
                 return;
             }
+            if (!email.includes("@")) {
+                setMessage("Reset password melalui email hanya tersedia untuk akun email. Hubungi administrator untuk akun username atau NIS.", "error");
+                return;
+            }
 
             forgotBtn.disabled = true;
             try {
@@ -500,7 +517,7 @@
             event.preventDefault();
             message.hidden = true;
 
-            const email = emailInput.value.trim();
+            const email = normalizeLoginIdentifier(emailInput.value);
             const password = passwordInput.value;
 
             if (!form.reportValidity()) return;
@@ -515,12 +532,14 @@
                 });
 
                 result.expires_at = Math.floor(Date.now() / 1000) + (result.expires_in || 3600);
+                result.supabase_url = SUPABASE_URL;
+                result.supabase_anon_key = SUPABASE_ANON_KEY;
                 localStorage.setItem(SESSION_KEY, JSON.stringify(result));
 
                 setMessage("Login berhasil! Mengalihkan ke Dashboard...", "success");
 
                 setTimeout(function () {
-                    window.location.href = "dashboard.html";
+                    window.location.href = dashboardForRole(result.user?.user_metadata?.role);
                 }, 1000);
 
             } catch (error) {

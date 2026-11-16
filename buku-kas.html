@@ -283,6 +283,47 @@
         }
 
         .btn-action-del:hover { background: var(--danger); color: #fff; }
+        .btn-action-receipt {
+            padding: 6px 9px;
+            border: 1px solid #bbf7d0;
+            background: #e8f7ed;
+            color: #166534;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+        .btn-action-receipt:hover { background: #dcfce7; }
+        .receipt-paper { max-width: 680px; margin: 0 auto; border: 1px solid #cbd5e1; padding: 28px; color: #1f2937; font: 14px Arial, sans-serif; }
+        .receipt-paper header { text-align: center; border-bottom: 2px solid #166534; padding-bottom: 16px; }
+        .receipt-paper h2 { margin: 22px 0 7px; color: #166534; text-align: center; }
+        .receipt-paper header p, .receipt-number { color: #64748b; font-size: 12px; text-align: center; }
+        .receipt-paper dl { display: grid; grid-template-columns: 150px 1fr; gap: 12px; margin: 24px 0; }
+        .receipt-paper dt { color: #64748b; }
+        .receipt-paper dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+        .receipt-amount { padding: 17px; border: 1px solid #bbf7d0; border-radius: 8px; background: #f0fdf4; text-align: center; }
+        .receipt-amount strong { display: block; margin-top: 7px; color: #166534; font-size: 23px; }
+        .receipt-signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; margin-top: 48px; text-align: center; }
+        .receipt-signatures div { min-height: 65px; padding-top: 9px; border-top: 1px solid #94a3b8; }
+        .receipt-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+        .receipt-row td { padding: 14px; background: #f8fafc; }
+
+        @media print {
+            body * { visibility: hidden !important; }
+            body.printing-receipt, body.printing-receipt * { visibility: hidden !important; }
+            body.printing-receipt .receipt-row.is-printing,
+            body.printing-receipt .receipt-row.is-printing * { visibility: visible !important; }
+            body.printing-receipt .receipt-row.is-printing { position: fixed; inset: 0; display: block !important; width: 100%; background: #fff; }
+            body.printing-receipt .receipt-row.is-printing td { display: block; border: 0; }
+            body.printing-receipt .receipt-paper { position: fixed; inset: 0; max-width: none; border: 0; }
+            .receipt-actions { display: none !important; }
+            body.printing-receipt, body.printing-receipt .app-shell-content { display: block !important; width: auto; height: auto; overflow: visible !important; }
+        }
+        @media (max-width: 520px) {
+            .receipt-paper { padding: 18px; }
+            .receipt-paper dl { grid-template-columns: 120px 1fr; }
+        }
 
         .modal-overlay {
             position: fixed;
@@ -610,6 +651,10 @@
                         </select>
                     </div>
                     <div class="field">
+                        <label for="reg-pihak" id="reg-pihak-label">Nama pemberi dana <span class="req">*</span></label>
+                        <input id="reg-pihak" type="text" maxlength="120" placeholder="Nama pemberi dana" required>
+                    </div>
+                    <div class="field">
                         <label for="reg-nominal">Nominal Transaksi (Rp) <span class="req">*</span></label>
                         <input id="reg-nominal" type="number" min="1" placeholder="Contoh: 150000" required>
                     </div>
@@ -690,6 +735,7 @@
 
         let currentTab = "semua";
         let selectedYearMonth = "";
+        let cachedTransactions = [];
 
         function checkAuth() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
@@ -740,6 +786,257 @@
 
         function formatRupiah(number) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[character]);
+        }
+
+        function openDigitalReceipt(item) {
+            const isExpense = item.jenis === "KELUAR";
+            const receiptTitle = isExpense ? "Bukti Pengeluaran" : "Tanda Terima";
+            const receiptNumber = `KAS-${item.id}`;
+            const transactionDate = new Date(`${item.tanggal}T00:00:00`).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+            const partyLabel = isExpense ? "Penerima dana" : "Diterima dari";
+            const partyName = isExpense
+                ? (item.penerima && item.penerima !== item.kategori ? item.penerima : "-")
+                : (item.donatur || "-");
+            const paymentStatus = isExpense ? "DIBAYARKAN" : "TELAH DITERIMA";
+            return `
+                <article class="receipt-paper">
+                    <header><h2>YAYASAN NUURU HIDAAYATIL QUR'AAN</h2><p>SIFAHMI • Bandung</p></header>
+                    <h2>${escapeHtml(receiptTitle)}</h2>
+                    <p class="receipt-number">Nomor: ${escapeHtml(receiptNumber)} • Tanggal: ${escapeHtml(transactionDate)}</p>
+                    <dl>
+                        <dt>Jenis transaksi</dt><dd>${escapeHtml(item.jenis === "INFAQ" ? "Infaq / Sedekah" : isExpense ? "Pengeluaran" : "Pemasukan")}</dd>
+                        <dt>${escapeHtml(partyLabel)}</dt><dd>${escapeHtml(partyName || "-")}</dd>
+                        <dt>Kategori</dt><dd>${escapeHtml(item.kategori || "-")}</dd>
+                        <dt>Keterangan</dt><dd>${escapeHtml(item.keterangan || "-")}</dd>
+                        ${item.penerima && !isExpense ? `<dt>Diterima oleh</dt><dd>${escapeHtml(item.penerima)}</dd>` : ""}
+                    </dl>
+                    <div class="receipt-amount">${escapeHtml(paymentStatus)}<strong>${escapeHtml(formatRupiah(item.nominal))}</strong></div>
+                    <div class="receipt-signatures"><div>Pemberi / Pembayar</div><div>Penerima / Bendahara</div></div>
+                </article>
+                <div class="receipt-actions">
+                    <button class="btn btn-primary" type="button" data-print-receipt>Cetak / Simpan PDF</button>
+                    <button class="btn btn-secondary" type="button" data-download-receipt>Unduh JPG</button>
+                    <button class="btn btn-secondary" type="button" data-share-receipt>Bagikan JPG</button>
+                    <a class="btn btn-secondary" data-whatsapp-link target="_blank" rel="noopener noreferrer">Buka WhatsApp (pilih penerima)</a>
+                    <button class="btn btn-secondary" type="button" data-close-receipt>Tutup Nota</button>
+                </div>`;
+        }
+
+        function receiptMessage(item) {
+            const transactionType = item.jenis === "KELUAR" ? "bukti pengeluaran" : "bukti penerimaan";
+            return `Assalamu'alaikum, berikut ${transactionType} ${item.kategori || "transaksi"} sebesar ${formatRupiah(item.nominal)}. Nomor nota KAS-${item.id}, tanggal ${item.tanggal}.`;
+        }
+
+        function wrapCanvasText(context, text, maxWidth) {
+            const words = String(text || "-").split(/\s+/);
+            const lines = [];
+            let line = "";
+            words.forEach(word => {
+                if (context.measureText(word).width > maxWidth) {
+                    if (line) lines.push(line);
+                    line = "";
+                    let segment = "";
+                    for (const character of word) {
+                        if (context.measureText(segment + character).width > maxWidth && segment) {
+                            lines.push(segment);
+                            segment = character;
+                        } else {
+                            segment += character;
+                        }
+                    }
+                    line = segment;
+                } else {
+                    const candidate = line ? `${line} ${word}` : word;
+                    if (context.measureText(candidate).width > maxWidth && line) {
+                        lines.push(line);
+                        line = word;
+                    } else {
+                        line = candidate;
+                    }
+                }
+            });
+            if (line) lines.push(line);
+            return lines.length ? lines : ["-"];
+        }
+
+        async function createReceiptJpg(item) {
+            const canvas = document.createElement("canvas");
+            const width = 1080;
+            const padding = 72;
+            canvas.width = width;
+            const context = canvas.getContext("2d");
+            if (!context) throw new Error("Browser tidak dapat membuat gambar nota.");
+
+            const isExpense = item.jenis === "KELUAR";
+            const partyName = isExpense
+                ? (item.penerima && item.penerima !== item.kategori ? item.penerima : "-")
+                : (item.donatur || "-");
+            const fields = [
+                ["Jenis transaksi", item.jenis === "INFAQ" ? "Infaq / Sedekah" : isExpense ? "Pengeluaran" : "Pemasukan"],
+                [isExpense ? "Penerima dana" : "Diterima dari", partyName],
+                ["Kategori", item.kategori || "-"],
+                ["Keterangan", item.keterangan || "-"],
+                ...(!isExpense && item.penerima ? [["Diterima oleh", item.penerima]] : []),
+            ];
+            context.font = "26px Arial";
+            const valueLines = fields.map(([, value]) => wrapCanvasText(context, value, width - padding * 2 - 270));
+            const detailsHeight = valueLines.reduce((total, lines) => total + Math.max(1, lines.length) * 40 + 22, 0);
+            canvas.height = 390 + detailsHeight + 260;
+            const drawContext = canvas.getContext("2d");
+            if (!drawContext) throw new Error("Browser tidak dapat membuat gambar nota.");
+
+            drawContext.fillStyle = "#ffffff";
+            drawContext.fillRect(0, 0, width, canvas.height);
+            drawContext.fillStyle = "#166534";
+            drawContext.textAlign = "center";
+            drawContext.font = "bold 34px Arial";
+            drawContext.fillText("YAYASAN NUURU HIDAAYATIL QUR'AAN", width / 2, 92);
+            drawContext.fillStyle = "#64748b";
+            drawContext.font = "23px Arial";
+            drawContext.fillText("SIFAHMI • Bandung", width / 2, 132);
+            drawContext.fillStyle = "#166534";
+            drawContext.fillRect(padding, 165, width - padding * 2, 3);
+
+            drawContext.fillStyle = "#166534";
+            drawContext.font = "bold 42px Arial";
+            drawContext.fillText(isExpense ? "BUKTI PENGELUARAN" : "TANDA TERIMA", width / 2, 235);
+            drawContext.fillStyle = "#64748b";
+            drawContext.font = "22px Arial";
+            const dateLabel = new Date(`${item.tanggal}T00:00:00`).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+            });
+            drawContext.fillText(`Nomor: KAS-${item.id}  •  Tanggal: ${dateLabel}`, width / 2, 278);
+
+            let y = 355;
+            fields.forEach(([label], index) => {
+                const lines = valueLines[index];
+                drawContext.textAlign = "left";
+                drawContext.fillStyle = "#64748b";
+                drawContext.font = "24px Arial";
+                drawContext.fillText(label, padding, y);
+                drawContext.fillStyle = "#1f2937";
+                drawContext.font = "bold 25px Arial";
+                lines.forEach((line, lineIndex) => {
+                    drawContext.fillText(line, padding + 270, y + lineIndex * 38);
+                });
+                y += Math.max(1, lines.length) * 40 + 22;
+            });
+
+            y += 14;
+            drawContext.fillStyle = "#f0fdf4";
+            drawContext.fillRect(padding, y, width - padding * 2, 132);
+            drawContext.strokeStyle = "#bbf7d0";
+            drawContext.strokeRect(padding, y, width - padding * 2, 132);
+            drawContext.textAlign = "center";
+            drawContext.fillStyle = "#166534";
+            drawContext.font = "bold 23px Arial";
+            drawContext.fillText(isExpense ? "DIBAYARKAN" : "TELAH DITERIMA", width / 2, y + 44);
+            drawContext.font = "bold 39px Arial";
+            drawContext.fillText(formatRupiah(item.nominal), width / 2, y + 96);
+
+            y += 205;
+            drawContext.textAlign = "center";
+            drawContext.fillStyle = "#1f2937";
+            drawContext.font = "22px Arial";
+            drawContext.fillText("Pemberi / Pembayar", width / 4, y);
+            drawContext.fillText("Penerima / Bendahara", width * 3 / 4, y);
+            drawContext.strokeStyle = "#94a3b8";
+            drawContext.beginPath();
+            drawContext.moveTo(padding, y + 28);
+            drawContext.lineTo(width / 2 - 24, y + 28);
+            drawContext.moveTo(width / 2 + 24, y + 28);
+            drawContext.lineTo(width - padding, y + 28);
+            drawContext.stroke();
+
+            return new Promise((resolve, reject) => {
+                canvas.toBlob(blob => {
+                    if (blob) resolve(blob);
+                    else reject(new Error("Gambar nota gagal dibuat."));
+                }, "image/jpeg", 0.92);
+            });
+        }
+
+        function downloadReceiptJpg(blob, item) {
+            const link = document.createElement("a");
+            const safeId = String(item.id).replace(/[^a-zA-Z0-9_-]/g, "");
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = `Nota-KAS-${safeId}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function santriNisFromDonatur(donatur) {
+            const match = String(donatur || "").match(/\(([^()]*)\)\s*$/);
+            return match ? match[1].trim() : "";
+        }
+
+        async function configureReceiptWhatsApp(item, link) {
+            const message = receiptMessage(item);
+            link.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            const nis = santriNisFromDonatur(item.donatur);
+            link.textContent = nis ? "Memuat nomor WhatsApp wali..." : "Buka WhatsApp (pilih penerima)";
+            if (!nis) {
+                return;
+            }
+            try {
+                const santri = await supabaseFetch(
+                    `santri?select=no_hp&nis=eq.${encodeURIComponent(nis)}&limit=1`
+                );
+                const phone = String(santri?.[0]?.no_hp || "").replace(/\D/g, "");
+                const whatsappPhone = phone.startsWith("0") ? `62${phone.slice(1)}` :
+                    phone.startsWith("8") ? `62${phone}` : phone;
+                if (whatsappPhone) {
+                    link.href = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
+                    link.textContent = "Chat WhatsApp Wali";
+                } else {
+                    link.textContent = "Buka WhatsApp (pilih penerima)";
+                }
+            } catch (error) {
+                showGlobalAlert(`Nomor WhatsApp wali tidak dapat dimuat: ${error.message}`, "error");
+            }
+        }
+
+        async function shareReceiptJpg(item) {
+            const blob = await createReceiptJpg(item);
+            const safeId = String(item.id).replace(/[^a-zA-Z0-9_-]/g, "");
+            const fileName = `Nota-KAS-${safeId}.jpg`;
+            if (typeof File === "function" && navigator.share && navigator.canShare) {
+                const file = new File([blob], fileName, { type: "image/jpeg" });
+                if (navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: `Nota KAS-${item.id}`,
+                            text: receiptMessage(item),
+                        });
+                        return;
+                    } catch (error) {
+                        if (error.name === "AbortError") return;
+                        throw error;
+                    }
+                }
+            }
+            downloadReceiptJpg(blob, item);
+            showGlobalAlert("JPG diunduh. Buka tautan WhatsApp pada nota lalu lampirkan file JPG sebelum mengirim.", "success");
         }
 
         function showGlobalAlert(msg, kind) {
@@ -862,6 +1159,7 @@
 
             try {
                 const data = await supabaseFetch("buku_kas?select=*&order=tanggal.asc");
+                cachedTransactions = Array.isArray(data) ? data : [];
                 const { saldoAwalBulanLalu } = await calculateBalances(data);
                 tbody.innerHTML = "";
 
@@ -889,10 +1187,8 @@
                 }
 
                 let displayList = monthFiltered.filter(item => {
-                    const searchMatch = item.keterangan.toLowerCase().includes(filterQuery.toLowerCase()) ||
-                                        item.kategori.toLowerCase().includes(filterQuery.toLowerCase()) ||
-                                        (item.donatur && item.donatur.toLowerCase().includes(filterQuery.toLowerCase())) ||
-                                        (item.penerima && item.penerima.toLowerCase().includes(filterQuery.toLowerCase()));
+                    const searchMatch = [item.keterangan, item.kategori, item.donatur, item.penerima]
+                        .some(value => String(value || "").toLowerCase().includes(filterQuery.toLowerCase()));
 
                     if (!searchMatch) return false;
 
@@ -927,14 +1223,15 @@
 
                     tr.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${item.tanggal}</td>
+                        <td>${escapeHtml(item.tanggal)}</td>
                         <td><span class="badge-type ${badgeClass}">${jenisLabel}</span></td>
-                        <td><strong>${item.donatur || "-"}</strong></td>
-                        <td>${item.penerima || item.kategori}</td>
-                        <td>${item.keterangan}</td>
+                        <td><strong>${escapeHtml(item.donatur || "-")}</strong></td>
+                        <td>${escapeHtml(item.penerima || item.kategori || "-")}</td>
+                        <td>${escapeHtml(item.keterangan || "-")}</td>
                         <td style="text-align: right;" class="${amountClass}">${prefixNominal}${formatRupiah(item.nominal)}</td>
                         <td style="text-align: center;">
-                            <button class="btn-action-del" onclick="deleteTransaction(${item.id})">Hapus</button>
+                            <button class="btn-action-receipt" type="button" data-receipt-id="${escapeHtml(item.id)}">Nota</button>
+                            <button class="btn-action-del" type="button" data-delete-id="${escapeHtml(item.id)}">Hapus</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -947,7 +1244,7 @@
         async function deleteTransaction(id) {
             if (confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) {
                 try {
-                    await supabaseFetch(`buku_kas?id=eq.${id}`, { method: "DELETE" });
+                    await supabaseFetch(`buku_kas?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
                     renderKasTable(document.getElementById("search-input").value);
                     showGlobalAlert("Transaksi kas berhasil dihapus.", "success");
                 } catch (err) {
@@ -955,6 +1252,85 @@
                 }
             }
         }
+
+        document.getElementById("kas-table-body").addEventListener("click", async function(event) {
+            const printButton = event.target.closest("[data-print-receipt]");
+            if (printButton) {
+                const receiptRow = printButton.closest(".receipt-row");
+                receiptRow.classList.add("is-printing");
+                document.body.classList.add("printing-receipt");
+                window.print();
+                receiptRow.classList.remove("is-printing");
+                document.body.classList.remove("printing-receipt");
+                return;
+            }
+            const downloadButton = event.target.closest("[data-download-receipt]");
+            if (downloadButton) {
+                const item = cachedTransactions.find(transaction =>
+                    String(transaction.id) === downloadButton.closest(".receipt-row").dataset.transactionId);
+                if (!item) {
+                    showGlobalAlert("Data transaksi untuk nota tidak ditemukan. Muat ulang halaman.", "error");
+                    return;
+                }
+                try {
+                    downloadReceiptJpg(await createReceiptJpg(item), item);
+                } catch (error) {
+                    showGlobalAlert(error.message, "error");
+                }
+                return;
+            }
+            const shareButton = event.target.closest("[data-share-receipt]");
+            if (shareButton) {
+                const item = cachedTransactions.find(transaction =>
+                    String(transaction.id) === shareButton.closest(".receipt-row").dataset.transactionId);
+                if (!item) {
+                    showGlobalAlert("Data transaksi untuk nota tidak ditemukan. Muat ulang halaman.", "error");
+                    return;
+                }
+                try {
+                    await shareReceiptJpg(item);
+                } catch (error) {
+                    showGlobalAlert(error.message, "error");
+                }
+                return;
+            }
+            const closeReceiptButton = event.target.closest("[data-close-receipt]");
+            if (closeReceiptButton) {
+                const receiptRow = closeReceiptButton.closest(".receipt-row");
+                const transactionRow = receiptRow.previousElementSibling;
+                receiptRow.remove();
+                transactionRow.querySelector("[data-receipt-id]").textContent = "Nota";
+                return;
+            }
+            const receiptButton = event.target.closest("[data-receipt-id]");
+            if (receiptButton) {
+                const item = cachedTransactions.find(transaction =>
+                    String(transaction.id) === receiptButton.dataset.receiptId);
+                if (!item) {
+                    showGlobalAlert("Data transaksi untuk nota tidak ditemukan. Muat ulang halaman.", "error");
+                    return;
+                }
+                const currentRow = receiptButton.closest("tr");
+                const nextRow = currentRow.nextElementSibling;
+                if (nextRow?.classList.contains("receipt-row")) {
+                    nextRow.remove();
+                    receiptButton.textContent = "Nota";
+                    return;
+                }
+                document.querySelectorAll(".receipt-row").forEach(row => row.remove());
+                document.querySelectorAll("[data-receipt-id]").forEach(button => button.textContent = "Nota");
+                const receiptRow = document.createElement("tr");
+                receiptRow.className = "receipt-row";
+                receiptRow.dataset.transactionId = item.id;
+                receiptRow.innerHTML = `<td colspan="8">${openDigitalReceipt(item)}</td>`;
+                currentRow.after(receiptRow);
+                configureReceiptWhatsApp(item, receiptRow.querySelector("[data-whatsapp-link]"));
+                receiptButton.textContent = "Tutup Nota";
+                return;
+            }
+            const deleteButton = event.target.closest("[data-delete-id]");
+            if (deleteButton) deleteTransaction(deleteButton.dataset.deleteId);
+        });
 
         document.getElementById("month-filter").addEventListener("change", function(e) {
             selectedYearMonth = e.target.value;
@@ -994,6 +1370,13 @@
 
         document.getElementById("btn-open-kas").addEventListener("click", openKasModal);
         document.getElementById("btn-open-infaq").addEventListener("click", openInfaqModal);
+        document.getElementById("reg-jenis").addEventListener("change", function(event) {
+            const isExpense = event.target.value === "KELUAR";
+            const partyLabel = document.getElementById("reg-pihak-label");
+            const partyInput = document.getElementById("reg-pihak");
+            partyLabel.innerHTML = `${isExpense ? "Nama penerima dana" : "Nama pemberi dana"} <span class="req">*</span>`;
+            partyInput.placeholder = isExpense ? "Nama penerima dana" : "Nama pemberi dana";
+        });
 
         document.querySelectorAll(".close-kas-modal").forEach(b => b.addEventListener("click", closeKasModal));
         document.querySelectorAll(".close-infaq-modal").forEach(b => b.addEventListener("click", closeInfaqModal));
@@ -1010,8 +1393,12 @@
                 tanggal: document.getElementById("reg-tanggal").value,
                 jenis: document.getElementById("reg-jenis").value,
                 kategori: document.getElementById("reg-kategori").value,
-                donatur: "-",
-                penerima: document.getElementById("reg-kategori").value,
+                donatur: document.getElementById("reg-jenis").value === "MASUK"
+                    ? document.getElementById("reg-pihak").value.trim()
+                    : "-",
+                penerima: document.getElementById("reg-jenis").value === "KELUAR"
+                    ? document.getElementById("reg-pihak").value.trim()
+                    : document.getElementById("reg-kategori").value,
                 nominal: Number(document.getElementById("reg-nominal").value),
                 keterangan: document.getElementById("reg-keterangan").value.trim()
             };
@@ -1020,7 +1407,7 @@
                 await supabaseFetch("buku_kas", { method: "POST", body: payload });
                 closeKasModal();
                 renderKasTable();
-                showGlobalAlert("Transaksi kas reguler berhasil disimpan.", "success");
+                showGlobalAlert("Transaksi berhasil disimpan. Nota digital tersedia pada tombol Nota di daftar transaksi.", "success");
             } catch (err) {
                 showKasModalAlert(err.message, "error");
             } finally {
@@ -1054,7 +1441,7 @@
                 await supabaseFetch("buku_kas", { method: "POST", body: payload });
                 closeInfaqModal();
                 renderKasTable();
-                showGlobalAlert(`Berhasil mencatat infaq ${santri}`, "success");
+                showGlobalAlert(`Infaq ${santri} berhasil dicatat. Bukti penerimaan tersedia pada tombol Nota di daftar transaksi.`, "success");
             } catch (err) {
                 showInfaqModalAlert(err.message, "error");
             } finally {
