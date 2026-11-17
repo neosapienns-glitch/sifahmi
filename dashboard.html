@@ -405,6 +405,78 @@
         .chart-container.empty canvas { display: none; }
         .chart-container.empty .chart-empty { display: block; }
 
+        .report-controls { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 10px; }
+        .report-field { display: grid; gap: 5px; color: var(--muted); font-size: 10px; font-weight: 800; }
+        .report-field input, .report-field select {
+            min-height: 40px;
+            min-width: 145px;
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 12px;
+        }
+        .report-print-button {
+            min-height: 40px;
+            padding: 8px 13px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--green-dark);
+            color: #fff;
+            font: inherit;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .report-print-button:hover { background: #124718; }
+        .report-status { margin: -4px 0 14px; color: var(--muted); font-size: 11px; }
+        .report-status.error { color: #b91c1c; }
+        .report-subsection { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+        .report-subsection > h4 { margin-bottom: 12px; font-size: 15px; }
+        .report-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .monthly-attendance-chart-grid { grid-template-columns: minmax(0, 1fr); }
+        .report-panel { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+        .report-panel h5 { margin-bottom: 4px; font-size: 12px; }
+        .report-panel > p { margin-bottom: 10px; color: var(--muted); font-size: 10px; }
+        .report-chart-container { position: relative; height: 300px; }
+        .attendance-register-list { display: grid; gap: 14px; margin-top: 14px; }
+        .attendance-register-sheet { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+        .attendance-register-title { margin-bottom: 12px; text-align: center; }
+        .attendance-register-title h5 { font-family: Georgia, "Times New Roman", serif; font-size: 17px; }
+        .attendance-register-title p { margin-top: 4px; color: var(--muted); font-size: 10px; }
+        .attendance-register-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; margin-bottom: 10px; font-size: 10px; }
+        .attendance-register-wrap { overflow-x: auto; }
+        .attendance-register-table { width: 100%; min-width: 1180px; table-layout: fixed; border-collapse: collapse; color: #111827; font-size: 9px; }
+        .attendance-register-table th, .attendance-register-table td { height: 24px; padding: 2px 3px; border: 1px solid #64748b; text-align: center; vertical-align: middle; }
+        .attendance-register-table thead th { background: #f1f5f9; font-weight: 800; }
+        .attendance-register-table .register-name { text-align: left; }
+        .attendance-register-table .register-nis { text-align: left; overflow-wrap: anywhere; }
+        .attendance-register-table .register-weekday { color: #475569; font-size: 8px; }
+        .attendance-register-table .register-day { font-variant-numeric: tabular-nums; }
+        .attendance-register-table .register-summary { background: #f8fafc; font-weight: 800; }
+        .attendance-register-table .status-hadir { color: #166534; background: #dcfce7; font-weight: 900; }
+        .attendance-register-table .status-izin { color: #1d4ed8; background: #dbeafe; font-weight: 900; }
+        .attendance-register-table .status-sakit { color: #a16207; background: #fef3c7; font-weight: 900; }
+        .attendance-register-table .status-alpa { color: #b91c1c; background: #fee2e2; font-weight: 900; }
+        .attendance-register-legend { margin-top: 7px; color: #475569; font-size: 9px; }
+        .attendance-register-footer { display: flex; justify-content: flex-end; margin-top: 14px; text-align: center; font-size: 10px; }
+        .attendance-register-signature { min-width: 180px; }
+        .attendance-register-signature strong { display: block; min-height: 34px; margin-top: 6px; padding-top: 18px; border-bottom: 1px solid #64748b; }
+        .finance-summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+        .finance-stat { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #f8fafc; }
+        .finance-stat span { display: block; color: var(--muted); font-size: 9px; font-weight: 800; text-transform: uppercase; }
+        .finance-stat strong { display: block; margin-top: 6px; font-size: 16px; }
+        .finance-stat.income strong, .finance-stat.infaq strong { color: var(--green-dark); }
+        .finance-stat.expense strong { color: #b91c1c; }
+        .finance-table-wrap { overflow-x: auto; }
+        .finance-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        .finance-table th, .finance-table td { padding: 8px 7px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+        .finance-table th { background: #f8fafc; color: #475569; font-size: 9px; text-transform: uppercase; }
+        .finance-table td.amount, .finance-table th.amount { text-align: right; white-space: nowrap; }
+        .report-no-data { padding: 20px 10px; color: var(--muted); text-align: center; font-size: 11px; }
+
         .status-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 12px; margin-top: 10px; }
         .status-legend-item { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; }
@@ -478,6 +550,7 @@
             main.container { padding: 17px 14px; gap: 14px; }
             .dashboard-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
             .dashboard-main-grid { grid-template-columns: 1fr; }
+            .report-chart-grid { grid-template-columns: 1fr; }
             .chart-container { height: 230px; }
         }
 
@@ -492,6 +565,51 @@
             .hero-actions { width: 100%; }
             .btn-hero { flex: 1; justify-content: center; }
             .chart-container.compact { height: 170px; }
+            .finance-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .report-panel { padding: 10px; }
+            .calendar-day { min-height: 64px; padding: 4px; }
+            .report-controls { width: 100%; align-items: stretch; }
+            .report-field { flex: 1; }
+            .report-field input, .report-field select { min-width: 0; width: 100%; }
+            .report-print-button { width: 100%; }
+        }
+
+        @media print {
+            @page { size: landscape; margin: 10mm; }
+            html, body { width: auto !important; height: auto !important; overflow: visible !important; }
+            body { display: block !important; }
+            .sidebar, .sidebar-overlay, header.top-bar, footer,
+            .dashboard-heading, .hero-banner, #app-notifications, .summary-grid, .dashboard-main-grid {
+                display: none !important;
+            }
+            .wrapper { display: block !important; width: auto !important; height: auto !important; overflow: visible !important; }
+            main.container { display: block !important; width: auto !important; max-width: none !important; padding: 0 !important; }
+            #monthly-reports { display: block !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; }
+            #monthly-reports .report-controls { display: none !important; }
+            #monthly-reports .report-status { margin-bottom: 8px; }
+            .report-subsection { break-inside: auto; page-break-inside: auto; }
+            .report-chart-grid { grid-template-columns: 1fr 1fr !important; }
+            .monthly-attendance-chart-grid { grid-template-columns: 1fr !important; }
+            .report-panel { break-inside: avoid; page-break-inside: avoid; }
+            .finance-details-panel { break-inside: auto; page-break-inside: auto; }
+            .finance-table thead { display: table-header-group; }
+            .finance-table tr { break-inside: avoid; page-break-inside: avoid; }
+            .report-chart-container { height: 220px !important; }
+            .attendance-register-list { gap: 0; }
+            .attendance-register-sheet { padding: 0; border: 0; border-radius: 0; break-inside: avoid; page-break-inside: avoid; }
+            .attendance-register-sheet:not(:last-child) { break-after: page; page-break-after: always; }
+            .attendance-register-title { margin-bottom: 7px; }
+            .attendance-register-title h5 { font-size: 15px; }
+            .attendance-register-title p, .attendance-register-meta, .attendance-register-legend, .attendance-register-footer { font-size: 8px; }
+            .attendance-register-meta { margin-bottom: 6px; }
+            .attendance-register-wrap { overflow: visible; }
+            .attendance-register-table { width: 100%; min-width: 0; font-size: 7px; }
+            .attendance-register-table th, .attendance-register-table td { height: 18px; padding: 1px; }
+            .attendance-register-table thead { display: table-header-group; }
+            .attendance-register-table .register-weekday { font-size: 6px; }
+            .attendance-register-footer { margin-top: 7px; }
+            .attendance-register-signature strong { min-height: 25px; padding-top: 13px; }
+            .finance-table th, .finance-table td { padding: 5px; }
         }
     </style>
     <script src="./app-updater.js" defer></script>
@@ -515,6 +633,12 @@
             <a href="dashboard.html" class="nav-item active">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                 <span>Dashboard Utama</span>
+            </a>
+
+            <span class="nav-category">LAPORAN</span>
+            <a href="#monthly-reports" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-5 5"/></svg>
+                <span>Laporan Bulanan</span>
             </a>
 
             <span class="nav-category">AKADEMIK &amp; SANTRI</span>
@@ -720,6 +844,67 @@
                     </section>
                 </aside>
             </div>
+
+            <section class="card monthly-report-section" id="monthly-reports">
+                <div class="card-header-flex">
+                    <div>
+                        <h3>Laporan Bulanan</h3>
+                        <p style="font-size: 11px; color: var(--muted); margin-top: 3px;">Rekap absensi per kelas serta pemasukan, infaq, dan pengeluaran.</p>
+                    </div>
+                    <div class="report-controls">
+                        <label class="report-field" for="report-month">Bulan laporan
+                            <input type="month" id="report-month">
+                        </label>
+                        <label class="report-field" for="report-class">Kelas absensi
+                            <select id="report-class">
+                                <option value="">Memuat kelas...</option>
+                            </select>
+                        </label>
+                        <button class="report-print-button" id="download-monthly-report" type="button">Cetak / Simpan PDF (Landscape)</button>
+                    </div>
+                </div>
+                <p class="report-status" id="monthly-report-status" role="status" aria-live="polite">Memuat laporan...</p>
+
+                <section class="report-subsection">
+                    <h4>Laporan Absensi</h4>
+                    <div class="report-chart-grid monthly-attendance-chart-grid">
+                        <article class="report-panel">
+                            <h5>Grafik Kehadiran Harian</h5>
+                            <p>Jumlah santri per status pada setiap tanggal.</p>
+                            <div class="report-chart-container"><canvas id="monthly-attendance-chart" aria-label="Grafik kehadiran harian"></canvas></div>
+                        </article>
+                    </div>
+                    <h5 style="margin-top: 16px;">Kalender Presensi Santri</h5>
+                    <p style="margin: 4px 0 0; color: var(--muted); font-size: 10px;">Status harian dan rekap per santri mengikuti kelas yang dipilih.</p>
+                    <div class="attendance-register-list" id="attendance-register-list"></div>
+                </section>
+
+                <section class="report-subsection">
+                    <h4>Laporan Keuangan</h4>
+                    <div class="finance-summary-grid">
+                        <div class="finance-stat income"><span>Pemasukan Kas</span><strong id="report-income-total">Rp 0</strong></div>
+                        <div class="finance-stat infaq"><span>Infaq</span><strong id="report-infaq-total">Rp 0</strong></div>
+                        <div class="finance-stat expense"><span>Pengeluaran</span><strong id="report-expense-total">Rp 0</strong></div>
+                        <div class="finance-stat"><span>Surplus / Defisit</span><strong id="report-net-total">Rp 0</strong></div>
+                    </div>
+                    <div class="report-chart-grid" style="margin-top: 14px;">
+                        <article class="report-panel">
+                            <h5>Grafik Keuangan Harian</h5>
+                            <p>Perbandingan pemasukan kas, infaq, dan pengeluaran.</p>
+                            <div class="report-chart-container"><canvas id="monthly-finance-chart" aria-label="Grafik keuangan harian"></canvas></div>
+                        </article>
+                        <article class="report-panel finance-details-panel">
+                            <h5>Rincian Transaksi Bulan Ini</h5>
+                            <div class="finance-table-wrap">
+                                <table class="finance-table">
+                                    <thead><tr><th>Tanggal</th><th>Jenis</th><th>Kategori / Uraian</th><th>Pihak</th><th class="amount">Nominal</th></tr></thead>
+                                    <tbody id="monthly-finance-rows"><tr><td class="report-no-data" colspan="5">Memuat transaksi...</td></tr></tbody>
+                                </table>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </section>
         </main>
 
         <footer>
@@ -737,6 +922,19 @@
         let attendanceChartInstance = null;
         let attendanceDoughnutInstance = null;
         let cachedMutabaahData = [];
+        let monthlyAttendanceChartInstance = null;
+        let monthlyFinanceChartInstance = null;
+        let monthlyReportRequestId = 0;
+        let monthlyReportSantriPromise = null;
+        const monthlyReportClasses = new Set();
+        const attendanceStatuses = ["Hadir", "Sakit", "Izin", "Alpa"];
+        const attendanceRegisterStatuses = ["Hadir", "Izin", "Sakit", "Alpa"];
+        const attendanceColors = {
+            Hadir: "#27ae60",
+            Sakit: "#f59e0b",
+            Izin: "#3b82f6",
+            Alpa: "#ef4444",
+        };
 
         function checkAuth() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
@@ -822,7 +1020,9 @@
                 const name = String(santri.kelas || "").trim().toLowerCase();
                 const matchedClass = classes.find(className => className.toLowerCase() === name);
                 if (matchedClass) counts.set(matchedClass, counts.get(matchedClass) + 1);
+                if (String(santri.kelas || "").trim()) monthlyReportClasses.add(String(santri.kelas).trim());
             });
+            updateMonthlyReportClassOptions();
 
             const total = activeSantri.length;
             const container = document.getElementById("class-distribution");
@@ -841,6 +1041,30 @@
                     </div>
                 </div>`;
             }).join("");
+        }
+
+        function updateMonthlyReportClassOptions() {
+            const select = document.getElementById("report-class");
+            if (!select) return;
+            const selectedClass = select.value;
+            const allClasses = new Set(monthlyReportClasses);
+            cachedMutabaahData.forEach(item => {
+                const className = String(item.kelas || "").trim();
+                if (className) allClasses.add(className);
+            });
+            const classes = Array.from(allClasses).sort((a, b) => a.localeCompare(b, "id"));
+            select.replaceChildren();
+            classes.forEach(className => {
+                select.add(new Option(className, className));
+            });
+            select.disabled = classes.length === 0;
+            if (!classes.length) {
+                select.add(new Option("Kelas belum tersedia", ""));
+            } else if (classes.includes(selectedClass)) {
+                select.value = selectedClass;
+            } else {
+                select.selectedIndex = 0;
+            }
         }
 
         async function loadKasSummary() {
@@ -888,6 +1112,11 @@
             try {
                 const data = await supabaseFetch("mutabaah?select=kehadiran,kelas,tanggal");
                 cachedMutabaahData = Array.isArray(data) ? data : [];
+                cachedMutabaahData.forEach(item => {
+                    const className = String(item.kelas || "").trim();
+                    if (className) monthlyReportClasses.add(className);
+                });
+                updateMonthlyReportClassOptions();
                 document.getElementById("val-total-mutabaah").textContent = `${cachedMutabaahData.length} Catatan`;
                 renderAttendanceSummary();
                 renderChart(document.getElementById("select-kelas-chart").value);
@@ -1051,6 +1280,499 @@
             });
         }
 
+        function getMonthDateRange(monthValue) {
+            const match = /^(\d{4})-(\d{2})$/.exec(monthValue);
+            if (!match) throw new Error("Pilih bulan laporan yang valid.");
+            const year = Number(match[1]);
+            const month = Number(match[2]);
+            if (month < 1 || month > 12) throw new Error("Bulan laporan tidak valid.");
+            const nextYear = month === 12 ? year + 1 : year;
+            const nextMonth = month === 12 ? 1 : month + 1;
+            return {
+                year,
+                month,
+                days: new Date(year, month, 0).getDate(),
+                start: `${year}-${String(month).padStart(2, "0")}-01`,
+                end: `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`,
+            };
+        }
+
+        async function fetchAllPages(path, pageSize = 1000) {
+            const records = [];
+            let offset = 0;
+            while (true) {
+                const page = await supabaseFetch(path, {
+                    prefer: "count=exact",
+                    headers: {
+                        "Range-Unit": "items",
+                        "Range": `${offset}-${offset + pageSize - 1}`,
+                    },
+                });
+                if (!Array.isArray(page)) throw new Error("Respons laporan dari server tidak valid.");
+                records.push(...page);
+                if (page.length < pageSize) return records;
+                offset += page.length;
+            }
+        }
+
+        function fetchMonthlyReportSantri() {
+            if (!monthlyReportSantriPromise) {
+                monthlyReportSantriPromise = fetchAllPages(
+                    "santri?select=nis,nama_lengkap,kelas,status&order=nama_lengkap.asc,nis.asc"
+                ).then(students => {
+                    students.forEach(student => {
+                        const className = String(student.kelas || "").trim();
+                        if (className) monthlyReportClasses.add(className);
+                    });
+                    updateMonthlyReportClassOptions();
+                    return students;
+                }).catch(error => {
+                    monthlyReportSantriPromise = null;
+                    throw error;
+                });
+            }
+            return monthlyReportSantriPromise;
+        }
+
+        function formatReportMonth(year, month) {
+            return new Date(year, month - 1, 1).toLocaleDateString("id-ID", {
+                month: "long",
+                year: "numeric",
+            });
+        }
+
+        function formatReportDate(dateValue) {
+            const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(dateValue || ""));
+            if (!match) return String(dateValue || "-");
+            return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+                .toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+        }
+
+        function getAttendanceStatus(value) {
+            const normalized = String(value || "").trim().toLowerCase();
+            return attendanceStatuses.find(status => status.toLowerCase() === normalized) || "";
+        }
+
+        function renderMonthlyAttendance(records, students, year, month, days, selectedClass) {
+            const dailyCounts = Array.from({ length: days }, () =>
+                ({ Hadir: 0, Sakit: 0, Izin: 0, Alpa: 0 }));
+            records.forEach(item => {
+                const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(item.tanggal || ""));
+                const status = getAttendanceStatus(item.kehadiran);
+                if (!match || !status || Number(match[1]) !== year || Number(match[2]) !== month) return;
+                const day = Number(match[3]);
+                if (day >= 1 && day <= days) dailyCounts[day - 1][status]++;
+            });
+
+            const labels = dailyCounts.map((_, index) => String(index + 1));
+            if (monthlyAttendanceChartInstance) monthlyAttendanceChartInstance.destroy();
+            monthlyAttendanceChartInstance = new Chart(document.getElementById("monthly-attendance-chart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: attendanceStatuses.map(status => ({
+                        label: status,
+                        data: dailyCounts.map(counts => counts[status]),
+                        backgroundColor: attendanceColors[status],
+                        borderRadius: 3,
+                    })),
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: "index", intersect: false },
+                    plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 9 } } } },
+                    scales: {
+                        x: { stacked: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 16 } },
+                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } },
+                    },
+                },
+            });
+
+            const rosterByClass = new Map();
+            const recordsByClass = new Map();
+            const ensureClass = classValue => {
+                const name = String(classValue || "").trim();
+                if (!name) return "";
+                if (!rosterByClass.has(name)) rosterByClass.set(name, new Map());
+                if (!recordsByClass.has(name)) recordsByClass.set(name, []);
+                return name;
+            };
+            students
+                .filter(student => !student.status || student.status === "Aktif")
+                .forEach(student => {
+                    const className = ensureClass(student.kelas);
+                    const nis = String(student.nis || "").trim();
+                    if (className && nis) {
+                        rosterByClass.get(className).set(nis, {
+                            nis,
+                            name: String(student.nama_lengkap || "Santri"),
+                        });
+                    }
+                });
+            records.forEach(item => {
+                const className = ensureClass(item.kelas);
+                if (!className) return;
+                recordsByClass.get(className).push(item);
+                const nis = String(item.santri_nis || "").trim();
+                if (nis && !rosterByClass.get(className).has(nis)) {
+                    rosterByClass.get(className).set(nis, {
+                        nis,
+                        name: String(item.nama_santri || "Santri"),
+                    });
+                }
+            });
+
+            const classes = selectedClass ? [selectedClass] : [];
+            const registerList = document.getElementById("attendance-register-list");
+            registerList.replaceChildren();
+            if (!classes.length) {
+                const empty = document.createElement("p");
+                empty.className = "report-no-data";
+                empty.textContent = "Data santri dan absensi belum tersedia untuk laporan ini.";
+                registerList.appendChild(empty);
+                return;
+            }
+
+            const weekdays = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+            const statusAbbreviations = { Hadir: "H", Izin: "I", Sakit: "S", Alpa: "A" };
+            const academicStart = month >= 7 ? year : year - 1;
+            const academicYear = `${academicStart}/${academicStart + 1}`;
+            const reportDate = new Date().toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+            });
+            classes.forEach(className => {
+                const classRecords = recordsByClass.get(className) || [];
+                const roster = Array.from(rosterByClass.get(className)?.values() || [])
+                    .sort((a, b) => a.name.localeCompare(b.name, "id") || a.nis.localeCompare(b.nis));
+                const attendanceByStudent = new Map();
+                const classDailyCounts = new Map();
+                const teachers = new Set();
+                classRecords.forEach(item => {
+                    const nis = String(item.santri_nis || "").trim();
+                    const date = String(item.tanggal || "").slice(0, 10);
+                    const status = getAttendanceStatus(item.kehadiran);
+                    if (nis && status && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                        if (!attendanceByStudent.has(nis)) attendanceByStudent.set(nis, new Map());
+                        attendanceByStudent.get(nis).set(date, status);
+                    }
+                    if (status && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                        if (!classDailyCounts.has(date)) {
+                            classDailyCounts.set(date, { Hadir: 0, Izin: 0, Sakit: 0, Alpa: 0 });
+                        }
+                        classDailyCounts.get(date)[status]++;
+                    }
+                    const teacher = String(item.nama_pengampu || "").trim();
+                    if (teacher) teachers.add(teacher);
+                });
+
+                const sheet = document.createElement("article");
+                sheet.className = "attendance-register-sheet";
+                const heading = document.createElement("header");
+                heading.className = "attendance-register-title";
+                const title = document.createElement("h5");
+                title.textContent = `Presensi MDTA TA ${academicYear}`;
+                const subtitle = document.createElement("p");
+                subtitle.textContent = `Laporan Kehadiran Bulanan · ${formatReportMonth(year, month)}`;
+                heading.append(title, subtitle);
+                sheet.appendChild(heading);
+
+                const metadata = document.createElement("div");
+                metadata.className = "attendance-register-meta";
+                [
+                    `Kelas : ${className}`,
+                    `Bulan : ${formatReportMonth(year, month)}`,
+                    `Pengampu : ${Array.from(teachers).join(", ") || "—"}`,
+                ].forEach(value => {
+                    const item = document.createElement("span");
+                    item.textContent = value;
+                    metadata.appendChild(item);
+                });
+                sheet.appendChild(metadata);
+
+                const tableWrap = document.createElement("div");
+                tableWrap.className = "attendance-register-wrap";
+                const table = document.createElement("table");
+                table.className = "attendance-register-table";
+                const columns = document.createElement("colgroup");
+                const addColumn = (className, width) => {
+                    const column = document.createElement("col");
+                    column.className = className;
+                    column.style.width = `${width}%`;
+                    columns.appendChild(column);
+                };
+                addColumn("register-no-column", 3);
+                addColumn("register-nis-column", 12);
+                addColumn("register-name-column", 17);
+                for (let day = 0; day < days; day++) addColumn("register-day-column", 54 / days);
+                for (let status = 0; status < attendanceRegisterStatuses.length; status++) addColumn("register-summary-column", 3.5);
+                table.appendChild(columns);
+
+                const thead = document.createElement("thead");
+                const weekdayRow = document.createElement("tr");
+                [["No", "register-no"], ["NIS", "register-nis"], ["Nama", "register-name"]].forEach(([label, className]) => {
+                    const cell = document.createElement("th");
+                    cell.rowSpan = 2;
+                    cell.className = className;
+                    cell.textContent = label;
+                    weekdayRow.appendChild(cell);
+                });
+                for (let day = 1; day <= days; day++) {
+                    const cell = document.createElement("th");
+                    cell.className = "register-weekday";
+                    cell.textContent = weekdays[new Date(year, month - 1, day).getDay()];
+                    weekdayRow.appendChild(cell);
+                }
+                const recapHeading = document.createElement("th");
+                recapHeading.colSpan = attendanceRegisterStatuses.length;
+                recapHeading.textContent = "Rekapan";
+                weekdayRow.appendChild(recapHeading);
+                thead.appendChild(weekdayRow);
+
+                const dateRow = document.createElement("tr");
+                for (let day = 1; day <= days; day++) {
+                    const cell = document.createElement("th");
+                    cell.className = "register-day";
+                    cell.textContent = String(day);
+                    dateRow.appendChild(cell);
+                }
+                attendanceRegisterStatuses.forEach(status => {
+                    const cell = document.createElement("th");
+                    cell.className = "register-summary";
+                    cell.textContent = statusAbbreviations[status];
+                    cell.title = status;
+                    dateRow.appendChild(cell);
+                });
+                thead.appendChild(dateRow);
+                table.appendChild(thead);
+
+                const tbody = document.createElement("tbody");
+                roster.forEach((student, index) => {
+                    const row = document.createElement("tr");
+                    [
+                        [String(index + 1), ""],
+                        [student.nis, "register-nis"],
+                        [student.name, "register-name"],
+                    ].forEach(([value, className]) => {
+                        const cell = document.createElement("td");
+                        cell.className = className;
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+                    const byDate = attendanceByStudent.get(student.nis) || new Map();
+                    const counts = { Hadir: 0, Izin: 0, Sakit: 0, Alpa: 0 };
+                    for (let day = 1; day <= days; day++) {
+                        const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                        const status = byDate.get(date) || "";
+                        const cell = document.createElement("td");
+                        cell.className = `register-day${status ? ` status-${status.toLowerCase()}` : ""}`;
+                        cell.textContent = status ? statusAbbreviations[status] : "";
+                        if (status) {
+                            cell.title = `${date}: ${status}`;
+                            counts[status]++;
+                        }
+                        row.appendChild(cell);
+                    }
+                    attendanceRegisterStatuses.forEach(status => {
+                        const cell = document.createElement("td");
+                        cell.className = "register-summary";
+                        cell.textContent = String(counts[status]);
+                        row.appendChild(cell);
+                    });
+                    tbody.appendChild(row);
+                });
+                if (!roster.length) {
+                    const row = document.createElement("tr");
+                    const cell = document.createElement("td");
+                    cell.colSpan = 3 + days + attendanceRegisterStatuses.length;
+                    cell.className = "report-no-data";
+                    cell.textContent = "Belum ada data santri di kelas ini.";
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                }
+                table.appendChild(tbody);
+
+                const tfoot = document.createElement("tfoot");
+                attendanceRegisterStatuses.forEach(status => {
+                    const row = document.createElement("tr");
+                    if (status === attendanceRegisterStatuses[0]) {
+                        const recapLabel = document.createElement("th");
+                        recapLabel.colSpan = 2;
+                        recapLabel.rowSpan = attendanceRegisterStatuses.length;
+                        recapLabel.textContent = "REKAPAN";
+                        row.appendChild(recapLabel);
+                    }
+                    const statusLabel = document.createElement("th");
+                    statusLabel.textContent = status.toUpperCase();
+                    row.appendChild(statusLabel);
+                    let monthlyStatusTotal = 0;
+                    for (let day = 1; day <= days; day++) {
+                        const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                        const counts = classDailyCounts.get(date);
+                        const count = counts ? counts[status] : 0;
+                        monthlyStatusTotal += count;
+                        const cell = document.createElement("td");
+                        cell.textContent = String(count);
+                        row.appendChild(cell);
+                    }
+                    const totalCell = document.createElement("th");
+                    totalCell.colSpan = attendanceRegisterStatuses.length;
+                    totalCell.textContent = String(monthlyStatusTotal);
+                    row.appendChild(totalCell);
+                    tfoot.appendChild(row);
+                });
+                table.appendChild(tfoot);
+                tableWrap.appendChild(table);
+                sheet.appendChild(tableWrap);
+
+                const legend = document.createElement("p");
+                legend.className = "attendance-register-legend";
+                legend.textContent = "Keterangan: H = Hadir · I = Izin · S = Sakit · A = Alpa (Alpha)";
+                sheet.appendChild(legend);
+
+                const footer = document.createElement("div");
+                footer.className = "attendance-register-footer";
+                const signature = document.createElement("div");
+                signature.className = "attendance-register-signature";
+                const locationDate = document.createElement("span");
+                locationDate.textContent = `Bandung, ${reportDate}`;
+                const signatory = document.createElement("strong");
+                signatory.textContent = Array.from(teachers).join(", ") || "Pengampu";
+                signature.append(locationDate, signatory);
+                footer.appendChild(signature);
+                sheet.appendChild(footer);
+                registerList.appendChild(sheet);
+            });
+        }
+
+        function classifyFinanceType(value) {
+            const type = String(value || "").trim().toUpperCase();
+            if (type === "MASUK" || type === "PEMASUKAN") return "Pemasukan Kas";
+            if (type === "INFAQ") return "Infaq";
+            if (type === "KELUAR" || type === "PENGELUARAN") return "Pengeluaran";
+            return "";
+        }
+
+        function renderMonthlyFinance(records, year, month, days) {
+            const totals = { "Pemasukan Kas": 0, "Infaq": 0, "Pengeluaran": 0 };
+            const dailyAmounts = {
+                "Pemasukan Kas": Array(days).fill(0),
+                "Infaq": Array(days).fill(0),
+                "Pengeluaran": Array(days).fill(0),
+            };
+            records.forEach(item => {
+                const type = classifyFinanceType(item.jenis);
+                const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(item.tanggal || ""));
+                const amount = Number(item.nominal);
+                if (!type || !match || !Number.isFinite(amount)
+                    || Number(match[1]) !== year || Number(match[2]) !== month) return;
+                totals[type] += amount;
+                const day = Number(match[3]);
+                if (day >= 1 && day <= days) dailyAmounts[type][day - 1] += amount;
+            });
+
+            document.getElementById("report-income-total").textContent = formatRupiah(totals["Pemasukan Kas"]);
+            document.getElementById("report-infaq-total").textContent = formatRupiah(totals.Infaq);
+            document.getElementById("report-expense-total").textContent = formatRupiah(totals.Pengeluaran);
+            document.getElementById("report-net-total").textContent = formatRupiah(
+                totals["Pemasukan Kas"] + totals.Infaq - totals.Pengeluaran
+            );
+
+            if (monthlyFinanceChartInstance) monthlyFinanceChartInstance.destroy();
+            monthlyFinanceChartInstance = new Chart(document.getElementById("monthly-finance-chart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: Array.from({ length: days }, (_, index) => String(index + 1)),
+                    datasets: [
+                        { label: "Pemasukan Kas", data: dailyAmounts["Pemasukan Kas"], backgroundColor: "#27ae60", borderRadius: 3 },
+                        { label: "Infaq", data: dailyAmounts.Infaq, backgroundColor: "#3b82f6", borderRadius: 3 },
+                        { label: "Pengeluaran", data: dailyAmounts.Pengeluaran, backgroundColor: "#ef4444", borderRadius: 3 },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: "index", intersect: false },
+                    plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 9 } } } },
+                    scales: {
+                        x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 16 } },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => new Intl.NumberFormat("id-ID", { notation: "compact", maximumFractionDigits: 1 }).format(value),
+                            },
+                        },
+                    },
+                },
+            });
+
+            const tbody = document.getElementById("monthly-finance-rows");
+            tbody.replaceChildren();
+            if (!records.length) {
+                const row = tbody.insertRow();
+                const cell = row.insertCell();
+                cell.className = "report-no-data";
+                cell.colSpan = 5;
+                cell.textContent = "Belum ada transaksi pada bulan ini.";
+                return;
+            }
+            records.forEach(item => {
+                const row = tbody.insertRow();
+                const type = classifyFinanceType(item.jenis);
+                const party = type === "Pengeluaran"
+                    ? item.penerima
+                    : item.donatur;
+                [
+                    formatReportDate(item.tanggal),
+                    type || String(item.jenis || "-"),
+                    item.keterangan || item.kategori || "-",
+                    party || "-",
+                ].forEach(value => {
+                    const cell = row.insertCell();
+                    cell.textContent = String(value);
+                });
+                const amountCell = row.insertCell();
+                amountCell.className = "amount";
+                amountCell.textContent = formatRupiah(Number(item.nominal) || 0);
+            });
+        }
+
+        async function loadMonthlyReport() {
+            const status = document.getElementById("monthly-report-status");
+            const monthValue = document.getElementById("report-month").value;
+            const requestId = ++monthlyReportRequestId;
+            status.className = "report-status";
+            status.textContent = "Memuat laporan bulanan...";
+            try {
+                const range = getMonthDateRange(monthValue);
+                const students = await fetchMonthlyReportSantri();
+                if (requestId !== monthlyReportRequestId) return;
+                const className = document.getElementById("report-class").value;
+                const dateFilter = `tanggal=gte.${range.start}&tanggal=lt.${range.end}`;
+                const classFilter = className ? `&kelas=eq.${encodeURIComponent(className)}` : "";
+                const attendancePath = `mutabaah?select=tanggal,kelas,kehadiran,santri_nis,nama_santri,nama_pengampu&${dateFilter}${classFilter}&order=tanggal.asc,santri_nis.asc`;
+                const financePath = `buku_kas?select=id,tanggal,jenis,kategori,donatur,penerima,nominal,keterangan&${dateFilter}&order=tanggal.asc,id.asc`;
+                const [attendance, transactions] = await Promise.all([
+                    className ? fetchAllPages(attendancePath) : Promise.resolve([]),
+                    fetchAllPages(financePath),
+                ]);
+                if (requestId !== monthlyReportRequestId) return;
+
+                renderMonthlyAttendance(attendance, students, range.year, range.month, range.days, className);
+                renderMonthlyFinance(transactions, range.year, range.month, range.days);
+                status.textContent = className
+                    ? `Laporan ${formatReportMonth(range.year, range.month)} · ${className} · ${attendance.length} catatan absensi · ${transactions.length} transaksi kas`
+                    : `Laporan ${formatReportMonth(range.year, range.month)} · Pilih kelas untuk melihat kalender absensi · ${transactions.length} transaksi kas`;
+            } catch (error) {
+                if (requestId !== monthlyReportRequestId) return;
+                status.classList.add("error");
+                status.textContent = `Laporan bulanan gagal dimuat: ${error.message}`;
+                console.error("Gagal memuat laporan bulanan:", error);
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", async function() {
             checkAuth();
             const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
@@ -1099,10 +1821,17 @@
                 renderChart(e.target.value);
             });
 
+            const reportMonthInput = document.getElementById("report-month");
+            reportMonthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+            reportMonthInput.addEventListener("change", loadMonthlyReport);
+            document.getElementById("report-class").addEventListener("change", loadMonthlyReport);
+            document.getElementById("download-monthly-report").addEventListener("click", () => window.print());
+
             loadSantriSummary();
             loadKasSummary();
             loadAttendanceData();
             loadRecentMutabaahFeed();
+            loadMonthlyReport();
         });
     </script>
 </body>
