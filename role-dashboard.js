@@ -85,6 +85,136 @@
         return item;
     }
 
+    function wrapReceiptText(context, value, maxWidth) {
+        const words = String(value || "-").split(/\s+/);
+        const lines = [];
+        let line = "";
+        words.forEach(word => {
+            const candidate = line ? `${line} ${word}` : word;
+            if (context.measureText(word).width > maxWidth) {
+                if (line) lines.push(line);
+                line = "";
+                let segment = "";
+                for (const character of word) {
+                    if (context.measureText(segment + character).width > maxWidth && segment) {
+                        lines.push(segment);
+                        segment = character;
+                    } else {
+                        segment += character;
+                    }
+                }
+                line = segment;
+            } else if (context.measureText(candidate).width > maxWidth && line) {
+                lines.push(line);
+                line = word;
+            } else {
+                line = candidate;
+            }
+        });
+        if (line) lines.push(line);
+        return lines.length ? lines : ["-"];
+    }
+
+    async function createTeacherInfaqReceipt(item) {
+        const width = 1000;
+        const padding = 64;
+        const context = document.createElement("canvas").getContext("2d");
+        if (!context) throw new Error("Browser tidak dapat membuat gambar struk.");
+
+        const fields = [
+            ["Jenis transaksi", "Infaq / Sedekah"],
+            ["Diterima dari", item.donatur],
+            ["Kategori", item.kategori],
+            ["Keterangan", item.keterangan],
+            ["Diterima oleh", item.penerima],
+        ];
+        context.font = "bold 26px Arial";
+        const fieldLines = fields.map(([, value]) => wrapReceiptText(context, value, width - padding * 2 - 300));
+        const detailsHeight = fieldLines.reduce((total, lines) => total + 34 + lines.length * 38 + 18, 0);
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = 560 + detailsHeight;
+        const draw = canvas.getContext("2d");
+        if (!draw) throw new Error("Browser tidak dapat membuat gambar struk.");
+
+        draw.fillStyle = "#f4f7f9";
+        draw.fillRect(0, 0, width, canvas.height);
+        draw.fillStyle = "#ffffff";
+        draw.fillRect(24, 24, width - 48, canvas.height - 48);
+        draw.strokeStyle = "#334155";
+        draw.lineWidth = 3;
+        draw.strokeRect(24, 24, width - 48, canvas.height - 48);
+        draw.textAlign = "left";
+        draw.fillStyle = "#1f2937";
+        draw.font = "bold 38px Arial";
+        draw.fillText("YAYASAN NUURU HIDAAYATIL QUR'AAN", padding, 100);
+        draw.fillStyle = "#64748b";
+        draw.font = "22px Arial";
+        draw.fillText("SIFAHMI • BANDUNG", padding, 138);
+        draw.textAlign = "right";
+        draw.fillStyle = "#64748b";
+        draw.font = "bold 18px Arial";
+        draw.fillText("NO. REGISTRASI", width - padding, 78);
+        draw.fillStyle = "#d97706";
+        draw.font = "bold 26px Arial";
+        draw.fillText(`KAS-${item.id}`, width - padding, 112);
+        draw.fillStyle = "#334155";
+        draw.fillRect(padding, 165, width - padding * 2, 3);
+
+        draw.textAlign = "left";
+        draw.fillStyle = "#1f2937";
+        draw.font = "bold 32px Arial";
+        draw.fillText("TANDA TERIMA", padding, 220);
+        draw.fillStyle = "#64748b";
+        draw.font = "20px Arial";
+        const dateLabel = new Date(`${item.tanggal}T00:00:00`).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        });
+        draw.fillText(`Tanggal transaksi: ${dateLabel}`, padding, 258);
+
+        let y = 310;
+        fields.forEach(([label], index) => {
+            draw.fillStyle = "#64748b";
+            draw.font = "20px Arial";
+            draw.fillText(label, padding, y);
+            draw.fillStyle = "#1f2937";
+            draw.font = "bold 25px Arial";
+            fieldLines[index].forEach((line, lineIndex) => draw.fillText(line, padding + 300, y + lineIndex * 36));
+            y += 34 + fieldLines[index].length * 38 + 18;
+            draw.strokeStyle = "#e2e8f0";
+            draw.lineWidth = 1;
+            draw.beginPath();
+            draw.moveTo(padding, y - 9);
+            draw.lineTo(width - padding, y - 9);
+            draw.stroke();
+        });
+
+        y += 12;
+        draw.fillStyle = "#e9f8f3";
+        draw.strokeStyle = "#a7e2d4";
+        draw.lineWidth = 2;
+        draw.fillRect(padding, y, width - padding * 2, 112);
+        draw.strokeRect(padding, y, width - padding * 2, 112);
+        draw.textAlign = "center";
+        draw.fillStyle = "#168f78";
+        draw.font = "bold 20px Arial";
+        draw.fillText("TELAH DITERIMA", width / 2, y + 38);
+        draw.font = "bold 36px Arial";
+        draw.fillText(new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(item.nominal), width / 2, y + 83);
+        draw.fillStyle = "#64748b";
+        draw.font = "18px Arial";
+        draw.fillText("Terima kasih atas titipan infaq Anda", width / 2, canvas.height - 62);
+
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(blob => {
+                if (blob) resolve(blob);
+                else reject(new Error("Gambar struk gagal dibuat."));
+            }, "image/jpeg", 0.92);
+        });
+    }
+
     async function start() {
         const historyContainer = document.getElementById("guardian-history");
         const teacherRoster = document.getElementById("teacher-roster");
@@ -218,10 +348,135 @@
 
     async function loadTeacherDashboard(profile, api, session, roster, history) {
         const className = profile.kelas_diampu;
+        const infaqStudentSelect = document.getElementById("teacher-infaq-student");
+        const infaqForm = document.getElementById("teacher-infaq-form");
+        const infaqMessage = document.getElementById("teacher-infaq-message");
+        const receiptModal = document.getElementById("teacher-infaq-receipt");
+        const receiptImage = document.getElementById("teacher-infaq-receipt-image");
+        const infaqDateInput = document.getElementById("teacher-infaq-date");
+        let receiptBlob = null;
+        let receiptObjectUrl = "";
+        let receiptItem = null;
+        let infaqRosterLoaded = false;
+        const localDateString = () => {
+            const date = new Date();
+            return [
+                date.getFullYear(),
+                String(date.getMonth() + 1).padStart(2, "0"),
+                String(date.getDate()).padStart(2, "0"),
+            ].join("-");
+        };
+        infaqDateInput.value = localDateString();
+
+        const closeReceipt = () => {
+            receiptModal.hidden = true;
+            if (receiptObjectUrl) URL.revokeObjectURL(receiptObjectUrl);
+            receiptObjectUrl = "";
+            receiptBlob = null;
+        };
+        document.getElementById("teacher-infaq-receipt-close").addEventListener("click", closeReceipt);
+        receiptModal.addEventListener("click", event => {
+            if (event.target === receiptModal) closeReceipt();
+        });
+
+        infaqForm.addEventListener("submit", async event => {
+            event.preventDefault();
+            if (!infaqForm.reportValidity()) return;
+
+            const selectedStudent = infaqStudentSelect.selectedOptions[0];
+            const nominal = Number(document.getElementById("teacher-infaq-amount").value);
+            if (!selectedStudent?.value || !Number.isSafeInteger(nominal) || nominal < 1) {
+                showMessage(infaqMessage, "Pilih santri dan masukkan nominal infaq yang valid.", true);
+                return;
+            }
+
+            const submitButton = document.getElementById("teacher-infaq-submit");
+            submitButton.disabled = true;
+            submitButton.textContent = "Menyimpan ke Buku Kas...";
+            infaqMessage.classList.remove("visible");
+            const donor = `${selectedStudent.dataset.nama || "Santri"} (${selectedStudent.value})`;
+            const notes = document.getElementById("teacher-infaq-note").value.trim();
+            let savedItem;
+            try {
+                const result = await api("buku_kas", {
+                    method: "POST",
+                    body: {
+                        tanggal: infaqDateInput.value,
+                        jenis: "INFAQ",
+                        kategori: "Infaq Santri",
+                        donatur: donor,
+                        penerima: profile.nama_lengkap?.trim() || "Asatidz",
+                        nominal,
+                        keterangan: notes ? `Infaq Santri: ${notes}` : `Infaq dari ${donor}`,
+                    },
+                });
+                savedItem = Array.isArray(result) ? result[0] : result;
+            } catch (error) {
+                showMessage(infaqMessage, `Infaq gagal disimpan ke Buku Kas: ${error.message}`, true);
+                submitButton.disabled = false;
+                submitButton.textContent = "Simpan ke Buku Kas & Buat Struk";
+                return;
+            }
+            if (!savedItem?.id) {
+                showMessage(infaqMessage, "Transaksi terkirim, tetapi nomor Buku Kas tidak diterima. Periksa Buku Kas Admin sebelum mencoba menyimpan ulang.", true);
+                submitButton.disabled = false;
+                submitButton.textContent = "Simpan ke Buku Kas & Buat Struk";
+                return;
+            }
+
+            infaqForm.reset();
+            infaqDateInput.value = localDateString();
+            try {
+                receiptItem = savedItem;
+                receiptBlob = await createTeacherInfaqReceipt(savedItem);
+                if (receiptObjectUrl) URL.revokeObjectURL(receiptObjectUrl);
+                receiptObjectUrl = URL.createObjectURL(receiptBlob);
+                receiptImage.src = receiptObjectUrl;
+                receiptModal.hidden = false;
+                document.getElementById("teacher-infaq-receipt-close").focus();
+                showMessage(infaqMessage, "Infaq tercatat di Buku Kas. Preview struk digital siap dibagikan.");
+            } catch (error) {
+                showMessage(infaqMessage, `Infaq tersimpan di Buku Kas, tetapi struk gagal dibuat: ${error.message}`, true);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Simpan ke Buku Kas & Buat Struk";
+            }
+        });
+
+        document.getElementById("teacher-infaq-download").addEventListener("click", () => {
+            if (!receiptBlob || !receiptItem) return;
+            const link = document.createElement("a");
+            link.href = receiptObjectUrl;
+            link.download = `Nota-KAS-${String(receiptItem.id).replace(/[^a-zA-Z0-9_-]/g, "")}.jpg`;
+            document.body.append(link);
+            link.click();
+            link.remove();
+        });
+        document.getElementById("teacher-infaq-share").addEventListener("click", async () => {
+            if (!receiptBlob || !receiptItem) return;
+            const fileName = `Nota-KAS-${String(receiptItem.id).replace(/[^a-zA-Z0-9_-]/g, "")}.jpg`;
+            const message = `Assalamu'alaikum, berikut bukti penerimaan ${receiptItem.kategori} dari ${receiptItem.donatur} sebesar Rp ${Number(receiptItem.nominal).toLocaleString("id-ID")} yang diterima oleh ${receiptItem.penerima}. Nomor nota KAS-${receiptItem.id}, tanggal ${receiptItem.tanggal}.`;
+            const file = new File([receiptBlob], fileName, { type: "image/jpeg" });
+            try {
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: `Nota KAS-${receiptItem.id}`, text: message });
+                    return;
+                }
+                document.getElementById("teacher-infaq-download").click();
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+                showMessage(infaqMessage, "JPG diunduh. Lampirkan file tersebut pada percakapan WhatsApp yang dibuka.");
+            } catch (error) {
+                if (error.name !== "AbortError") showMessage(infaqMessage, `Struk tidak dapat dibagikan: ${error.message}`, true);
+            }
+        });
+
         if (!className) {
             document.getElementById("teacher-class").textContent = "Kelas belum ditetapkan";
             roster.innerHTML = '<p class="empty">Hubungi administrator untuk menetapkan kelas tanggung jawab.</p>';
             history.innerHTML = "";
+            infaqStudentSelect.innerHTML = '<option value="">Kelas belum ditetapkan</option>';
+            infaqStudentSelect.disabled = true;
+            document.getElementById("teacher-infaq-submit").disabled = true;
             return;
         }
 
@@ -246,6 +501,19 @@
             try {
                 const students = await api(`santri?select=nis,nama_lengkap,kelas,status&kelas=eq.${encodeURIComponent(className)}&order=nama_lengkap.asc`);
                 const activeStudents = students.filter(student => !student.status || student.status === "Aktif");
+                infaqRosterLoaded = true;
+                infaqStudentSelect.replaceChildren(new Option(
+                    activeStudents.length ? "-- Pilih santri --" : "Belum ada santri aktif di kelas ini",
+                    ""
+                ));
+                activeStudents.forEach(student => {
+                    const option = new Option(`${student.nama_lengkap || "Santri"} (NIS ${student.nis || "—"})`, student.nis);
+                    option.dataset.nama = student.nama_lengkap || "Santri";
+                    infaqStudentSelect.append(option);
+                });
+                infaqStudentSelect.disabled = activeStudents.length === 0;
+                document.getElementById("teacher-infaq-submit").disabled = activeStudents.length === 0;
+                infaqMessage.classList.remove("visible");
                 document.getElementById("teacher-student-count").textContent = activeStudents.length;
                 roster.replaceChildren();
                 if (!activeStudents.length) {
@@ -291,6 +559,12 @@
                 document.getElementById("teacher-present-rate").textContent = "—";
                 roster.innerHTML = `<p class="empty">Data kelas gagal dimuat: ${error.message}</p>`;
                 history.replaceChildren();
+                if (!infaqRosterLoaded) {
+                    infaqStudentSelect.replaceChildren(new Option("Data santri gagal dimuat", ""));
+                    infaqStudentSelect.disabled = true;
+                    document.getElementById("teacher-infaq-submit").disabled = true;
+                    showMessage(infaqMessage, `Daftar santri gagal dimuat: ${error.message}`, true);
+                }
             }
         };
         await refreshTeacherData();

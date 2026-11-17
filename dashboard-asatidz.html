@@ -44,11 +44,29 @@
         .empty { color:var(--muted); font-size:12px; line-height:1.6; }
         .substitute-form { display:grid; grid-template-columns:1fr auto; gap:9px; margin-top:14px; }
         .substitute-form input { min-width:0; min-height:40px; padding:8px 11px; border:1px solid var(--line); border-radius:10px; font:inherit; }
+        .infaq-form { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+        .infaq-form label { display:flex; flex-direction:column; gap:6px; color:var(--muted); font-size:11px; font-weight:800; }
+        .infaq-form input,.infaq-form select,.infaq-form textarea { width:100%; min-width:0; min-height:40px; padding:8px 11px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font:inherit; }
+        .infaq-form textarea { min-height:72px; resize:vertical; }
+        .infaq-form .full-width { grid-column:1/-1; }
+        .infaq-form button { min-height:42px; border:0; border-radius:10px; background:var(--green-dark); color:#fff; font:inherit; font-size:12px; font-weight:800; cursor:pointer; }
+        .infaq-form button:disabled { opacity:.6; cursor:wait; }
         .role-message { display:none; margin-top:10px; padding:10px 12px; border-radius:10px; background:#e9f8ef; color:#1b5e20; font-size:12px; }
         .role-message.error { background:#fdecea; color:#a93226; }
         .role-message.visible { display:block; }
+        .receipt-overlay { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:18px; background:rgba(15,23,42,.58); }
+        .receipt-overlay[hidden] { display:none; }
+        .receipt-dialog { width:min(100%,620px); max-height:90vh; overflow:auto; padding:18px; border-radius:18px; background:#fff; box-shadow:0 24px 70px rgba(15,23,42,.25); }
+        .receipt-dialog header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
+        .receipt-dialog h3 { font-size:15px; }
+        .receipt-close { width:34px; height:34px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font-size:20px; cursor:pointer; }
+        .receipt-preview { display:block; width:100%; border:1px solid var(--line); border-radius:12px; background:#f8fafc; }
+        .receipt-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+        .receipt-actions button { min-height:40px; padding:0 13px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font:inherit; font-size:11px; font-weight:800; cursor:pointer; }
+        .receipt-actions .receipt-share { border-color:var(--green-dark); background:var(--green-dark); color:#fff; }
+        .receipt-help { margin-top:9px; color:var(--muted); font-size:10px; line-height:1.5; }
         @media(max-width:800px){ main.container{padding:18px 14px}.two-column{grid-template-columns:1fr} }
-        @media(max-width:540px){ .overview-grid{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:1/-1}.welcome-card{padding:19px}.welcome-card h2{font-size:20px}.class-banner{align-items:flex-start; flex-direction:column}.role-topbar{padding:12px 14px} }
+        @media(max-width:540px){ .overview-grid{grid-template-columns:1fr 1fr}.stat-card:last-child{grid-column:1/-1}.welcome-card{padding:19px}.welcome-card h2{font-size:20px}.class-banner{align-items:flex-start; flex-direction:column}.role-topbar{padding:12px 14px}.infaq-form{grid-template-columns:1fr}.infaq-form .full-width{grid-column:auto}.receipt-overlay{padding:10px}.receipt-dialog{padding:13px} }
     </style>
     <script src="./app-shell.js" defer></script>
     <script src="./role-dashboard.js" defer></script>
@@ -67,6 +85,29 @@
                 <span class="class-pill" id="teacher-class">Memuat kelas...</span>
                 <a class="primary-link" id="open-mutabaah" href="mutabaah.html">Buka Mutaba'ah Kelas →</a>
             </div>
+        </section>
+
+        <section class="panel">
+            <h3>Terima Titipan Infaq Santri</h3>
+            <p class="panel-intro">Catat titipan langsung ke Buku Kas. Transaksi ini akan tampil bersama catatan admin, dan struk JPG muncul setelah berhasil disimpan.</p>
+            <form class="infaq-form" id="teacher-infaq-form">
+                <label>Tanggal
+                    <input id="teacher-infaq-date" type="date" required>
+                </label>
+                <label>Nama santri
+                    <select id="teacher-infaq-student" required disabled>
+                        <option value="">Memuat daftar santri...</option>
+                    </select>
+                </label>
+                <label>Nominal (Rp)
+                    <input id="teacher-infaq-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="Contoh: 5000" required>
+                </label>
+                <label class="full-width">Keterangan / Uraian (opsional)
+                    <textarea id="teacher-infaq-note" maxlength="300" placeholder="Keterangan tambahan"></textarea>
+                </label>
+                <button class="full-width" id="teacher-infaq-submit" type="submit" disabled>Simpan ke Buku Kas & Buat Struk</button>
+            </form>
+            <div class="role-message" id="teacher-infaq-message" role="status"></div>
         </section>
 
         <section class="overview-grid">
@@ -99,5 +140,19 @@
         </section>
 
     </main>
+    <div class="receipt-overlay" id="teacher-infaq-receipt" role="dialog" aria-modal="true" aria-labelledby="teacher-infaq-receipt-title" hidden>
+        <section class="receipt-dialog">
+            <header>
+                <h3 id="teacher-infaq-receipt-title">Struk Digital Infaq</h3>
+                <button class="receipt-close" id="teacher-infaq-receipt-close" type="button" aria-label="Tutup struk">&times;</button>
+            </header>
+            <img class="receipt-preview" id="teacher-infaq-receipt-image" alt="Preview struk digital titipan infaq">
+            <div class="receipt-actions">
+                <button class="receipt-share" id="teacher-infaq-share" type="button">Kirim JPG via WhatsApp</button>
+                <button id="teacher-infaq-download" type="button">Unduh JPG</button>
+            </div>
+            <p class="receipt-help">Struk menggunakan nomor transaksi Buku Kas. Jika berbagi gambar tidak didukung perangkat, JPG diunduh dan WhatsApp dibuka dengan pesan struk.</p>
+        </section>
+    </div>
 </body>
 </html>

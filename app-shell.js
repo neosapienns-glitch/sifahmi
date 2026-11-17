@@ -8,7 +8,6 @@
         { label: "Evaluasi & Rapor", href: "raport.html", icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>' },
         { category: "KEUANGAN MA'HAD" },
         { label: "Buku Kas Utama", href: "buku-kas.html", icon: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/>' },
-        { label: "Infaq & Sedekah", href: "infaq.html", icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' },
         { category: "PENGELOLAAN" },
         { label: "Daftar Akun", href: "daftar-akun.html", icon: '<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0M19 8v6M22 11h-6"/>' }
     ];

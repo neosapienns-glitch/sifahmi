@@ -836,11 +836,7 @@
             selectSiswa.innerHTML = `<option value="">-- Memuat Santri... --</option>`;
 
             try {
-                let list = await supabaseFetch(`santri?select=*&kelas=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
-                if (!Array.isArray(list) || list.length === 0) {
-                    const fallback = await supabaseFetch(`santri?select=*&program=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
-                    if (Array.isArray(fallback)) list = fallback;
-                }
+                const list = await supabaseFetch(`santri?select=*&kelas=eq.${encodeURIComponent(kelasName)}&order=nama_lengkap.asc`);
 
                 currentSantriList = Array.isArray(list) ? list : [];
                 selectSiswa.innerHTML = `<option value="">-- Pilih Santri --</option>`;

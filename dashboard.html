@@ -536,11 +536,6 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                 <span>Buku Kas Utama</span>
             </a>
-            <a href="infaq.html" class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <span>Infaq &amp; Sedekah</span>
-            </a>
-
             <span class="nav-category">PENGELOLAAN</span>
             <a href="daftar-akun.html" class="nav-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0M19 8v6M22 11h-6"/></svg>
@@ -587,7 +582,7 @@
                 </div>
                 <div class="hero-actions">
                     <a href="mutabaah.html" class="btn-hero">📖 Setor Mutaba'ah</a>
-                    <a href="infaq.html" class="btn-hero">💰 Terima Infaq</a>
+                    <a href="buku-kas.html?tab=infaq&action=new" class="btn-hero">💰 Catat Infaq di Buku Kas</a>
                 </div>
             </section>
 
@@ -802,7 +797,7 @@
 
         async function loadSantriSummary() {
             try {
-                const list = await supabaseFetch("santri?select=jenis_kelamin,status,kelas,program");
+                const list = await supabaseFetch("santri?select=jenis_kelamin,status,kelas");
                 if (!Array.isArray(list)) return;
 
                 const activeList = list.filter(s => s.status === "Aktif" || !s.status);
@@ -824,7 +819,7 @@
             const classes = ["Taud 1", "Taud 2", "Mubtadi 1", "Mubtadi 2", "Mutawassith"];
             const counts = new Map(classes.map(name => [name, 0]));
             activeSantri.forEach(santri => {
-                const name = String(santri.kelas || santri.program || "").trim().toLowerCase();
+                const name = String(santri.kelas || "").trim().toLowerCase();
                 const matchedClass = classes.find(className => className.toLowerCase() === name);
                 if (matchedClass) counts.set(matchedClass, counts.get(matchedClass) + 1);
             });
