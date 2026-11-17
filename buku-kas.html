@@ -295,17 +295,28 @@
             margin-right: 4px;
         }
         .btn-action-receipt:hover { background: #dcfce7; }
-        .receipt-paper { max-width: 680px; margin: 0 auto; border: 1px solid #cbd5e1; padding: 28px; color: #1f2937; font: 14px Arial, sans-serif; }
-        .receipt-paper header { text-align: center; border-bottom: 2px solid #166534; padding-bottom: 16px; }
-        .receipt-paper h2 { margin: 22px 0 7px; color: #166534; text-align: center; }
-        .receipt-paper header p, .receipt-number { color: #64748b; font-size: 12px; text-align: center; }
-        .receipt-paper dl { display: grid; grid-template-columns: 150px 1fr; gap: 12px; margin: 24px 0; }
-        .receipt-paper dt { color: #64748b; }
-        .receipt-paper dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
-        .receipt-amount { padding: 17px; border: 1px solid #bbf7d0; border-radius: 8px; background: #f0fdf4; text-align: center; }
-        .receipt-amount strong { display: block; margin-top: 7px; color: #166534; font-size: 23px; }
-        .receipt-signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; margin-top: 48px; text-align: center; }
-        .receipt-signatures div { min-height: 65px; padding-top: 9px; border-top: 1px solid #94a3b8; }
+        .receipt-paper { max-width: 760px; margin: 0 auto; padding: 14px; color: #1f2937; font: 14px Arial, sans-serif; }
+        .receipt-foundation { margin: 0; color: #166534; font-size: 19px; font-weight: 800; text-align: center; }
+        .receipt-address { margin: 4px 0 14px; color: #475569; font-size: 11px; text-align: center; }
+        .receipt-card { padding: 20px; border: 2px solid #334155; border-radius: 18px; background: #fff; }
+        .receipt-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+        .receipt-title { margin: 4px 0 6px; color: #1f2937; font-size: 21px; font-weight: 850; }
+        .receipt-brand { margin: 0; color: #64748b; font-size: 11px; }
+        .receipt-reg { flex: 0 0 auto; color: #64748b; font-size: 9px; font-weight: 750; text-align: right; }
+        .receipt-reg strong { display: block; margin-top: 3px; color: #d97706; font-size: 15px; }
+        .receipt-rule { height: 2px; margin: 17px 0; background: #334155; }
+        .receipt-detail-row { display: grid; grid-template-columns: minmax(140px, .75fr) 1.25fr; align-items: center; gap: 12px; min-height: 46px; border-bottom: 1px solid #cbd5e1; }
+        .receipt-detail-row > span { color: #475569; font-size: 12px; }
+        .receipt-detail-row > strong { color: #1f2937; font-size: 13px; overflow-wrap: anywhere; }
+        .receipt-amount-badge { display: inline-flex; justify-self: start; padding: 7px 14px; border: 1px solid #a7e2d4; border-radius: 10px; background: #e9f8f3; color: #168f78 !important; font-size: 18px !important; }
+        .receipt-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; padding-top: 22px; border-top: 1px dashed #cbd5e1; }
+        .receipt-date-label,.receipt-signature-label { color: #64748b; font-size: 10px; font-weight: 800; }
+        .receipt-date-value { display: block; margin-top: 7px; color: #1f2937; font-size: 14px; font-weight: 800; }
+        .receipt-status { display: inline-flex; margin-top: 16px; padding: 8px 11px; border: 1px solid #a7e2d4; border-radius: 9px; background: #e9f8f3; color: #168f78; font-size: 10px; font-weight: 850; }
+        .receipt-signature { align-self: end; text-align: center; }
+        .receipt-signature strong { display: block; margin: 34px 0 5px; font-size: 14px; }
+        .receipt-signature-line { display: block; border-top: 1px dashed #64748b; }
+        .receipt-signature small { display: block; margin-top: 5px; color: #94a3b8; font-size: 10px; }
         .receipt-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
         .receipt-row td { padding: 14px; background: #f8fafc; }
 
@@ -321,8 +332,13 @@
             body.printing-receipt, body.printing-receipt .app-shell-content { display: block !important; width: auto; height: auto; overflow: visible !important; }
         }
         @media (max-width: 520px) {
-            .receipt-paper { padding: 18px; }
-            .receipt-paper dl { grid-template-columns: 120px 1fr; }
+            .receipt-paper { padding: 8px; }
+            .receipt-card { padding: 14px; }
+            .receipt-detail-row { grid-template-columns: minmax(110px, .8fr) 1.2fr; }
+            .receipt-topline { gap: 6px; }
+            .receipt-title { font-size: 17px; }
+            .receipt-reg strong { font-size: 12px; }
+            .receipt-bottom { gap: 8px; }
         }
 
         .modal-overlay {
@@ -727,6 +743,7 @@
         <strong>© 2026 Manajemen Santri YAYASAN NUURU HIDAAYATIL QUR'AAN</strong> <br>Jln jend. AH Nasution Gg Jamaras 3 RT 003 / 001 Kel. Jatihandap Kec. Mandalajati Bandung 40195
     </footer>
 
+    <script src="./digital-receipt.js"></script>
     <script>
         "use strict";
 
@@ -801,32 +818,37 @@
 
         function openDigitalReceipt(item) {
             const isExpense = item.jenis === "KELUAR";
-            const receiptTitle = isExpense ? "Bukti Pengeluaran" : "Tanda Terima";
-            const receiptNumber = `KAS-${item.id}`;
+            const receiptTitle = isExpense ? "BUKTI PENGELUARAN" : "KWITANSI DIGITAL";
+            const receiptNumber = `KW-KAS-${item.id}`;
             const transactionDate = new Date(`${item.tanggal}T00:00:00`).toLocaleDateString("id-ID", {
                 day: "numeric",
                 month: "long",
                 year: "numeric"
             });
-            const partyLabel = isExpense ? "Penerima dana" : "Diterima dari";
+            const partyLabel = isExpense ? "Dibayarkan Kepada" : "Telah Diterima Dari";
             const partyName = isExpense
                 ? (item.penerima && item.penerima !== item.kategori ? item.penerima : "-")
-                : (item.donatur || "-");
-            const paymentStatus = isExpense ? "DIBAYARKAN" : "TELAH DITERIMA";
+                : String(item.donatur || "-").replace(/\s+\([^()]*\)\s*$/, "");
+            const paymentDescription = item.keterangan || item.kategori || "-";
+            const paymentStatus = isExpense ? "✓ DIBAYARKAN & TERVERIFIKASI" : "✓ LUNAS & TERVERIFIKASI";
             return `
                 <article class="receipt-paper">
-                    <header><h2>YAYASAN NUURU HIDAAYATIL QUR'AAN</h2><p>SIFAHMI • Bandung</p></header>
-                    <h2>${escapeHtml(receiptTitle)}</h2>
-                    <p class="receipt-number">Nomor: ${escapeHtml(receiptNumber)} • Tanggal: ${escapeHtml(transactionDate)}</p>
-                    <dl>
-                        <dt>Jenis transaksi</dt><dd>${escapeHtml(item.jenis === "INFAQ" ? "Infaq / Sedekah" : isExpense ? "Pengeluaran" : "Pemasukan")}</dd>
-                        <dt>${escapeHtml(partyLabel)}</dt><dd>${escapeHtml(partyName || "-")}</dd>
-                        <dt>Kategori</dt><dd>${escapeHtml(item.kategori || "-")}</dd>
-                        <dt>Keterangan</dt><dd>${escapeHtml(item.keterangan || "-")}</dd>
-                        ${item.penerima && !isExpense ? `<dt>Diterima oleh</dt><dd>${escapeHtml(item.penerima)}</dd>` : ""}
-                    </dl>
-                    <div class="receipt-amount">${escapeHtml(paymentStatus)}<strong>${escapeHtml(formatRupiah(item.nominal))}</strong></div>
-                    <div class="receipt-signatures"><div>Pemberi / Pembayar</div><div>Penerima / Bendahara</div></div>
+                    <p class="receipt-foundation">YAYASAN NUURU HIDAAYATIL QUR'AAN</p>
+                    <p class="receipt-address">Jl. Jend. AH Nasution, Gg. Jamaras 3, Jatihandap, Bandung 40195</p>
+                    <section class="receipt-card">
+                        <div class="receipt-topline">
+                            <div><h2 class="receipt-title">${escapeHtml(receiptTitle)}</h2><p class="receipt-brand">SIFAHMI • Bandung</p></div>
+                            <div class="receipt-reg">NO. REGISTRASI<strong>${escapeHtml(receiptNumber)}</strong></div>
+                        </div>
+                        <div class="receipt-rule"></div>
+                        <div class="receipt-detail-row"><span>${escapeHtml(partyLabel)}</span><strong>${escapeHtml(partyName || "-")}</strong></div>
+                        <div class="receipt-detail-row"><span>Uang Sejumlah</span><strong class="receipt-amount-badge">${escapeHtml(formatRupiah(item.nominal))}</strong></div>
+                        <div class="receipt-detail-row"><span>Untuk Pembayaran</span><strong>${escapeHtml(paymentDescription)}</strong></div>
+                        <div class="receipt-bottom">
+                            <div><span class="receipt-date-label">TANGGAL TRANSAKSI</span><strong class="receipt-date-value">${escapeHtml(transactionDate)}</strong><span class="receipt-status">${escapeHtml(paymentStatus)}</span></div>
+                            <div class="receipt-signature"><span class="receipt-signature-label">PENERIMA / BENDAHARA</span><strong>${escapeHtml(item.penerima || "Bendahara")}</strong><span class="receipt-signature-line"></span><small>Yayasan Nuuru Hidaayatil Qur'aan</small></div>
+                        </div>
+                    </section>
                 </article>
                 <div class="receipt-actions">
                     <button class="btn btn-primary" type="button" data-print-receipt>Cetak / Simpan PDF</button>
@@ -839,138 +861,11 @@
 
         function receiptMessage(item) {
             const transactionType = item.jenis === "KELUAR" ? "bukti pengeluaran" : "bukti penerimaan";
-            return `Assalamu'alaikum, berikut ${transactionType} ${item.kategori || "transaksi"} sebesar ${formatRupiah(item.nominal)}. Nomor nota KAS-${item.id}, tanggal ${item.tanggal}.`;
-        }
-
-        function wrapCanvasText(context, text, maxWidth) {
-            const words = String(text || "-").split(/\s+/);
-            const lines = [];
-            let line = "";
-            words.forEach(word => {
-                if (context.measureText(word).width > maxWidth) {
-                    if (line) lines.push(line);
-                    line = "";
-                    let segment = "";
-                    for (const character of word) {
-                        if (context.measureText(segment + character).width > maxWidth && segment) {
-                            lines.push(segment);
-                            segment = character;
-                        } else {
-                            segment += character;
-                        }
-                    }
-                    line = segment;
-                } else {
-                    const candidate = line ? `${line} ${word}` : word;
-                    if (context.measureText(candidate).width > maxWidth && line) {
-                        lines.push(line);
-                        line = word;
-                    } else {
-                        line = candidate;
-                    }
-                }
-            });
-            if (line) lines.push(line);
-            return lines.length ? lines : ["-"];
+            return `Assalamu'alaikum, berikut ${transactionType} ${item.kategori || "transaksi"} sebesar ${formatRupiah(item.nominal)}. Nomor kwitansi KW-KAS-${item.id}, tanggal ${item.tanggal}.`;
         }
 
         async function createReceiptJpg(item) {
-            const canvas = document.createElement("canvas");
-            const width = 1080;
-            const padding = 72;
-            canvas.width = width;
-            const context = canvas.getContext("2d");
-            if (!context) throw new Error("Browser tidak dapat membuat gambar nota.");
-
-            const isExpense = item.jenis === "KELUAR";
-            const partyName = isExpense
-                ? (item.penerima && item.penerima !== item.kategori ? item.penerima : "-")
-                : (item.donatur || "-");
-            const fields = [
-                ["Jenis transaksi", item.jenis === "INFAQ" ? "Infaq / Sedekah" : isExpense ? "Pengeluaran" : "Pemasukan"],
-                [isExpense ? "Penerima dana" : "Diterima dari", partyName],
-                ["Kategori", item.kategori || "-"],
-                ["Keterangan", item.keterangan || "-"],
-                ...(!isExpense && item.penerima ? [["Diterima oleh", item.penerima]] : []),
-            ];
-            context.font = "26px Arial";
-            const valueLines = fields.map(([, value]) => wrapCanvasText(context, value, width - padding * 2 - 270));
-            const detailsHeight = valueLines.reduce((total, lines) => total + Math.max(1, lines.length) * 40 + 22, 0);
-            canvas.height = 390 + detailsHeight + 260;
-            const drawContext = canvas.getContext("2d");
-            if (!drawContext) throw new Error("Browser tidak dapat membuat gambar nota.");
-
-            drawContext.fillStyle = "#ffffff";
-            drawContext.fillRect(0, 0, width, canvas.height);
-            drawContext.fillStyle = "#166534";
-            drawContext.textAlign = "center";
-            drawContext.font = "bold 34px Arial";
-            drawContext.fillText("YAYASAN NUURU HIDAAYATIL QUR'AAN", width / 2, 92);
-            drawContext.fillStyle = "#64748b";
-            drawContext.font = "23px Arial";
-            drawContext.fillText("SIFAHMI • Bandung", width / 2, 132);
-            drawContext.fillStyle = "#166534";
-            drawContext.fillRect(padding, 165, width - padding * 2, 3);
-
-            drawContext.fillStyle = "#166534";
-            drawContext.font = "bold 42px Arial";
-            drawContext.fillText(isExpense ? "BUKTI PENGELUARAN" : "TANDA TERIMA", width / 2, 235);
-            drawContext.fillStyle = "#64748b";
-            drawContext.font = "22px Arial";
-            const dateLabel = new Date(`${item.tanggal}T00:00:00`).toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-            });
-            drawContext.fillText(`Nomor: KAS-${item.id}  •  Tanggal: ${dateLabel}`, width / 2, 278);
-
-            let y = 355;
-            fields.forEach(([label], index) => {
-                const lines = valueLines[index];
-                drawContext.textAlign = "left";
-                drawContext.fillStyle = "#64748b";
-                drawContext.font = "24px Arial";
-                drawContext.fillText(label, padding, y);
-                drawContext.fillStyle = "#1f2937";
-                drawContext.font = "bold 25px Arial";
-                lines.forEach((line, lineIndex) => {
-                    drawContext.fillText(line, padding + 270, y + lineIndex * 38);
-                });
-                y += Math.max(1, lines.length) * 40 + 22;
-            });
-
-            y += 14;
-            drawContext.fillStyle = "#f0fdf4";
-            drawContext.fillRect(padding, y, width - padding * 2, 132);
-            drawContext.strokeStyle = "#bbf7d0";
-            drawContext.strokeRect(padding, y, width - padding * 2, 132);
-            drawContext.textAlign = "center";
-            drawContext.fillStyle = "#166534";
-            drawContext.font = "bold 23px Arial";
-            drawContext.fillText(isExpense ? "DIBAYARKAN" : "TELAH DITERIMA", width / 2, y + 44);
-            drawContext.font = "bold 39px Arial";
-            drawContext.fillText(formatRupiah(item.nominal), width / 2, y + 96);
-
-            y += 205;
-            drawContext.textAlign = "center";
-            drawContext.fillStyle = "#1f2937";
-            drawContext.font = "22px Arial";
-            drawContext.fillText("Pemberi / Pembayar", width / 4, y);
-            drawContext.fillText("Penerima / Bendahara", width * 3 / 4, y);
-            drawContext.strokeStyle = "#94a3b8";
-            drawContext.beginPath();
-            drawContext.moveTo(padding, y + 28);
-            drawContext.lineTo(width / 2 - 24, y + 28);
-            drawContext.moveTo(width / 2 + 24, y + 28);
-            drawContext.lineTo(width - padding, y + 28);
-            drawContext.stroke();
-
-            return new Promise((resolve, reject) => {
-                canvas.toBlob(blob => {
-                    if (blob) resolve(blob);
-                    else reject(new Error("Gambar nota gagal dibuat."));
-                }, "image/jpeg", 0.92);
-            });
+            return window.createSifahmiReceiptJpg(item);
         }
 
         function downloadReceiptJpg(blob, item) {
@@ -978,7 +873,7 @@
             const safeId = String(item.id).replace(/[^a-zA-Z0-9_-]/g, "");
             const url = URL.createObjectURL(blob);
             link.href = url;
-            link.download = `Nota-KAS-${safeId}.jpg`;
+            link.download = `Kwitansi-KW-KAS-${safeId}.jpg`;
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -1019,14 +914,14 @@
         async function shareReceiptJpg(item) {
             const blob = await createReceiptJpg(item);
             const safeId = String(item.id).replace(/[^a-zA-Z0-9_-]/g, "");
-            const fileName = `Nota-KAS-${safeId}.jpg`;
+            const fileName = `Kwitansi-KW-KAS-${safeId}.jpg`;
             if (typeof File === "function" && navigator.share && navigator.canShare) {
                 const file = new File([blob], fileName, { type: "image/jpeg" });
                 if (navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({
                             files: [file],
-                            title: `Nota KAS-${item.id}`,
+                            title: `Kwitansi KW-KAS-${item.id}`,
                             text: receiptMessage(item),
                         });
                         return;
@@ -1435,7 +1330,7 @@
                 donatur: santri,
                 penerima: document.getElementById("infaq-penerima").value,
                 nominal: nominal,
-                keterangan: notes ? `Infaq Santri: ${notes}` : `Infaq dari ${santri}`
+                keterangan: notes ? `Infaq Santri: ${notes}` : "Infaq Santri"
             };
 
             try {
