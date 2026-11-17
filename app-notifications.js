@@ -14,11 +14,25 @@
             </header>
             <p class="app-notification-status" data-notification-status role="status"></p>
             <div class="app-notification-list" data-notification-list></div>
+            <nav class="app-notification-pagination" aria-label="Halaman notifikasi">
+                <button type="button" data-notification-prev disabled>Lebih baru</button>
+                <span data-notification-page aria-live="polite">Halaman 1</span>
+                <button type="button" data-notification-next disabled>Lebih lama</button>
+            </nav>
         </section>`;
 
     const list = container.querySelector("[data-notification-list]");
     const count = container.querySelector("[data-notification-count]");
     const status = container.querySelector("[data-notification-status]");
+    const previousPage = container.querySelector("[data-notification-prev]");
+    const nextPage = container.querySelector("[data-notification-next]");
+    const pageLabel = container.querySelector("[data-notification-page]");
+    const isAdministrator = document.body.dataset.dashboardRole === "Administrator"
+        || /(?:^|\/)dashboard\.html$/i.test(window.location.pathname);
+    const pageSize = isAdministrator ? 5 : 3;
+    let currentPage = 0;
+    let hasNextPage = false;
+    container.querySelector(".app-notification-pagination").hidden = !isAdministrator;
 
     const style = document.createElement("style");
     style.textContent = `
@@ -29,6 +43,10 @@
         .app-notification-refresh,.app-notification-read,.app-notification-delete{padding:7px 10px;border:1px solid #d1d5db;border-radius:9px;background:#fff;color:#1b5e20;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
         .app-notification-delete{color:#a93226}
         .app-notification-list{display:grid;gap:8px;margin-top:12px}
+        .app-notification-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+        .app-notification-pagination button{padding:7px 10px;border:1px solid #d1d5db;border-radius:9px;background:#fff;color:#1b5e20;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+        .app-notification-pagination button:disabled{opacity:.45;cursor:not-allowed}
+        .app-notification-pagination span{color:#64748b;font-size:11px}
         .app-notification-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px;border:1px solid #edf1f5;border-radius:11px;background:#f8fafc}
         .app-notification-item.unread{border-color:#bbf7d0;background:#f0fdf4}
         .app-notification-item h3{font-size:12px}
@@ -103,7 +121,10 @@
 
     function renderNotifications(notifications) {
         const unreadCount = notifications.filter(notification => !notification.read_at).length;
-        count.textContent = `${unreadCount} belum dibaca • ${notifications.length} notifikasi terbaru`;
+        count.textContent = `${unreadCount} belum dibaca • ${notifications.length} notifikasi`;
+        pageLabel.textContent = `Halaman ${currentPage + 1}`;
+        previousPage.disabled = currentPage === 0;
+        nextPage.disabled = !hasNextPage;
         
         // Deteksi notifikasi unread baru untuk memunculkan notifikasi ponsel (bila ada data baru)
         notifications.forEach(notification => {
@@ -145,7 +166,8 @@
                 button.dataset.notificationRead = notification.id;
                 button.textContent = "Tandai dibaca";
                 item.append(button);
-            } else if (document.body.dataset.dashboardRole === "Wali Murid") {
+            }
+            if (isAdministrator || (notification.read_at && document.body.dataset.dashboardRole === "Wali Murid")) {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "app-notification-delete";
@@ -161,9 +183,15 @@
         showStatus("");
         try {
             const notifications = await api(
-                "app_notifications?select=id,title,message,created_at,read_at&order=created_at.desc&limit=3"
+                `app_notifications?select=id,title,message,created_at,read_at&order=created_at.desc&limit=${pageSize + 1}&offset=${currentPage * pageSize}`
             );
-            renderNotifications(notifications);
+            if (!notifications.length && currentPage > 0) {
+                currentPage -= 1;
+                await loadNotifications();
+                return;
+            }
+            hasNextPage = notifications.length > pageSize;
+            renderNotifications(notifications.slice(0, pageSize));
         } catch (error) {
             showStatus(error.message, true);
         }
@@ -172,6 +200,20 @@
     container.addEventListener("click", async event => {
         const refreshButton = event.target.closest("[data-notification-refresh]");
         if (refreshButton) {
+            await loadNotifications();
+            return;
+        }
+
+        const previousButton = event.target.closest("[data-notification-prev]");
+        if (previousButton && currentPage > 0) {
+            currentPage -= 1;
+            await loadNotifications();
+            return;
+        }
+
+        const nextButton = event.target.closest("[data-notification-next]");
+        if (nextButton && hasNextPage) {
+            currentPage += 1;
             await loadNotifications();
             return;
         }
@@ -198,11 +240,11 @@
 
         const deleteButton = event.target.closest("[data-notification-delete]");
         if (!deleteButton) return;
-        if (!window.confirm("Hapus notifikasi yang sudah dibaca ini?")) return;
+        if (!window.confirm("Hapus notifikasi ini?")) return;
         deleteButton.disabled = true;
         try {
             await api(
-                `app_notifications?id=eq.${encodeURIComponent(deleteButton.dataset.notificationDelete)}&read_at=not.is.null`,
+                `app_notifications?id=eq.${encodeURIComponent(deleteButton.dataset.notificationDelete)}${isAdministrator ? "" : "&read_at=not.is.null"}`,
                 {
                     method: "DELETE",
                     prefer: "return=minimal",
