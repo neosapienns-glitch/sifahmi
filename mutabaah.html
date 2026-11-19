@@ -264,9 +264,8 @@
         .modal-footer { padding: 14px 20px; border-top: 1px solid var(--line); background: #fdfdfd; display: flex; justify-content: flex-end; gap: 8px; }
 
         .batch-santri-row { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
-        .batch-santri-controls { display: grid; grid-template-columns: minmax(110px,.4fr) minmax(0,1fr); gap: 8px; }
-        .batch-santri-controls select,.batch-santri-controls input { min-height: 38px; padding: 8px 10px; font-size: 12px; }
-        @media(max-width:520px){.batch-santri-controls{grid-template-columns:1fr}}
+        .batch-santri-controls { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .batch-santri-controls select { min-height: 38px; padding: 8px 10px; font-size: 12px; }
 
         .message { margin-bottom: 14px; padding: 10px 14px; border-radius: 10px; font-size: 12.5px; line-height: 1.4; }
         .message[hidden] { display: none !important; }
@@ -755,19 +754,7 @@
 
                 const previous = existingByNis.get(String(student.nis));
                 status.value = attendanceOptions.includes(previous?.kehadiran) ? previous.kehadiran : "Hadir";
-
-                const reason = document.createElement("input");
-                reason.type = "text";
-                reason.maxLength = 500;
-                reason.placeholder = "Alasan tidak hadir (wajib)";
-                reason.setAttribute("aria-label", `Alasan tidak hadir ${student.nama_lengkap || "santri"}`);
-                reason.value = previous?.catatan_kehadiran || "";
-                reason.hidden = status.value === "Hadir";
-                status.addEventListener("change", () => {
-                    reason.hidden = status.value === "Hadir";
-                });
-
-                controls.append(status, reason);
+                controls.append(status);
                 row.append(name, controls);
                 container.append(row);
             });
@@ -794,7 +781,7 @@
             modal.classList.add("active");
             try {
                 const existing = await supabaseFetch(
-                    `mutabaah?select=santri_nis,kehadiran,catatan_kehadiran&kelas=eq.${encodeURIComponent(className)}&tanggal=eq.${encodeURIComponent(date)}`
+                    `mutabaah?select=santri_nis,kehadiran&kelas=eq.${encodeURIComponent(className)}&tanggal=eq.${encodeURIComponent(date)}`
                 );
                 renderBatchPresence(Array.isArray(existing) ? existing : []);
                 saveButton.disabled = false;
@@ -814,19 +801,13 @@
 
             for (const row of rows) {
                 const status = row.querySelector("select").value;
-                const reason = row.querySelector("input").value.trim();
-                if (status !== "Hadir" && !reason) {
-                    showGlobalAlert(`Isi alasan tidak hadir untuk ${row.dataset.nama || "santri"} terlebih dahulu.`, "error");
-                    row.querySelector("input").focus();
-                    return;
-                }
                 records.push({
                     tanggal: date,
                     kelas: className,
                     santri_nis: row.dataset.nis,
                     nama_santri: row.dataset.nama,
                     kehadiran: status,
-                    catatan_kehadiran: status === "Hadir" ? null : reason,
+                    catatan_kehadiran: null,
                     nama_pengampu: currentTeacherContext
                         ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
                         : null,
@@ -870,7 +851,7 @@
             container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Memuat riwayat...</div>`;
 
             try {
-                const list = await supabaseFetch(`mutabaah?select=tanggal,kelas,nama_santri,nama_pengampu,kehadiran,catatan_kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan&santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc&limit=5`);
+                const list = await supabaseFetch(`mutabaah?select=tanggal,kelas,nama_santri,nama_pengampu,kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan&santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc&limit=5`);
                 container.innerHTML = "";
 
                 if (!Array.isArray(list) || list.length === 0) {
@@ -891,7 +872,6 @@
                     const details = [];
                     if (item.kelas) details.push(`Kelas: ${item.kelas}`);
                     if (item.kehadiran) details.push(`Kehadiran: ${item.kehadiran}`);
-                    if (item.catatan_kehadiran) details.push(`Alasan tidak hadir: ${item.catatan_kehadiran}`);
                     if (item.sabaq_surat) {
                         details.push(`Hafalan baru: ${item.sabaq_surat} (${item.sabaq_baris || 0} baris${item.sabaq_nilai == null ? "" : `, nilai ${item.sabaq_nilai}`})`);
                     }
@@ -1037,7 +1017,7 @@
 
                 try {
                     const attendanceRecords = await supabaseFetch(
-                        `mutabaah?select=kehadiran,catatan_kehadiran&santri_nis=eq.${encodeURIComponent(nis)}&tanggal=eq.${encodeURIComponent(dateInput.value)}&limit=1`
+                        `mutabaah?select=kehadiran&santri_nis=eq.${encodeURIComponent(nis)}&tanggal=eq.${encodeURIComponent(dateInput.value)}&limit=1`
                     );
                     const existingAttendance = Array.isArray(attendanceRecords) ? attendanceRecords[0] : null;
                     const payload = {
@@ -1046,7 +1026,7 @@
                         santri_nis: nis,
                         nama_santri: namaSantri,
                         kehadiran: existingAttendance?.kehadiran || "Hadir",
-                        catatan_kehadiran: existingAttendance?.catatan_kehadiran || null,
+                        catatan_kehadiran: null,
                         nama_pengampu: currentTeacherContext
                             ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
                             : null,
