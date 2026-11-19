@@ -602,6 +602,29 @@
             return await response.json();
         }
 
+        function nextDate(date) {
+            const value = new Date(`${date}T00:00:00`);
+            value.setDate(value.getDate() + 1);
+            return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
+        }
+
+        async function saveMutabaahRecords(records) {
+            const activeRecords = await supabaseFetch("rpc/save_archived_mutabaah", {
+                method: "POST",
+                body: { p_records: records },
+            });
+            if (!Array.isArray(activeRecords)) {
+                throw new Error("Respons penyimpanan arsip Mutabaah tidak valid.");
+            }
+            if (activeRecords.length) {
+                await supabaseFetch("mutabaah?on_conflict=santri_nis,tanggal", {
+                    method: "POST",
+                    prefer: "resolution=merge-duplicates,return=representation",
+                    body: activeRecords,
+                });
+            }
+        }
+
         function showGlobalAlert(msg, kind) {
             const alertBox = document.getElementById("global-alert");
             if (alertBox) {
@@ -781,7 +804,7 @@
             modal.classList.add("active");
             try {
                 const existing = await supabaseFetch(
-                    `mutabaah?select=santri_nis,kehadiran&kelas=eq.${encodeURIComponent(className)}&tanggal=eq.${encodeURIComponent(date)}`
+                    `rpc/read_mutabaah?select=santri_nis,kehadiran&p_kelas=${encodeURIComponent(className)}&p_date_from=${encodeURIComponent(date)}&p_date_to=${encodeURIComponent(nextDate(date))}`
                 );
                 renderBatchPresence(Array.isArray(existing) ? existing : []);
                 saveButton.disabled = false;
@@ -822,11 +845,7 @@
             saveButton.disabled = true;
             saveButton.textContent = "Menyimpan...";
             try {
-                await supabaseFetch("mutabaah?on_conflict=santri_nis,tanggal", {
-                    method: "POST",
-                    prefer: "resolution=merge-duplicates,return=representation",
-                    body: records,
-                });
+                await saveMutabaahRecords(records);
                 document.getElementById("presence-modal").classList.remove("active");
                 showGlobalAlert(`Presensi ${records.length} santri berhasil disimpan.`, "success");
                 fetchRiwayatSiswa();
@@ -851,7 +870,7 @@
             container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 12px;">Memuat riwayat...</div>`;
 
             try {
-                const list = await supabaseFetch(`mutabaah?select=tanggal,kelas,nama_santri,nama_pengampu,kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan&santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc&limit=5`);
+                const list = await supabaseFetch(`rpc/read_mutabaah?select=tanggal,kelas,nama_santri,nama_pengampu,kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan&p_santri_nis=${encodeURIComponent(nis)}&order=tanggal.desc&limit=5`);
                 container.innerHTML = "";
 
                 if (!Array.isArray(list) || list.length === 0) {
@@ -1017,7 +1036,7 @@
 
                 try {
                     const attendanceRecords = await supabaseFetch(
-                        `mutabaah?select=kehadiran&santri_nis=eq.${encodeURIComponent(nis)}&tanggal=eq.${encodeURIComponent(dateInput.value)}&limit=1`
+                        `rpc/read_mutabaah?select=kehadiran&p_santri_nis=${encodeURIComponent(nis)}&p_date_from=${encodeURIComponent(dateInput.value)}&p_date_to=${encodeURIComponent(nextDate(dateInput.value))}&limit=1`
                     );
                     const existingAttendance = Array.isArray(attendanceRecords) ? attendanceRecords[0] : null;
                     const payload = {
@@ -1040,11 +1059,7 @@
                         setoran_catatan: document.getElementById("setoran-catatan").value.trim() || null,
                         tahsin_catatan: detailPelajaranTxt.length > 0 ? detailPelajaranTxt.join(" | ") : null
                     };
-                    await supabaseFetch("mutabaah?on_conflict=santri_nis,tanggal", {
-                        method: "POST",
-                        prefer: "resolution=merge-duplicates,return=representation",
-                        body: payload
-                    });
+                    await saveMutabaahRecords([payload]);
                     showGlobalAlert(`Mutaba'ah ${namaSantri} berhasil disimpan!`, "success");
                     fetchRiwayatSiswa();
                 } catch (err) {

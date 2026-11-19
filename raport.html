@@ -881,7 +881,7 @@
 
             try {
                 // 1. Ambil seluruh catatan mutaba'ah santri
-                const mutabaahList = await supabaseFetch(`mutabaah?santri_nis=eq.${encodeURIComponent(nis)}&order=tanggal.desc`);
+                const mutabaahList = await supabaseFetch(`rpc/read_mutabaah?p_santri_nis=${encodeURIComponent(nis)}&order=tanggal.desc`);
                 currentMutabaahRecords = Array.isArray(mutabaahList) ? mutabaahList : [];
 
                 // Hitung Rekap Kehadiran

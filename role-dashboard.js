@@ -405,7 +405,7 @@
 
                 const [summaryResult, records] = await Promise.all([
                     api("rpc/teacher_class_summary", { method: "POST", body: {} }),
-                    api(`mutabaah?select=nama_santri,nama_pengampu,tanggal,kelas,kehadiran,catatan_kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan&kelas=eq.${encodeURIComponent(className)}&order=tanggal.desc&limit=5`),
+                    api(`rpc/read_mutabaah?select=nama_santri,nama_pengampu,tanggal,kelas,kehadiran,catatan_kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan&p_kelas=${encodeURIComponent(className)}&order=tanggal.desc&limit=5`),
                 ]);
                 const summary = Array.isArray(summaryResult) ? summaryResult[0] : summaryResult;
                 const attendanceTotal = Number(summary?.total_kehadiran) || 0;
@@ -605,7 +605,7 @@
             if (kind === "raport") {
                 endpoint = `raport?select=semester,tahun_ajaran,rata_rata_akhir,capaian_tahfidz,catatan_pengampu,tanggal_cetak&santri_nis=eq.${escapeFilter(nis)}&order=tanggal_cetak.desc&limit=7&offset=${page * 6}`;
             } else {
-                endpoint = `mutabaah?select=tanggal,kelas,kehadiran,catatan_kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan,nama_pengampu&santri_nis=eq.${escapeFilter(nis)}&order=tanggal.desc&limit=7&offset=${page * 6}`;
+                endpoint = `rpc/read_mutabaah?select=tanggal,kelas,kehadiran,catatan_kehadiran,sabaq_surat,sabaq_baris,sabaq_nilai,sabaq_catatan,setoran_surat,setoran_baris,setoran_nilai,setoran_catatan,tahsin_catatan,nama_pengampu&p_santri_nis=${escapeFilter(nis)}&order=tanggal.desc&limit=7&offset=${page * 6}`;
             }
             const results = await api(endpoint);
             const hasOlderRecords = results.length > 6;

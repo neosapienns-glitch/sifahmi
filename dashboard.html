@@ -1110,14 +1110,15 @@
 
         async function loadAttendanceData() {
             try {
-                const data = await supabaseFetch("mutabaah?select=kehadiran,kelas,tanggal");
+                const data = await supabaseFetch("rpc/mutabaah_attendance_summary");
                 cachedMutabaahData = Array.isArray(data) ? data : [];
                 cachedMutabaahData.forEach(item => {
                     const className = String(item.kelas || "").trim();
                     if (className) monthlyReportClasses.add(className);
                 });
                 updateMonthlyReportClassOptions();
-                document.getElementById("val-total-mutabaah").textContent = `${cachedMutabaahData.length} Catatan`;
+                const totalRecords = cachedMutabaahData.reduce((sum, item) => sum + (Number(item.jumlah) || 0), 0);
+                document.getElementById("val-total-mutabaah").textContent = `${totalRecords} Catatan`;
                 renderAttendanceSummary();
                 renderChart(document.getElementById("select-kelas-chart").value);
             } catch (err) {
@@ -1133,10 +1134,11 @@
             const counts = { Hadir: 0, Sakit: 0, Izin: 0, Alpa: 0 };
             records.forEach(item => {
                 const status = String(item.kehadiran || "").trim().toLowerCase();
-                if (status === "hadir") counts.Hadir++;
-                else if (status === "sakit") counts.Sakit++;
-                else if (status === "izin") counts.Izin++;
-                else if (status === "alpa") counts.Alpa++;
+                const amount = Number(item.jumlah) || 0;
+                if (status === "hadir") counts.Hadir += amount;
+                else if (status === "sakit") counts.Sakit += amount;
+                else if (status === "izin") counts.Izin += amount;
+                else if (status === "alpa") counts.Alpa += amount;
             });
             return counts;
         }
@@ -1189,7 +1191,7 @@
             container.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Memuat setoran terbaru...</div>`;
 
             try {
-                const list = await supabaseFetch("mutabaah?select=nama_santri,sabaq_surat,sabaq_catatan,setoran_surat,setoran_catatan,tahsin_kitab,tanggal&order=tanggal.desc&limit=4");
+                const list = await supabaseFetch("rpc/read_mutabaah?select=nama_santri,sabaq_surat,sabaq_catatan,setoran_surat,setoran_catatan,tahsin_kitab,tanggal&order=tanggal.desc&limit=4");
                 container.innerHTML = "";
 
                 if (!Array.isArray(list) || list.length === 0) {
@@ -1751,8 +1753,7 @@
                 if (requestId !== monthlyReportRequestId) return;
                 const className = document.getElementById("report-class").value;
                 const dateFilter = `tanggal=gte.${range.start}&tanggal=lt.${range.end}`;
-                const classFilter = className ? `&kelas=eq.${encodeURIComponent(className)}` : "";
-                const attendancePath = `mutabaah?select=tanggal,kelas,kehadiran,santri_nis,nama_santri,nama_pengampu&${dateFilter}${classFilter}&order=tanggal.asc,santri_nis.asc`;
+                const attendancePath = `rpc/read_mutabaah?select=tanggal,kelas,kehadiran,santri_nis,nama_santri,nama_pengampu&p_date_from=${range.start}&p_date_to=${range.end}${className ? `&p_kelas=${encodeURIComponent(className)}` : ""}&order=tanggal.asc,santri_nis.asc`;
                 const financePath = `buku_kas?select=id,tanggal,jenis,kategori,donatur,penerima,nominal,keterangan&${dateFilter}&order=tanggal.asc,id.asc`;
                 const [attendance, transactions] = await Promise.all([
                     className ? fetchAllPages(attendancePath) : Promise.resolve([]),
