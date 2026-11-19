@@ -448,10 +448,14 @@
 
     async function loadGuardianDashboard(profile, api, container) {
         if (!profile.santri_nis) {
+            document.getElementById("guardian-student-name").textContent = "Belum terhubung";
             container.innerHTML = '<p class="empty">Akun belum dihubungkan dengan NIS santri. Hubungi administrator.</p>';
             return;
         }
         const nis = String(profile.santri_nis);
+        const welcomeTitle = document.getElementById("guardian-welcome-title");
+        const studentName = document.getElementById("guardian-student-name");
+        const studentNis = document.getElementById("guardian-student-nis");
         const selector = document.getElementById("guardian-history-kind");
         const previousButton = document.getElementById("guardian-history-prev");
         const nextButton = document.getElementById("guardian-history-next");
@@ -461,6 +465,16 @@
             selector.value, nis, api, container, currentPage, previousButton, nextButton, pageLabel
         );
         try {
+            const students = await api(`santri?select=nis,nama_lengkap&nis=eq.${escapeFilter(nis)}&limit=1`);
+            const student = Array.isArray(students) ? students[0] : null;
+            if (!student?.nama_lengkap) {
+                throw new Error("Data santri untuk akun wali ini tidak ditemukan.");
+            }
+            welcomeTitle.textContent =
+                `Ahlan wa Sahlan, ${profile.nama_lengkap?.trim() || "Wali Santri"} 👋`;
+            studentName.textContent = student.nama_lengkap;
+            studentNis.textContent = `NIS ${student.nis || nis}`;
+
             selector.addEventListener("change", () => {
                 currentPage = 0;
                 loadHistory();
