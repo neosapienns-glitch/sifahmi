@@ -644,7 +644,10 @@
             const namaHari = daysNames[dateObj.getDay()];
 
             document.getElementById("txt-hari-jadwal").textContent = `Hari: ${namaHari}`;
-            document.getElementById("txt-kelas-jadwal").textContent = `Kelas: ${selectKelas}`;
+            const isSubstituteClass = currentTeacherContext
+                && selectKelas !== currentTeacherContext.primaryClass;
+            document.getElementById("txt-kelas-jadwal").textContent =
+                `Kelas: ${selectKelas}${isSubstituteClass ? " (Pengganti)" : ""}`;
 
             const container = document.getElementById("dynamic-pelajaran-container");
             container.innerHTML = "";
@@ -831,9 +834,7 @@
                     nama_santri: row.dataset.nama,
                     kehadiran: status,
                     catatan_kehadiran: null,
-                    nama_pengampu: currentTeacherContext
-                        ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
-                        : null,
+                    nama_pengampu: currentTeacherContext?.name || null,
                 });
             }
 
@@ -926,10 +927,22 @@
             checkAuth();
 
             const dateInput = document.getElementById("input-tanggal-mutabaah");
-            dateInput.valueAsDate = new Date();
+            const localToday = new Date();
+            const todayString = [
+                localToday.getFullYear(),
+                String(localToday.getMonth() + 1).padStart(2, "0"),
+                String(localToday.getDate()).padStart(2, "0"),
+            ].join("-");
+            dateInput.value = todayString;
+            const requestedDate = new URLSearchParams(window.location.search).get("tanggal");
+            if (requestedDate) {
+                dateInput.value = requestedDate;
+                if (!dateInput.value) dateInput.value = todayString;
+            }
 
             const selectKelas = document.getElementById("select-kelas");
             const selectSiswa = document.getElementById("select-siswa");
+            let configureTeacherClassOptions = preferredClass => preferredClass;
 
             try {
                 const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
@@ -950,16 +963,39 @@
                 if (role === "Asatidz") {
                     const assignedClass = profile.kelas_diampu;
                     if (!assignedClass) throw new Error("Akun asatidz belum memiliki kelas tanggung jawab.");
+                    const assignments = await supabaseFetch(
+                        `teacher_class_substitutions?select=kelas,assignment_date&substitute_user_id=eq.${encodeURIComponent(session.user.id)}&assignment_date=eq.${encodeURIComponent(todayString)}&order=kelas.asc`
+                    );
+                    if (!Array.isArray(assignments)) throw new Error("Daftar kelas pengganti tidak valid.");
                     currentTeacherContext = {
                         id: session.user.id,
-                        className: assignedClass,
+                        primaryClass: assignedClass,
                         name: profile.nama_lengkap || profile.full_name || "Asatidz",
+                        substituteAssignments: assignments,
                     };
-                    selectKelas.value = assignedClass;
-                    selectKelas.disabled = true;
+
+                    configureTeacherClassOptions = preferredClass => {
+                        const availableClasses = new Set([
+                            assignedClass,
+                            ...assignments
+                                .filter(assignment => dateInput.value === todayString && assignment.assignment_date === todayString)
+                                .map(assignment => assignment.kelas),
+                        ]);
+                        Array.from(selectKelas.options).forEach(option => {
+                            option.disabled = !availableClasses.has(option.value);
+                        });
+                        const selectedClass = availableClasses.has(preferredClass) ? preferredClass : assignedClass;
+                        selectKelas.value = selectedClass;
+                        selectKelas.disabled = availableClasses.size === 1;
+                        return selectedClass;
+                    };
+
                     const requestedClass = new URLSearchParams(window.location.search).get("kelas");
-                    if (requestedClass && requestedClass !== assignedClass) {
-                        window.history.replaceState({}, "", `mutabaah.html?kelas=${encodeURIComponent(assignedClass)}`);
+                    const selectedClass = configureTeacherClassOptions(requestedClass || assignedClass);
+                    if (requestedClass && requestedClass !== selectedClass) {
+                        const query = new URLSearchParams(window.location.search);
+                        query.set("kelas", selectedClass);
+                        window.history.replaceState({}, "", `mutabaah.html?${query.toString()}`);
                     }
                 }
             } catch (error) {
@@ -976,6 +1012,13 @@
             });
 
             dateInput.addEventListener("change", function() {
+                if (currentTeacherContext) {
+                    const previousClass = selectKelas.value;
+                    const selectedClass = configureTeacherClassOptions(previousClass);
+                    if (selectedClass !== previousClass) {
+                        loadSantriByKelas(selectedClass).then(fetchRiwayatSiswa);
+                    }
+                }
                 renderDynamicSubjects();
             });
 
@@ -994,7 +1037,7 @@
                 }
             });
 
-            loadSantriByKelas(currentTeacherContext?.className || selectKelas.value).then(fetchRiwayatSiswa);
+            loadSantriByKelas(selectKelas.value).then(fetchRiwayatSiswa);
             renderDynamicSubjects();
 
             // Submit Handling Form Dinamis (UPSERT Merge Ke Supabase)
@@ -1046,9 +1089,7 @@
                         nama_santri: namaSantri,
                         kehadiran: existingAttendance?.kehadiran || "Hadir",
                         catatan_kehadiran: null,
-                        nama_pengampu: currentTeacherContext
-                            ? (localStorage.getItem(`ynhq-substitute-${currentTeacherContext.id}-${currentTeacherContext.className}`) || currentTeacherContext.name)
-                            : null,
+                        nama_pengampu: currentTeacherContext?.name || null,
                         sabaq_surat: document.getElementById("sabaq-surat").value.trim() || null,
                         sabaq_baris: Number(document.getElementById("sabaq-baris").value) || 0,
                         sabaq_nilai: Number(document.getElementById("sabaq-nilai").value) || null,

@@ -357,17 +357,39 @@
         document.getElementById("roster-class").textContent = className;
         document.getElementById("open-mutabaah").href = `mutabaah.html?kelas=${encodeURIComponent(className)}`;
 
-        const substituteKey = `ynhq-substitute-${session.user.id}-${className}`;
-        const substituteInput = document.getElementById("substitute-name");
-        substituteInput.value = localStorage.getItem(substituteKey) || "";
-        document.getElementById("substitute-form").addEventListener("submit", (event) => {
-            event.preventDefault();
-            const name = substituteInput.value.trim();
-            if (name) localStorage.setItem(substituteKey, name);
-            else localStorage.removeItem(substituteKey);
-            showMessage(document.getElementById("substitute-message"),
-                name ? `Nama pengganti "${name}" tersimpan pada perangkat ini.` : "Nama pengganti dihapus; catatan akan memakai nama akun Anda.");
-        });
+        const substituteAssignmentsContainer = document.getElementById("teacher-substitute-assignments");
+        try {
+            const assignments = await api(
+                `teacher_class_substitutions?select=kelas,assignment_date&substitute_user_id=eq.${encodeURIComponent(session.user.id)}&assignment_date=eq.${localDateString()}&order=kelas.asc`
+            );
+            if (!Array.isArray(assignments)) throw new Error("Respons penugasan pengganti tidak valid.");
+            substituteAssignmentsContainer.replaceChildren();
+            if (!assignments.length) {
+                substituteAssignmentsContainer.innerHTML =
+                    '<p class="empty">Belum ada penugasan pengganti hari ini.</p>';
+            } else {
+                assignments.forEach(assignment => {
+                    const link = document.createElement("a");
+                    link.className = "substitute-assignment-link";
+                    link.href = `mutabaah.html?kelas=${encodeURIComponent(assignment.kelas)}&tanggal=${encodeURIComponent(assignment.assignment_date)}`;
+                    const label = document.createElement("span");
+                    label.textContent = `${assignment.kelas} · ${new Date(`${assignment.assignment_date}T00:00:00`).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    })}`;
+                    const action = document.createElement("span");
+                    action.textContent = "Buka Mutabaah →";
+                    link.append(label, action);
+                    substituteAssignmentsContainer.append(link);
+                });
+            }
+        } catch (error) {
+            substituteAssignmentsContainer.replaceChildren(Object.assign(document.createElement("p"), {
+                className: "empty",
+                textContent: `Penugasan pengganti gagal dimuat: ${error.message}`,
+            }));
+        }
 
         const refreshTeacherData = async () => {
             try {

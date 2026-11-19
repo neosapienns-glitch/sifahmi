@@ -42,8 +42,8 @@
         .history-details { margin:0; padding-left:19px; color:#475569; font-size:11px; line-height:1.65; }
         .history-detail-empty { color:var(--muted); font-size:11px; }
         .empty { color:var(--muted); font-size:12px; line-height:1.6; }
-        .substitute-form { display:grid; grid-template-columns:1fr auto; gap:9px; margin-top:14px; }
-        .substitute-form input { min-width:0; min-height:40px; padding:8px 11px; border:1px solid var(--line); border-radius:10px; font:inherit; }
+        .substitute-assignment-link { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 12px; border:1px solid #eef2f6; border-radius:12px; background:#f8fafc; color:var(--green-dark); font-size:12px; font-weight:800; text-decoration:none; }
+        .substitute-assignment-link:hover { border-color:var(--green); background:#f0fbf4; }
         .infaq-form { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
         .infaq-form label { display:flex; flex-direction:column; gap:6px; color:var(--muted); font-size:11px; font-weight:800; }
         .infaq-form input,.infaq-form select,.infaq-form textarea { width:100%; min-width:0; min-height:40px; padding:8px 11px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); font:inherit; }
@@ -131,13 +131,11 @@
         </div>
 
         <section class="panel">
-            <h3>Asatidz Pengganti</h3>
-            <p class="panel-intro">Isi nama jika Anda sedang menggantikan pengampu kelas. Nama ini akan dicatat pada mutaba'ah yang Anda simpan.</p>
-            <form class="substitute-form" id="substitute-form">
-                <input id="substitute-name" type="text" maxlength="100" placeholder="Nama asatidz pengganti (opsional)">
-                <button class="secondary-link" type="submit">Simpan Nama</button>
-            </form>
-            <div class="role-message" id="substitute-message" role="status"></div>
+            <h3>Penugasan Pengganti Hari Ini</h3>
+            <p class="panel-intro">Administrator dapat memberi akses Mutabaah ke kelas lain pada tanggal tugas.</p>
+            <div class="list" id="teacher-substitute-assignments">
+                <p class="empty">Memuat penugasan pengganti...</p>
+            </div>
         </section>
 
     </main>

@@ -137,6 +137,16 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
         }
 
+        .substitute-card { flex: 0 0 auto; margin-bottom: 12px; }
+        .substitute-card h3 { font-size: 15px; }
+        .substitute-card > p { margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+        .substitution-form { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; align-items: end; gap: 10px; margin: 13px 0; }
+        .substitution-form label { margin: 0; }
+        .substitution-form .btn { white-space: nowrap; }
+        .substitution-table-wrap { max-height: 130px; overflow: auto; border: 1px solid var(--line); border-radius: 9px; }
+        .substitution-table-wrap th { position: sticky; top: 0; }
+        .substitution-table-wrap td { padding: 8px 11px; }
+
         .filter-toolbar {
             flex-shrink: 0;
             display: flex;
@@ -329,6 +339,14 @@
             line-height: 1.6;
         }
         footer strong { color: var(--muted); }
+        @media(max-width:760px) {
+            .substitution-form { grid-template-columns: 1fr 1fr; }
+            .substitution-form .btn { grid-column: 1 / -1; }
+        }
+        @media(max-width:480px) {
+            .substitution-form { grid-template-columns: 1fr; }
+            .substitution-form .btn { grid-column: auto; }
+        }
     </style>
     <link rel="stylesheet" href="./app-shell.css">
     <script src="./app-shell.js" defer></script>
@@ -366,6 +384,42 @@
         </div>
 
         <div class="message" id="global-alert" hidden></div>
+
+        <section class="card substitute-card">
+            <h3>Penugasan Asatidz Pengganti</h3>
+            <p>Administrator dapat memberi akses Mutabaah ke kelas lain untuk satu tanggal. Penugasan pada kelas dan tanggal yang sama akan menggantikan penugasan sebelumnya.</p>
+            <form class="substitution-form" id="substitution-form">
+                <label for="substitute-teacher">Asatidz Pengganti
+                    <select id="substitute-teacher" required>
+                        <option value="">Memuat akun asatidz...</option>
+                    </select>
+                </label>
+                <label for="substitute-class">Kelas yang Digantikan
+                    <select id="substitute-class" required>
+                        <option value="">-- Pilih kelas --</option>
+                        <option value="Taud 1">Taud 1</option>
+                        <option value="Taud 2">Taud 2</option>
+                        <option value="Mubtadi 1">Mubtadi 1</option>
+                        <option value="Mubtadi 2">Mubtadi 2</option>
+                        <option value="Mutawassith">Mutawassith</option>
+                    </select>
+                </label>
+                <label for="substitute-date">Tanggal Tugas
+                    <input id="substitute-date" type="date" required>
+                </label>
+                <button class="btn btn-primary" id="btn-save-substitution" type="submit" disabled>Tetapkan Pengganti</button>
+            </form>
+            <div class="substitution-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Asatidz</th><th>Kelas</th><th>Tanggal</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody id="substitution-table-body">
+                        <tr><td colspan="4" style="text-align:center; color:var(--muted);">Memuat penugasan...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <section class="card">
             <div class="filter-toolbar">
@@ -484,6 +538,7 @@
         const SESSION_KEY = "ynhq-supabase-session";
 
         let currentRoleFilter = "semua";
+        let teacherNameById = new Map();
 
         function checkAuth() {
             const sessionRaw = localStorage.getItem(SESSION_KEY);
@@ -552,6 +607,76 @@
             alertBox.textContent = msg;
             alertBox.className = "message " + kind;
             alertBox.hidden = false;
+        }
+
+        function localDateString() {
+            const date = new Date();
+            return [
+                date.getFullYear(),
+                String(date.getMonth() + 1).padStart(2, "0"),
+                String(date.getDate()).padStart(2, "0"),
+            ].join("-");
+        }
+
+        async function loadSubstitutionTeachers() {
+            const select = document.getElementById("substitute-teacher");
+            const teachers = await supabaseFetch(
+                "profiles?select=id,nama_lengkap,kelas_diampu&role=eq.Asatidz&order=nama_lengkap.asc"
+            );
+            if (!Array.isArray(teachers)) throw new Error("Daftar asatidz dari database tidak valid.");
+
+            teacherNameById = new Map(teachers.map(teacher => [
+                String(teacher.id),
+                teacher.nama_lengkap || "Asatidz",
+            ]));
+            select.replaceChildren(new Option(
+                teachers.length ? "-- Pilih asatidz --" : "Belum ada akun asatidz",
+                ""
+            ));
+            teachers.forEach(teacher => {
+                const option = new Option(
+                    `${teacher.nama_lengkap || "Asatidz"}${teacher.kelas_diampu ? ` · ${teacher.kelas_diampu}` : ""}`,
+                    teacher.id
+                );
+                select.append(option);
+            });
+            document.getElementById("btn-save-substitution").disabled = teachers.length === 0;
+        }
+
+        async function renderSubstitutionAssignments() {
+            const tbody = document.getElementById("substitution-table-body");
+            const assignments = await supabaseFetch(
+                `teacher_class_substitutions?select=kelas,assignment_date,substitute_user_id&assignment_date=gte.${localDateString()}&order=assignment_date.asc,kelas.asc`
+            );
+            if (!Array.isArray(assignments)) throw new Error("Daftar penugasan pengganti dari database tidak valid.");
+            tbody.replaceChildren();
+            if (!assignments.length) {
+                const row = tbody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.style.textAlign = "center";
+                cell.style.color = "var(--muted)";
+                cell.textContent = "Belum ada penugasan hari ini atau mendatang.";
+                return;
+            }
+
+            assignments.forEach(assignment => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent =
+                    teacherNameById.get(String(assignment.substitute_user_id)) || "Akun asatidz";
+                row.insertCell().textContent = assignment.kelas;
+                row.insertCell().textContent = new Date(`${assignment.assignment_date}T00:00:00`)
+                    .toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+                const actionCell = row.insertCell();
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "btn-action-del substitution-delete";
+                deleteButton.textContent = "Hapus";
+                deleteButton.dataset.class = assignment.kelas;
+                deleteButton.dataset.date = assignment.assignment_date;
+                deleteButton.setAttribute("aria-label", `Hapus pengganti ${assignment.kelas} tanggal ${assignment.assignment_date}`);
+                actionCell.append(deleteButton);
+            });
         }
 
         async function populateSantriDropdown() {
@@ -844,8 +969,90 @@
             renderUserTable(e.target.value);
         });
 
+        document.getElementById("substitute-date").value = localDateString();
+        document.getElementById("substitute-date").min = localDateString();
+        document.getElementById("substitution-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            if (!this.reportValidity()) return;
+
+            const submitButton = document.getElementById("btn-save-substitution");
+            let session;
+            try {
+                session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+            } catch (error) {
+                showGlobalAlert("Sesi administrator tidak valid. Silakan masuk kembali.", "error");
+                return;
+            }
+            if (!session.user?.id) {
+                showGlobalAlert("Sesi administrator tidak ditemukan. Silakan masuk kembali.", "error");
+                return;
+            }
+
+            submitButton.disabled = true;
+            try {
+                const saved = await supabaseFetch("teacher_class_substitutions?on_conflict=kelas,assignment_date", {
+                    method: "POST",
+                    prefer: "resolution=merge-duplicates,return=representation",
+                    body: {
+                        kelas: document.getElementById("substitute-class").value,
+                        assignment_date: document.getElementById("substitute-date").value,
+                        substitute_user_id: document.getElementById("substitute-teacher").value,
+                        assigned_by: session.user.id,
+                    },
+                });
+                if (!Array.isArray(saved) || !saved.length) {
+                    throw new Error("Penugasan tidak mendapat konfirmasi dari database.");
+                }
+            } catch (error) {
+                showGlobalAlert(`Penugasan pengganti gagal disimpan: ${error.message}`, "error");
+                submitButton.disabled = document.getElementById("substitute-teacher").options.length <= 1;
+                return;
+            }
+            submitButton.disabled = document.getElementById("substitute-teacher").options.length <= 1;
+            showGlobalAlert("Asatidz pengganti berhasil ditetapkan untuk tanggal tersebut.", "success");
+            try {
+                await renderSubstitutionAssignments();
+            } catch (error) {
+                showGlobalAlert(`Penugasan tersimpan, tetapi daftar gagal dimuat ulang: ${error.message}`, "error");
+            }
+        });
+
+        document.getElementById("substitution-table-body").addEventListener("click", async function(event) {
+            const button = event.target.closest(".substitution-delete");
+            if (!button || !confirm(`Hapus penugasan pengganti kelas ${button.dataset.class} tanggal ${button.dataset.date}?`)) return;
+
+            button.disabled = true;
+            try {
+                await supabaseFetch(
+                    `teacher_class_substitutions?kelas=eq.${encodeURIComponent(button.dataset.class)}&assignment_date=eq.${encodeURIComponent(button.dataset.date)}`,
+                    { method: "DELETE" }
+                );
+                showGlobalAlert("Penugasan pengganti berhasil dihapus.", "success");
+                await renderSubstitutionAssignments();
+            } catch (error) {
+                button.disabled = false;
+                showGlobalAlert(`Penugasan pengganti gagal dihapus: ${error.message}`, "error");
+            }
+        });
+
         checkAuth();
         renderUserTable();
+        (async function loadSubstitutionManagement() {
+            try {
+                await loadSubstitutionTeachers();
+                await renderSubstitutionAssignments();
+            } catch (error) {
+                const tbody = document.getElementById("substitution-table-body");
+                tbody.replaceChildren();
+                const row = tbody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.style.textAlign = "center";
+                cell.style.color = "var(--danger)";
+                cell.textContent = `Data penugasan gagal dimuat: ${error.message}`;
+                showGlobalAlert(`Pengelolaan pengganti gagal dimuat: ${error.message}`, "error");
+            }
+        })();
     </script>
 </body>
 </html>
